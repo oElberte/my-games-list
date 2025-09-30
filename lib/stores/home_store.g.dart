@@ -77,18 +77,6 @@ mixin _$HomeStore on HomeStoreBase, Store {
   );
 
   @override
-  bool isFavorite(String itemId) {
-    final _$actionInfo = _$HomeStoreBaseActionController.startAction(
-      name: 'HomeStoreBase.isFavorite',
-    );
-    try {
-      return super.isFavorite(itemId);
-    } finally {
-      _$HomeStoreBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   void _initializeMockData() {
     final _$actionInfo = _$HomeStoreBaseActionController.startAction(
       name: 'HomeStoreBase._initializeMockData',

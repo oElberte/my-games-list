@@ -36,7 +36,6 @@ abstract class HomeStoreBase with Store {
     await _saveFavorites();
   }
 
-  @action
   bool isFavorite(String itemId) {
     return favoriteItemIds.contains(itemId);
   }
