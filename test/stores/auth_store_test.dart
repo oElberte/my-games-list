@@ -31,11 +31,13 @@ void main() {
     test('should load auth state from storage', () async {
       // Set up storage to return a saved user
       mockStorageService.setBoolReturn(true);
-      mockStorageService.setStringReturn('{"id":"123","email":"saved@example.com","name":"Saved User"}');
+      mockStorageService.setStringReturn(
+        '{"id":"123","email":"saved@example.com","name":"Saved User"}',
+      );
 
       // Create a new store to trigger _loadAuthState in constructor
       final newAuthStore = AuthStore(mockStorageService);
-      
+
       // Wait a bit for async initialization
       await Future.delayed(Duration(milliseconds: 10));
 
@@ -84,7 +86,8 @@ void main() {
       await authStore.login('test@example.com', 'password123');
 
       expect(mockStorageService.setStringCallHistory.length, greaterThan(0));
-      final savedData = mockStorageService.setStringCallHistory.first['value'] as String;
+      final savedData =
+          mockStorageService.setStringCallHistory.first['value'] as String;
       expect(savedData, contains('test@example.com'));
     });
 
@@ -113,16 +116,10 @@ void main() {
 
     test('should validate empty credentials on login', () async {
       // Test with empty email
-      expect(
-        () => authStore.login('', 'password123'),
-        throwsException,
-      );
+      expect(() => authStore.login('', 'password123'), throwsException);
 
       // Test with empty password
-      expect(
-        () => authStore.login('test@example.com', ''),
-        throwsException,
-      );
+      expect(() => authStore.login('test@example.com', ''), throwsException);
 
       // Test with valid credentials
       await authStore.login('test@example.com', 'validpassword');
@@ -132,12 +129,12 @@ void main() {
     test('should generate unique user IDs', () async {
       await authStore.login('user1@example.com', 'password123');
       final userId1 = authStore.currentUser!.id;
-      
+
       await authStore.logout();
-      
+
       // Wait a bit to ensure different timestamp
       await Future.delayed(Duration(milliseconds: 10));
-      
+
       await authStore.login('user2@example.com', 'password123');
       final userId2 = authStore.currentUser!.id;
 
@@ -146,7 +143,7 @@ void main() {
 
     test('should use email prefix as user name', () async {
       await authStore.login('johndoe@example.com', 'password123');
-      
+
       expect(authStore.currentUser!.name, equals('johndoe'));
     });
   });

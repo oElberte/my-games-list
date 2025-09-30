@@ -6,7 +6,7 @@ class MockLocalStorageService implements LocalStorageService {
   final List<Map<String, dynamic>> setBoolCallHistory = [];
   final List<Map<String, dynamic>> setStringListCallHistory = [];
   final List<String> removeCallHistory = [];
-  
+
   String? _stringReturn;
   bool? _boolReturn;
   int? _intReturn;

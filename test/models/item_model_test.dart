@@ -80,7 +80,10 @@ void main() {
       expect(updatedItem.id, equals('1')); // unchanged
       expect(updatedItem.name, equals('Updated Game')); // changed
       expect(updatedItem.description, equals('Updated description')); // changed
-      expect(updatedItem.imageUrl, equals('https://example.com/image.jpg')); // unchanged
+      expect(
+        updatedItem.imageUrl,
+        equals('https://example.com/image.jpg'),
+      ); // unchanged
     });
 
     test('should implement equality correctly', () {

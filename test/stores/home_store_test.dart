@@ -17,9 +17,12 @@ void main() {
     test('should initialize with mock data', () async {
       // Wait for initialization to complete
       await Future.delayed(Duration(milliseconds: 10));
-      
+
       expect(homeStore.items.length, equals(5));
-      expect(homeStore.items.first.name, equals('The Legend of Zelda: Breath of the Wild'));
+      expect(
+        homeStore.items.first.name,
+        equals('The Legend of Zelda: Breath of the Wild'),
+      );
       expect(homeStore.items.last.name, equals('The Witcher 3: Wild Hunt'));
     });
 
@@ -30,7 +33,7 @@ void main() {
 
     test('should load favorites from storage', () async {
       mockStorageService.setStringListReturn(['1', '3']);
-      
+
       final newHomeStore = HomeStore(mockStorageService);
       await Future.delayed(Duration(milliseconds: 10));
 
@@ -41,7 +44,7 @@ void main() {
 
     test('should handle missing favorites gracefully', () async {
       mockStorageService.setStringListReturn(null);
-      
+
       final newHomeStore = HomeStore(mockStorageService);
       await Future.delayed(Duration(milliseconds: 10));
 
@@ -50,15 +53,15 @@ void main() {
 
     test('should toggle favorite correctly', () async {
       const itemId = '1';
-      
+
       // Initially not favorite
       expect(homeStore.isFavorite(itemId), isFalse);
-      
+
       // Add to favorites
       await homeStore.toggleFavorite(itemId);
       expect(homeStore.isFavorite(itemId), isTrue);
       expect(homeStore.favoriteItemIds.contains(itemId), isTrue);
-      
+
       // Remove from favorites
       await homeStore.toggleFavorite(itemId);
       expect(homeStore.isFavorite(itemId), isFalse);
@@ -67,16 +70,22 @@ void main() {
 
     test('should save favorites to storage when toggled', () async {
       await homeStore.toggleFavorite('1');
-      
+
       // Check that setStringList was called (favorites are stored as string list)
-      expect(mockStorageService.setStringListCallHistory.length, greaterThan(0));
-      expect(mockStorageService.setStringListCallHistory.last['key'], equals('favorite_items'));
+      expect(
+        mockStorageService.setStringListCallHistory.length,
+        greaterThan(0),
+      );
+      expect(
+        mockStorageService.setStringListCallHistory.last['key'],
+        equals('favorite_items'),
+      );
     });
 
     test('should return correct favorite items', () async {
       await homeStore.toggleFavorite('1');
       await homeStore.toggleFavorite('3');
-      
+
       final favoriteItems = homeStore.favoriteItems;
       expect(favoriteItems.length, equals(2));
       expect(favoriteItems.any((item) => item.id == '1'), isTrue);
@@ -104,14 +113,14 @@ void main() {
 
     test('should handle multiple favorite toggles correctly', () async {
       const itemIds = ['1', '2', '3'];
-      
+
       // Add all to favorites
       for (final id in itemIds) {
         await homeStore.toggleFavorite(id);
       }
-      
+
       expect(homeStore.favoriteItemIds.length, equals(3));
-      
+
       // Remove one
       await homeStore.toggleFavorite('2');
       expect(homeStore.favoriteItemIds.length, equals(2));
@@ -122,14 +131,14 @@ void main() {
 
     test('computed favoriteItems should update reactively', () async {
       expect(homeStore.favoriteItems.isEmpty, isTrue);
-      
+
       await homeStore.toggleFavorite('1');
       expect(homeStore.favoriteItems.length, equals(1));
       expect(homeStore.favoriteItems.first.id, equals('1'));
-      
+
       await homeStore.toggleFavorite('2');
       expect(homeStore.favoriteItems.length, equals(2));
-      
+
       await homeStore.toggleFavorite('1');
       expect(homeStore.favoriteItems.length, equals(1));
       expect(homeStore.favoriteItems.first.id, equals('2'));
