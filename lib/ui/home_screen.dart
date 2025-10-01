@@ -27,36 +27,30 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Observer(
-        builder: (context) {
-          return ListView.builder(
-            padding: const EdgeInsets.all(8.0),
-            itemCount: homeStore.items.length,
-            itemBuilder: (context, index) {
-              final item = homeStore.items[index];
+      body: ListView.builder(
+        padding: const EdgeInsets.all(8.0),
+        itemCount: homeStore.items.length,
+        itemBuilder: (context, index) {
+          final item = homeStore.items[index];
 
-              return Observer(
-                builder: (context) {
-                  // This Observer will track changes to favoriteItemIds
-                  final isFavorite = homeStore.favoriteItemIds.contains(
-                    item.id,
-                  );
+          return Observer(
+            builder: (context) {
+              // This Observer will track changes to favoriteItemIds
+              final isFavorite = homeStore.favoriteItemIds.contains(item.id);
 
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: ListTile(
-                      title: Text(item.name),
-                      subtitle: Text(item.description),
-                      trailing: IconButton(
-                        icon: Icon(
-                          isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : null,
-                        ),
-                        onPressed: () => homeStore.toggleFavorite(item.id),
-                      ),
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 4.0),
+                child: ListTile(
+                  title: Text(item.name),
+                  subtitle: Text(item.description),
+                  trailing: IconButton(
+                    icon: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: isFavorite ? Colors.red : null,
                     ),
-                  );
-                },
+                    onPressed: () => homeStore.toggleFavorite(item.id),
+                  ),
+                ),
               );
             },
           );
