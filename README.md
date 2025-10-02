@@ -101,39 +101,51 @@ test/                        # Comprehensive test suite
 
 ### State Management
 
-- **MobX**: 2.4.0 - Reactive state management
-- **MobX Codegen**: 2.7.0 - Code generation for MobX
+- **MobX**: Reactive state management
+- **MobX Codegen**: Code generation for MobX
 
 ### Dependency Injection
 
-- **GetIt**: 8.0.2 - Service locator
+- **GetIt**: Service locator
 
 ### Navigation
 
-- **GoRouter**: 14.6.1 - Declarative routing
+- **GoRouter**: Declarative routing
 
 ### Storage
 
-- **SharedPreferences**: 2.3.3 - Local data persistence
+- **SharedPreferences**: Local data persistence
 
 ### Web Integration
 
-- **WebView Flutter**: 4.10.0 - In-app web browser
+- **WebView Flutter**: In-app web browser
 
 ### Development Tools
 
-- **Build Runner**: 2.4.8 - Code generation
-- **Flutter Lints**: 5.0.0 - Dart linting rules
+- **Build Runner**: Code generation
+- **Flutter Lints**: Dart linting rules
 
 ## Getting Started
 
 ### Prerequisites
 
-- Flutter SDK 3.24.0 or later
-- Dart SDK 3.5.0 or later
+- **FVM (Flutter Version Manager)** - Recommended for managing Flutter SDK versions
+- Flutter SDK 3.24.0 or later (managed via FVM)
+- Dart SDK 3.5.0 or later (comes with Flutter)
 - Android Studio / VS Code with Flutter extensions
 - Android SDK for Android development
 - Xcode for iOS development (macOS only)
+
+### FVM Setup (Recommended)
+
+**FVM (Flutter Version Manager)** allows you to easily manage multiple Flutter SDK versions and ensures consistent development environments across your team.
+
+#### Verify Installation
+
+```bash
+fvm --version
+fvm doctor  # Diagnose any issues
+```
 
 ### Installation
 
@@ -144,21 +156,31 @@ test/                        # Comprehensive test suite
    cd my_games_list
    ```
 
-2. **Install dependencies**
+2. **Set up Flutter SDK version**
 
    ```bash
-   flutter pub get
+   # Install and use the project's Flutter version
+   fvm use 3.35.4
+
+   # This creates .fvmrc and configures the project
+   # VS Code will automatically detect the FVM configuration
    ```
 
-3. **Generate code**
+3. **Install dependencies**
 
    ```bash
-   flutter packages pub run build_runner build
+   fvm flutter pub get
    ```
 
-4. **Run the application**
+4. **Generate code**
+
    ```bash
-   flutter run
+   fvm flutter packages pub run build_runner build
+   ```
+
+5. **Run the application**
+   ```bash
+   fvm flutter run
    ```
 
 ### Development Setup
@@ -167,25 +189,25 @@ test/                        # Comprehensive test suite
 
    ```bash
    # One-time generation
-   flutter packages pub run build_runner build
+   fvm flutter packages pub run build_runner build
 
    # Watch mode for development
-   flutter packages pub run build_runner watch
+   fvm flutter packages pub run build_runner watch
    ```
 
 2. **Running Tests**
 
    ```bash
    # Run all tests
-   flutter test
+   fvm flutter test
 
    # Run with coverage
-   flutter test --coverage
+   fvm flutter test --coverage
    ```
 
 3. **Code Analysis**
    ```bash
-   flutter analyze
+   fvm flutter analyze
    ```
 
 ## Testing
@@ -203,13 +225,13 @@ The project includes comprehensive test coverage:
 
 ```bash
 # All tests
-flutter test
+fvm flutter test
 
 # Specific test file
-flutter test test/stores/auth_store_test.dart
+fvm flutter test test/stores/auth_store_test.dart
 
 # With coverage report
-flutter test --coverage
+fvm flutter test --coverage
 ```
 
 ### Test Coverage
@@ -225,21 +247,21 @@ flutter test --coverage
 ### Android
 
 ```bash
-flutter build apk --release
+fvm flutter build apk --release
 # or
-flutter build appbundle --release
+fvm flutter build appbundle --release
 ```
 
 ### iOS
 
 ```bash
-flutter build ios --release
+fvm flutter build ios --release
 ```
 
 ### Web
 
 ```bash
-flutter build web --release
+fvm flutter build web --release
 ```
 
 ## Configuration
@@ -305,7 +327,7 @@ final appRouter = GoRouter(
 
 1. Create feature branch
 2. Implement changes with tests
-3. Run `flutter analyze` and `flutter test`
+3. Run `fvm flutter analyze` and `fvm flutter test`
 4. Submit pull request
 
 ### Commit Messages

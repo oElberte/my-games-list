@@ -12,7 +12,7 @@ class WebViewScreen extends StatefulWidget {
 }
 
 class _WebViewScreenState extends State<WebViewScreen> {
-  late WebViewController _controller;
+  late final WebViewController _controller;
   bool _isLoading = true;
 
   @override
