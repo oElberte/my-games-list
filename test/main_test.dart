@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:my_games_list/main.dart';
 import 'package:my_games_list/services/service_locator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   group('MyGamesListApp', () {
     setUp(() async {
       // Reset GetIt and setup mock data
-      await getIt.reset();
+      await sl.reset();
       SharedPreferences.setMockInitialValues({});
       await setupServiceLocator();
     });
 
     tearDown(() async {
-      await getIt.reset();
+      await sl.reset();
     });
 
     testWidgets('should initialize and display app correctly', (tester) async {
@@ -58,7 +57,7 @@ void main() {
     });
 
     testWidgets('should react to theme changes', (tester) async {
-      // This test will be expanded once we have SettingsStore implemented
+      // This test will be expanded once we have SettingsBloc fully integrated
       // For now, just ensure the app can be built
       await tester.pumpWidget(const MyGamesListApp());
       await tester.pumpAndSettle();

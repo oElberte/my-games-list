@@ -1,83 +1,111 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:my_games_list/stores/home_store.dart';
+import 'package:my_games_list/blocs/home_bloc.dart';
+import 'package:my_games_list/blocs/home_event.dart';
+import 'package:my_games_list/blocs/home_state.dart';
 
 import '../mocks/mock_services.dart';
 
 void main() {
-  group('HomeStore Reactivity', () {
+  group('HomeBloc Reactivity', () {
     late MockLocalStorageService mockStorageService;
-    late HomeStore homeStore;
+    late HomeBloc homeBloc;
 
     setUp(() {
       mockStorageService = MockLocalStorageService();
-      homeStore = HomeStore(mockStorageService);
+      homeBloc = HomeBloc(mockStorageService);
     });
 
-    test('should update favorite status reactively', () async {
-      // Wait for initialization
-      await Future.delayed(Duration(milliseconds: 10));
-
-      // Initially should have 5 items and no favorites
-      expect(homeStore.items.length, equals(5));
-      expect(homeStore.favoriteItemIds.length, equals(0));
-      expect(homeStore.isFavorite('1'), isFalse);
-
-      // Toggle first item as favorite
-      await homeStore.toggleFavorite('1');
-
-      // Should now be favorite
-      expect(homeStore.isFavorite('1'), isTrue);
-      expect(homeStore.favoriteItemIds.length, equals(1));
-      expect(homeStore.favoriteItemIds.contains('1'), isTrue);
-
-      // Toggle again to unfavorite
-      await homeStore.toggleFavorite('1');
-
-      // Should no longer be favorite
-      expect(homeStore.isFavorite('1'), isFalse);
-      expect(homeStore.favoriteItemIds.length, equals(0));
+    tearDown(() {
+      homeBloc.close();
     });
 
-    test('should track multiple favorites correctly', () async {
-      // Wait for initialization
-      await Future.delayed(Duration(milliseconds: 10));
+    blocTest<HomeBloc, HomeState>(
+      'should update favorite status reactively',
+      build: () {
+        mockStorageService.setStringListReturn(null);
+        return HomeBloc(mockStorageService);
+      },
+      act: (bloc) async {
+        bloc.add(const HomeInitialized());
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        bloc.add(const HomeToggleFavorite('1'));
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        bloc.add(const HomeToggleFavorite('1'));
+      },
+      expect: () => [
+        // After initialization
+        predicate<HomeState>(
+          (state) =>
+              state.items.length == 5 &&
+              state.favoriteItemIds.isEmpty &&
+              !state.isFavorite('1'),
+        ),
+        // After first toggle (add favorite)
+        predicate<HomeState>(
+          (state) =>
+              state.isFavorite('1') &&
+              state.favoriteItemIds.length == 1 &&
+              state.favoriteItemIds.contains('1'),
+        ),
+        // After second toggle (remove favorite)
+        predicate<HomeState>(
+          (state) => !state.isFavorite('1') && state.favoriteItemIds.isEmpty,
+        ),
+      ],
+    );
 
-      // Add multiple favorites
-      await homeStore.toggleFavorite('1');
-      await homeStore.toggleFavorite('3');
-      await homeStore.toggleFavorite('5');
+    blocTest<HomeBloc, HomeState>(
+      'should track multiple favorites correctly',
+      build: () {
+        mockStorageService.setStringListReturn(null);
+        return HomeBloc(mockStorageService);
+      },
+      act: (bloc) async {
+        bloc.add(const HomeInitialized());
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        bloc.add(const HomeToggleFavorite('1'));
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        bloc.add(const HomeToggleFavorite('3'));
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        bloc.add(const HomeToggleFavorite('5'));
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        bloc.add(const HomeToggleFavorite('3'));
+      },
+      skip: 4, // Skip to final state
+      expect: () => [
+        predicate<HomeState>(
+          (state) =>
+              state.favoriteItemIds.length == 2 &&
+              state.isFavorite('1') &&
+              !state.isFavorite('3') &&
+              state.isFavorite('5'),
+        ),
+      ],
+    );
 
-      expect(homeStore.favoriteItemIds.length, equals(3));
-      expect(homeStore.isFavorite('1'), isTrue);
-      expect(homeStore.isFavorite('2'), isFalse);
-      expect(homeStore.isFavorite('3'), isTrue);
-      expect(homeStore.isFavorite('4'), isFalse);
-      expect(homeStore.isFavorite('5'), isTrue);
-
-      // Remove one favorite
-      await homeStore.toggleFavorite('3');
-
-      expect(homeStore.favoriteItemIds.length, equals(2));
-      expect(homeStore.isFavorite('1'), isTrue);
-      expect(homeStore.isFavorite('3'), isFalse);
-      expect(homeStore.isFavorite('5'), isTrue);
-    });
-
-    test('should return correct favorite items', () async {
-      // Wait for initialization
-      await Future.delayed(Duration(milliseconds: 10));
-
-      // Add some favorites
-      await homeStore.toggleFavorite('1'); // Zelda
-      await homeStore.toggleFavorite('3'); // Cyberpunk
-
-      final favoriteItems = homeStore.favoriteItems;
-      expect(favoriteItems.length, equals(2));
-      expect(favoriteItems.any((item) => item.name.contains('Zelda')), isTrue);
-      expect(
-        favoriteItems.any((item) => item.name.contains('Cyberpunk')),
-        isTrue,
-      );
-    });
+    blocTest<HomeBloc, HomeState>(
+      'should return correct favorite items',
+      build: () {
+        mockStorageService.setStringListReturn(null);
+        return HomeBloc(mockStorageService);
+      },
+      act: (bloc) async {
+        bloc.add(const HomeInitialized());
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        bloc.add(const HomeToggleFavorite('1')); // Zelda
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        bloc.add(const HomeToggleFavorite('3')); // Cyberpunk
+      },
+      skip: 2, // Skip to final state
+      expect: () => [
+        predicate<HomeState>((state) {
+          final favoriteItems = state.favoriteItems;
+          return favoriteItems.length == 2 &&
+              favoriteItems.any((item) => item.name.contains('Zelda')) &&
+              favoriteItems.any((item) => item.name.contains('Cyberpunk'));
+        }),
+      ],
+    );
   });
 }
