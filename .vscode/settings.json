@@ -1,3 +1,23 @@
 {
-  "dart.flutterSdkPath": ".fvm/versions/3.35.4"
+  // FVM Flutter SDK path
+  "dart.flutterSdkPath": ".fvm/versions/3.35.4",
+
+  // Dart line length and formatting settings
+  "dart.lineLength": 80,
+  "editor.rulers": [80],
+  "editor.formatOnSave": true,
+  "dart.enableSdkFormatter": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.selectionHighlight": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off"
+  }
 }
