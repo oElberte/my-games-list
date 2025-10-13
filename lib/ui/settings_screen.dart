@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
-import '../services/service_locator.dart';
-import '../stores/auth_store.dart';
-import '../stores/settings_store.dart';
-import '../utils/app_router.dart';
+import 'package:my_games_list/blocs/auth_bloc.dart';
+import 'package:my_games_list/blocs/auth_event.dart';
+import 'package:my_games_list/blocs/auth_state.dart';
+import 'package:my_games_list/blocs/settings_bloc.dart';
+import 'package:my_games_list/blocs/settings_event.dart';
+import 'package:my_games_list/blocs/settings_state.dart';
+import 'package:my_games_list/utils/app_router.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final authStore = getIt<AuthStore>();
-    final settingsStore = getIt<SettingsStore>();
-
+    // AuthBloc and SettingsBloc are already provided at the app level
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -34,22 +34,23 @@ class SettingsScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Observer(
-              builder: (context) => Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Name: ${authStore.currentUser?.name ?? 'Unknown'}'),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Email: ${authStore.currentUser?.email ?? 'Unknown'}',
-                      ),
-                    ],
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                final user = state is AuthAuthenticated ? state.user : null;
+                return Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Name: ${user?.name ?? 'Unknown'}'),
+                        const SizedBox(height: 4),
+                        Text('Email: ${user?.email ?? 'Unknown'}'),
+                      ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
             const SizedBox(height: 24),
 
@@ -59,13 +60,17 @@ class SettingsScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Observer(
-              builder: (context) => SwitchListTile(
-                title: const Text('Dark Mode'),
-                subtitle: const Text('Toggle between light and dark theme'),
-                value: settingsStore.isDarkMode,
-                onChanged: (value) => settingsStore.setDarkMode(value),
-              ),
+            BlocBuilder<SettingsBloc, SettingsState>(
+              builder: (context, state) {
+                return SwitchListTile(
+                  title: const Text('Dark Mode'),
+                  subtitle: const Text('Toggle between light and dark theme'),
+                  value: state.isDarkMode,
+                  onChanged: (value) => context.read<SettingsBloc>().add(
+                    SettingsDarkModeSet(value),
+                  ),
+                );
+              },
             ),
             const Spacer(),
 
@@ -73,11 +78,9 @@ class SettingsScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () async {
-                  await authStore.logout();
-                  if (context.mounted) {
-                    context.go(AppRouter.loginPath);
-                  }
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthLogoutRequested());
+                  context.go(AppRouter.signInPath);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,

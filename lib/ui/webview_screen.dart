@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_games_list/utils/app_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
-import '../utils/app_router.dart';
 
 class WebViewScreen extends StatefulWidget {
   const WebViewScreen({super.key});
