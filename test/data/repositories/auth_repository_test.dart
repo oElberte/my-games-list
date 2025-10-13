@@ -4,6 +4,7 @@ import 'package:my_games_list/data/models/requests/sign_in_request.dart';
 import 'package:my_games_list/data/models/requests/sign_up_request.dart';
 import 'package:my_games_list/data/models/responses/auth_response.dart';
 import 'package:my_games_list/data/repositories/auth_repository.dart';
+import 'package:my_games_list/domain/models/api_error.dart';
 import 'package:my_games_list/domain/models/api_response.dart';
 import 'package:my_games_list/services/http/i_http_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -79,7 +80,17 @@ void main() {
           any(),
           data: any(named: 'data'),
         ),
-      ).thenAnswer((_) async => ApiResponse.failure('Invalid credentials'));
+      ).thenAnswer(
+        (_) async => ApiResponse.failure(
+          const ApiError(
+            name: 'Sign In',
+            message: 'Invalid credentials',
+            action: 'sign_in',
+            statusCode: 401,
+            errorCode: 'invalid_credentials',
+          ),
+        ),
+      );
 
       // Act & Assert
       expect(() => repository.signIn(signInRequest), throwsA(isA<Exception>()));
@@ -143,7 +154,17 @@ void main() {
           any(),
           data: any(named: 'data'),
         ),
-      ).thenAnswer((_) async => ApiResponse.failure('Email already exists'));
+      ).thenAnswer(
+        (_) async => ApiResponse.failure(
+          const ApiError(
+            name: 'Sign Up',
+            message: 'Email already exists',
+            action: 'sign_up',
+            statusCode: 400,
+            errorCode: 'email_exists',
+          ),
+        ),
+      );
 
       // Act & Assert
       expect(() => repository.signUp(signUpRequest), throwsA(isA<Exception>()));

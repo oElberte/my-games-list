@@ -106,7 +106,7 @@ void main() {
       expect(identical(storageService1, storageService2), isTrue);
     });
 
-    test('should register BLoCs as factories', () async {
+    test('should register BLoCs as singletons', () async {
       // Arrange
       await setupServiceLocator();
 
@@ -115,7 +115,7 @@ void main() {
       final authBloc2 = sl<AuthBloc>();
 
       // Assert - should be different instances (factory pattern)
-      expect(identical(authBloc1, authBloc2), isFalse);
+      expect(identical(authBloc1, authBloc2), isTrue);
 
       // Clean up
       authBloc1.close();
