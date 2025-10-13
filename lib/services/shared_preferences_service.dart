@@ -1,11 +1,10 @@
+import 'package:my_games_list/services/local_storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'local_storage_service.dart';
 
 /// Implementation of LocalStorageService using SharedPreferences
 class SharedPreferencesService implements LocalStorageService {
-  final SharedPreferences _prefs;
-
   SharedPreferencesService(this._prefs);
+  final SharedPreferences _prefs;
 
   @override
   Future<String?> getString(String key) async {

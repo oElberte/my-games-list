@@ -1,57 +1,71 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:my_games_list/blocs/auth_bloc.dart';
+import 'package:my_games_list/blocs/home_bloc.dart';
+import 'package:my_games_list/blocs/settings_bloc.dart';
+import 'package:my_games_list/services/http/dio_http_client.dart';
+import 'package:my_games_list/services/http/i_http_client.dart';
+import 'package:my_games_list/services/local_storage_service.dart';
+import 'package:my_games_list/services/shared_preferences_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'local_storage_service.dart';
-import 'shared_preferences_service.dart';
-import '../stores/auth_store.dart';
-import '../stores/settings_store.dart';
-import '../stores/home_store.dart';
-
 /// Global service locator instance
-final GetIt getIt = GetIt.instance;
+final GetIt sl = GetIt.instance;
 
-/// Sets up all dependencies for the application
-/// This should be called during app initialization
+/// Sets up global dependencies for the application.
+/// This should be called during app initialization.
+/// Only registers dependencies that are needed globally throughout the app.
+/// Module-specific dependencies should be registered lazily when modules are loaded.
 Future<void> setupServiceLocator() async {
+  // Load environment variables
+  await dotenv.load();
+
   // Register core services first
   await _registerCoreServices();
 
-  // Register stores
-  _registerStores();
+  // Register global BLoCs (non-auth)
+  _registerGlobalBlocs();
 }
 
-/// Registers core services like storage
+/// Registers core services like storage and HTTP client.
+/// These are global dependencies needed throughout the app.
 Future<void> _registerCoreServices() async {
-  // Register SharedPreferences instance
+  // Register SharedPreferences instance as singleton
   final sharedPreferences = await SharedPreferences.getInstance();
-  getIt.registerSingleton<SharedPreferences>(sharedPreferences);
+  sl.registerSingleton<SharedPreferences>(sharedPreferences);
 
   // Register storage service implementation
-  getIt.registerSingleton<LocalStorageService>(
+  sl.registerSingleton<LocalStorageService>(
     SharedPreferencesService(sharedPreferences),
   );
+
+  // Register HTTP client as singleton (used globally for all API calls)
+  sl.registerLazySingleton<IHttpClient>(() => DioHttpClient());
 }
 
-/// Registers MobX stores
-void _registerStores() {
-  // Register AuthStore
-  getIt.registerSingleton<AuthStore>(AuthStore(getIt<LocalStorageService>()));
-
-  // Register SettingsStore
-  getIt.registerSingleton<SettingsStore>(
-    SettingsStore(getIt<LocalStorageService>()),
+/// Registers global BLoCs that are needed throughout the app.
+/// Auth-specific BLoCs (SignIn/SignUp) are registered modularly in the router.
+void _registerGlobalBlocs() {
+  // Register AuthBloc as lazy singleton - manages global authentication state
+  sl.registerLazySingleton<AuthBloc>(
+    () => AuthBloc(sl<LocalStorageService>()),
   );
 
-  // Register HomeStore
-  getIt.registerSingleton<HomeStore>(HomeStore(getIt<LocalStorageService>()));
+  // Register SettingsBloc as lazy singleton
+  sl.registerLazySingleton<SettingsBloc>(
+    () => SettingsBloc(sl<LocalStorageService>()),
+  );
+
+  // Register HomeBloc as factory - new instance per screen
+  sl.registerFactory<HomeBloc>(() => HomeBloc(sl<LocalStorageService>()));
 }
 
 /// Resets all registrations - useful for testing
 Future<void> resetServiceLocator() async {
-  await getIt.reset();
+  await sl.reset();
 }
 
 /// Helper method to check if all services are ready
 Future<void> waitForServicesReady() async {
-  await getIt.allReady();
+  await sl.allReady();
 }

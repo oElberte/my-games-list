@@ -1,9 +1,5 @@
 /// User model representing a user in the application
 class User {
-  final String id;
-  final String email;
-  final String name;
-
   const User({required this.id, required this.email, required this.name});
 
   /// Creates a User from JSON map
@@ -14,6 +10,9 @@ class User {
       name: json['name'] as String,
     );
   }
+  final String id;
+  final String email;
+  final String name;
 
   /// Converts User to JSON map
   Map<String, dynamic> toJson() {

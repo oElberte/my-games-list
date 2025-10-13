@@ -1,10 +1,5 @@
 /// Item model representing a game or item in the list
 class Item {
-  final String id;
-  final String name;
-  final String description;
-  final String? imageUrl;
-
   const Item({
     required this.id,
     required this.name,
@@ -21,6 +16,10 @@ class Item {
       imageUrl: json['imageUrl'] as String?,
     );
   }
+  final String id;
+  final String name;
+  final String description;
+  final String? imageUrl;
 
   /// Converts Item to JSON map
   Map<String, dynamic> toJson() {
