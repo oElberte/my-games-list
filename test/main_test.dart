@@ -32,8 +32,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Assert
-      final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
-      expect(materialApp.title, equals('My Games List'));
+      // Since we use onGenerateTitle with localization, we check the Title widget
+      expect(find.byType(Title), findsOneWidget);
+      final titleWidget = tester.widget<Title>(find.byType(Title));
+      expect(titleWidget.title, equals('My Games List'));
     });
 
     testWidgets('should not show debug banner', (tester) async {

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
 import 'package:my_games_list/features/settings/bloc/settings_event.dart';
 import 'package:my_games_list/features/settings/bloc/settings_state.dart';
+import 'package:my_games_list/l10n/app_localizations.dart';
 
 void main() async {
   // Ensure Flutter bindings are initialized
@@ -56,7 +59,14 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
           return MaterialApp.router(
-            title: 'My Games List',
+            onGenerateTitle: (context) => context.l10n.appTitle,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
             routerConfig: AppRouter.createRouter(),
             theme: ThemeData(
               useMaterial3: true,
