@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_bloc.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_event.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_state.dart';
@@ -64,7 +65,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Sign Up'), centerTitle: true),
+        appBar: AppBar(
+          title: Text(context.l10n.signUpAppBarTitle),
+          centerTitle: true,
+        ),
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -78,9 +82,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     // App Title/Logo
                     const Icon(Icons.games, size: 80, color: Colors.blue),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Create Account',
-                      style: TextStyle(
+                    Text(
+                      context.l10n.signUpBodyTitle,
+                      style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
@@ -88,7 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Sign up to get started',
+                      context.l10n.signUpSubtitle,
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                       textAlign: TextAlign.center,
                     ),
@@ -98,22 +102,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextFormField(
                       controller: _usernameController,
                       textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                        labelText: 'Username',
-                        hintText: 'Choose a username',
-                        prefixIcon: Icon(Icons.person_outline),
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: context.l10n.usernameLabel,
+                        hintText: context.l10n.usernameHint,
+                        prefixIcon: const Icon(Icons.person_outline),
+                        border: const OutlineInputBorder(),
                       ),
                       validator: Validatorless.multiple([
-                        Validatorless.required('Username is required'),
-                        Validatorless.min(
-                          3,
-                          'Username must be at least 3 characters',
-                        ),
-                        Validatorless.max(
-                          20,
-                          'Username must be at most 20 characters',
-                        ),
+                        Validatorless.required(context.l10n.usernameRequired),
+                        Validatorless.min(3, context.l10n.usernameMinLength),
+                        Validatorless.max(20, context.l10n.usernameMaxLength),
                       ]),
                     ),
                     const SizedBox(height: 16),
@@ -123,15 +121,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        hintText: 'Enter your email',
-                        prefixIcon: Icon(Icons.email_outlined),
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: context.l10n.emailLabel,
+                        hintText: context.l10n.emailHint,
+                        prefixIcon: const Icon(Icons.email_outlined),
+                        border: const OutlineInputBorder(),
                       ),
                       validator: Validatorless.multiple([
-                        Validatorless.required('Email is required'),
-                        Validatorless.email('Enter a valid email address'),
+                        Validatorless.required(context.l10n.emailRequired),
+                        Validatorless.email(context.l10n.emailInvalid),
                       ]),
                     ),
                     const SizedBox(height: 16),
@@ -142,8 +140,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
-                        labelText: 'Password',
-                        hintText: 'Create a password',
+                        labelText: context.l10n.passwordLabel,
+                        hintText: context.l10n.passwordCreateHint,
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -160,11 +158,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         border: const OutlineInputBorder(),
                       ),
                       validator: Validatorless.multiple([
-                        Validatorless.required('Password is required'),
-                        Validatorless.min(
-                          6,
-                          'Password must be at least 6 characters',
-                        ),
+                        Validatorless.required(context.l10n.passwordRequired),
+                        Validatorless.min(6, context.l10n.passwordMinLength),
                       ]),
                     ),
                     const SizedBox(height: 16),
@@ -176,8 +171,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => _handleSignUp(),
                       decoration: InputDecoration(
-                        labelText: 'Confirm Password',
-                        hintText: 'Re-enter your password',
+                        labelText: context.l10n.confirmPasswordLabel,
+                        hintText: context.l10n.confirmPasswordHint,
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -195,10 +190,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         border: const OutlineInputBorder(),
                       ),
                       validator: Validatorless.multiple([
-                        Validatorless.required('Please confirm your password'),
+                        Validatorless.required(
+                          context.l10n.confirmPasswordRequired,
+                        ),
                         Validatorless.compare(
                           _passwordController,
-                          'Passwords do not match',
+                          context.l10n.passwordMismatch,
                         ),
                       ]),
                     ),
@@ -225,9 +222,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : const Text(
-                                  'Sign Up',
-                                  style: TextStyle(
+                              : Text(
+                                  context.l10n.signUpButton,
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -241,12 +238,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Already have an account?'),
+                        Text(context.l10n.alreadyHaveAccount),
                         TextButton(
                           onPressed: () => context.go('/signin'),
-                          child: const Text(
-                            'Sign In',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          child: Text(
+                            context.l10n.signInLink,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],

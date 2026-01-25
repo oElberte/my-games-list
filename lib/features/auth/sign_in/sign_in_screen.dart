@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_bloc.dart';
 import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_event.dart';
 import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_state.dart';
@@ -57,7 +58,10 @@ class _SignInScreenState extends State<SignInScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Sign In'), centerTitle: true),
+        appBar: AppBar(
+          title: Text(context.l10n.signInTitle),
+          centerTitle: true,
+        ),
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -71,9 +75,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     // App Title/Logo
                     const Icon(Icons.games, size: 80, color: Colors.blue),
                     const SizedBox(height: 16),
-                    const Text(
-                      'My Games List',
-                      style: TextStyle(
+                    Text(
+                      context.l10n.appTitle,
+                      style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
@@ -81,7 +85,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Sign in to continue',
+                      context.l10n.signInSubtitle,
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                       textAlign: TextAlign.center,
                     ),
@@ -92,15 +96,15 @@ class _SignInScreenState extends State<SignInScreen> {
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        hintText: 'Enter your email',
-                        prefixIcon: Icon(Icons.email_outlined),
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: context.l10n.emailLabel,
+                        hintText: context.l10n.emailHint,
+                        prefixIcon: const Icon(Icons.email_outlined),
+                        border: const OutlineInputBorder(),
                       ),
                       validator: Validatorless.multiple([
-                        Validatorless.required('Email is required'),
-                        Validatorless.email('Enter a valid email address'),
+                        Validatorless.required(context.l10n.emailRequired),
+                        Validatorless.email(context.l10n.emailInvalid),
                       ]),
                     ),
                     const SizedBox(height: 16),
@@ -112,8 +116,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => _handleSignIn(),
                       decoration: InputDecoration(
-                        labelText: 'Password',
-                        hintText: 'Enter your password',
+                        labelText: context.l10n.passwordLabel,
+                        hintText: context.l10n.passwordHint,
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -130,11 +134,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         border: const OutlineInputBorder(),
                       ),
                       validator: Validatorless.multiple([
-                        Validatorless.required('Password is required'),
-                        Validatorless.min(
-                          6,
-                          'Password must be at least 6 characters',
-                        ),
+                        Validatorless.required(context.l10n.passwordRequired),
+                        Validatorless.min(6, context.l10n.passwordMinLength),
                       ]),
                     ),
                     const SizedBox(height: 24),
@@ -160,9 +161,9 @@ class _SignInScreenState extends State<SignInScreen> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : const Text(
-                                  'Sign In',
-                                  style: TextStyle(
+                              : Text(
+                                  context.l10n.signInButton,
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -176,12 +177,12 @@ class _SignInScreenState extends State<SignInScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Don't have an account?"),
+                        Text(context.l10n.noAccount),
                         TextButton(
                           onPressed: () => context.go('/signup'),
-                          child: const Text(
-                            'Sign Up',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          child: Text(
+                            context.l10n.signUpLink,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
