@@ -1,11 +1,13 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
 import 'package:my_games_list/features/auth/user_model.dart';
+import 'package:my_games_list/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../mocks/mock_blocs.dart';
@@ -93,7 +95,16 @@ void main() {
       );
 
       final router = AppRouter.createRouter();
-      final app = MaterialApp.router(routerConfig: router);
+      final app = MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+      );
 
       await tester.pumpWidget(app);
       await tester.pump();
@@ -124,7 +135,16 @@ void main() {
       );
 
       final router = AppRouter.createRouter();
-      final app = MaterialApp.router(routerConfig: router);
+      final app = MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+      );
 
       await tester.pumpWidget(app);
       await tester.pump();

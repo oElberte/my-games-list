@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/features/auth/auth_repository.dart';
 import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_bloc.dart';
@@ -115,7 +116,7 @@ class _ErrorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Error'),
+        title: Text(context.l10n.errorTitle),
         backgroundColor: Colors.red,
         foregroundColor: Colors.white,
       ),
@@ -127,9 +128,12 @@ class _ErrorScreen extends StatelessWidget {
             children: [
               const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              const Text(
-                'Oops! Something went wrong.',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Text(
+                context.l10n.errorMessage,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
@@ -142,7 +146,7 @@ class _ErrorScreen extends StatelessWidget {
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () => context.go(AppRouter.homePath),
-                child: const Text('Go to Home'),
+                child: Text(context.l10n.goHome),
               ),
             ],
           ),
