@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
@@ -17,7 +18,7 @@ class SettingsScreen extends StatelessWidget {
     // AuthBloc and SettingsBloc are already provided at the app level
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(context.l10n.settingsTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go(AppRouter.homePath),
@@ -29,9 +30,9 @@ class SettingsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // User Info Section
-            const Text(
-              'User Information',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              context.l10n.userInformationTitle,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             BlocBuilder<AuthBloc, AuthState>(
@@ -43,9 +44,17 @@ class SettingsScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Name: ${user?.name ?? 'Unknown'}'),
+                        Text(
+                          context.l10n.nameFormat(
+                            user?.name ?? context.l10n.unknown,
+                          ),
+                        ),
                         const SizedBox(height: 4),
-                        Text('Email: ${user?.email ?? 'Unknown'}'),
+                        Text(
+                          context.l10n.emailFormat(
+                            user?.email ?? context.l10n.unknown,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -55,16 +64,16 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Theme Settings Section
-            const Text(
-              'Appearance',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              context.l10n.appearanceTitle,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             BlocBuilder<SettingsBloc, SettingsState>(
               builder: (context, state) {
                 return SwitchListTile(
-                  title: const Text('Dark Mode'),
-                  subtitle: const Text('Toggle between light and dark theme'),
+                  title: Text(context.l10n.darkModeTitle),
+                  subtitle: Text(context.l10n.darkModeSubtitle),
                   value: state.isDarkMode,
                   onChanged: (value) => context.read<SettingsBloc>().add(
                     SettingsDarkModeSet(value),
@@ -86,7 +95,7 @@ class SettingsScreen extends StatelessWidget {
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Logout'),
+                child: Text(context.l10n.logoutButton),
               ),
             ),
           ],
