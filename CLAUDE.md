@@ -2,6 +2,33 @@
 
 > **Note for AI Agents**: This is a living document that should be updated whenever significant architectural patterns, conventions, or important implementation details are added or changed. Focus on cost-benefit: document patterns that will help future development, avoid over-documenting trivial details.
 
+## Critical Requirements
+
+### FVM (Flutter Version Management)
+
+**Always use FVM for all Flutter commands.** This project uses FVM to manage Flutter versions.
+
+```bash
+# Use fvm prefix for all Flutter commands
+fvm flutter pub get
+fvm flutter run
+fvm flutter test
+fvm flutter analyze
+```
+
+### Testing Requirements
+
+**Tests are mandatory.** Whenever code is updated or created:
+
+1. **Run existing tests** to ensure nothing is broken: `fvm flutter test`
+2. **Update tests** if behavior changes
+3. **Create new tests** for new functionality
+
+**Test coverage expectations:**
+- All BLoC events must have corresponding tests
+- All repository methods must be tested
+- Widget tests for critical user flows
+
 ## Feature Documentation Architecture
 
 This project uses a distributed documentation strategy. Specific feature details are documented within their respective feature directories.
@@ -87,6 +114,22 @@ Repositories throw exceptions with user messages; BLoCs catch them and emit Erro
 **Priority 2 (Should Have)**:
 - Integration tests for main flows
 - Utility function tests
+
+**Test Commands:**
+```bash
+# Run all tests
+fvm flutter test
+
+# Run specific test file
+fvm flutter test test/features/auth/bloc/auth_bloc_test.dart
+
+# Run with coverage
+fvm flutter test --coverage
+```
+
+**Test Location:**
+- Tests mirror the `lib/` structure in `test/`
+- Mock services are in `test/mocks/`
 
 ## Code Style & Conventions
 
