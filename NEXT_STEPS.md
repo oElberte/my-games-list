@@ -1,5 +1,3 @@
-- [] i18n
-- [] Restructure folder architecture by features
-- [] Dart MCP
+- [x] i18n
 - [] Best way to resize the app for Mobile and Desktop
 - [] Checker flutter_dotenv safe
