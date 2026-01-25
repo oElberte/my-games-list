@@ -2,7 +2,6 @@ import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/features/auth/auth_response.dart';
 import 'package:my_games_list/features/auth/sign_in/sign_in_request.dart';
 import 'package:my_games_list/features/auth/sign_up/sign_up_request.dart';
-import 'package:my_games_list/features/auth/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Implementation of AuthRepository that handles authentication operations
@@ -19,7 +18,6 @@ class AuthRepository {
   static const String _tokenKey = 'auth_token';
 
   Future<AuthResponse> signIn(SignInRequest request) async {
-    /*
     final response = await _httpClient.post<Map<String, dynamic>>(
       '/auth/signin',
       data: request.toJson(),
@@ -30,19 +28,6 @@ class AuthRepository {
     }
 
     final authResponse = AuthResponse.fromJson(response.dataOrThrow);
-    */
-
-    await Future.delayed(const Duration(seconds: 1));
-
-    // Mock response
-    final user = User(
-      id: 'mock_id_123',
-      email: request.email,
-      name: request.email.split('@')[0],
-      username: request.email.split('@')[0],
-    );
-
-    final authResponse = AuthResponse(token: 'mock_token_abc_123', user: user);
 
     // Save token to local storage
     await saveToken(authResponse.token);
@@ -54,7 +39,6 @@ class AuthRepository {
   }
 
   Future<AuthResponse> signUp(SignUpRequest request) async {
-    /*
     final response = await _httpClient.post<Map<String, dynamic>>(
       '/auth/signup',
       data: request.toJson(),
@@ -65,19 +49,6 @@ class AuthRepository {
     }
 
     final authResponse = AuthResponse.fromJson(response.dataOrThrow);
-    */
-
-    await Future.delayed(const Duration(seconds: 1));
-
-    // Mock response
-    final user = User(
-      id: 'mock_id_456',
-      email: request.email,
-      name: request.username,
-      username: request.username,
-    );
-
-    final authResponse = AuthResponse(token: 'mock_token_def_456', user: user);
 
     // Save token to local storage
     await saveToken(authResponse.token);
