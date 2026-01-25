@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_games_list/blocs/home_bloc.dart';
-import 'package:my_games_list/blocs/home_event.dart';
-import 'package:my_games_list/blocs/home_state.dart';
-import 'package:my_games_list/services/service_locator.dart';
-import 'package:my_games_list/utils/app_router.dart';
+import 'package:my_games_list/core/utils/app_router.dart';
+import 'package:my_games_list/core/utils/service_locator.dart';
+import 'package:my_games_list/features/home/bloc/home_bloc.dart';
+import 'package:my_games_list/features/home/bloc/home_event.dart';
+import 'package:my_games_list/features/home/bloc/home_state.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -21,10 +21,6 @@ class HomeScreen extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.settings),
               onPressed: () => context.go(AppRouter.settingsPath),
-            ),
-            IconButton(
-              icon: const Icon(Icons.web),
-              onPressed: () => context.go(AppRouter.webviewPath),
             ),
           ],
         ),

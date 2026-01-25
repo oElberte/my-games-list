@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:my_games_list/blocs/home_event.dart';
-import 'package:my_games_list/blocs/home_state.dart';
-import 'package:my_games_list/models/item_model.dart';
-import 'package:my_games_list/services/local_storage_service.dart';
+import 'package:my_games_list/core/data/services/storage/local_storage_service.dart';
+import 'package:my_games_list/features/home/bloc/home_event.dart';
+import 'package:my_games_list/features/home/bloc/home_state.dart';
+import 'package:my_games_list/features/home/item_model.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc(this._storageService) : super(const HomeState()) {
@@ -20,33 +20,33 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final items = [
       const Item(
         id: '1',
-        name: 'The Legend of Zelda: Breath of the Wild',
-        description: 'An open-world action-adventure game.',
-        imageUrl: 'https://example.com/zelda.jpg',
+        name: 'Tesla Model 3',
+        description: 'All-electric sedan with cutting-edge technology.',
+        imageUrl: 'https://example.com/tesla.jpg',
       ),
       const Item(
         id: '2',
-        name: 'Super Mario Odyssey',
-        description: 'A 3D platform game featuring Mario.',
-        imageUrl: 'https://example.com/mario.jpg',
+        name: 'BMW M4',
+        description: 'High-performance luxury coupe.',
+        imageUrl: 'https://example.com/bmw.jpg',
       ),
       const Item(
         id: '3',
-        name: 'Cyberpunk 2077',
-        description: 'A futuristic open-world RPG.',
-        imageUrl: 'https://example.com/cyberpunk.jpg',
+        name: 'Audi RS6',
+        description: 'High-performance station wagon.',
+        imageUrl: 'https://example.com/audi.jpg',
       ),
       const Item(
         id: '4',
-        name: 'God of War',
-        description: 'An action-adventure game based on Norse mythology.',
-        imageUrl: 'https://example.com/gow.jpg',
+        name: 'Porsche 911',
+        description: 'Iconic sports car with legendary handling.',
+        imageUrl: 'https://example.com/porsche.jpg',
       ),
       const Item(
         id: '5',
-        name: 'The Witcher 3: Wild Hunt',
-        description: 'An open-world fantasy RPG.',
-        imageUrl: 'https://example.com/witcher.jpg',
+        name: 'Ford Mustang',
+        description: 'Classic American muscle car.',
+        imageUrl: 'https://example.com/mustang.jpg',
       ),
     ];
 

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:my_games_list/models/item_model.dart';
+import 'package:my_games_list/features/home/item_model.dart';
 
 class HomeState extends Equatable {
   const HomeState({this.items = const [], this.favoriteItemIds = const []});
