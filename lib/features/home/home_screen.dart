@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/features/home/bloc/home_bloc.dart';
 import 'package:my_games_list/features/home/bloc/home_event.dart';
@@ -16,7 +17,7 @@ class HomeScreen extends StatelessWidget {
       create: (context) => sl<HomeBloc>()..add(const HomeInitialized()),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('My Games List'),
+          title: Text(context.l10n.appTitle),
           actions: [
             IconButton(
               icon: const Icon(Icons.settings),
