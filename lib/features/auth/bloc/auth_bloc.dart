@@ -10,6 +10,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this._storageService) : super(const AuthInitial()) {
     on<AuthStateLoaded>(_onAuthStateLoaded);
     on<AuthLoginRequested>(_onAuthLoginRequested);
+    on<AuthUserAuthenticated>(_onAuthUserAuthenticated);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
   }
   final LocalStorageService _storageService;
@@ -60,6 +61,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (e) {
       emit(AuthError(e.toString()));
     }
+  }
+
+  Future<void> _onAuthUserAuthenticated(
+    AuthUserAuthenticated event,
+    Emitter<AuthState> emit,
+  ) async {
+    await _saveAuthState(event.user);
+    emit(AuthAuthenticated(event.user));
   }
 
   Future<void> _onAuthLogoutRequested(
