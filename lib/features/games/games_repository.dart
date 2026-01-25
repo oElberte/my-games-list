@@ -1,0 +1,27 @@
+import 'package:my_games_list/core/data/services/http/i_http_client.dart';
+import 'package:my_games_list/features/games/anticipated_game_model.dart';
+
+/// Repository for fetching game-related data from the API
+class GamesRepository {
+  GamesRepository({required IHttpClient httpClient}) : _httpClient = httpClient;
+
+  final IHttpClient _httpClient;
+
+  /// Fetches the most anticipated upcoming games
+  Future<List<AnticipatedGame>> getAnticipatedGames() async {
+    final response = await _httpClient.get<Map<String, dynamic>>(
+      '/games/anticipated',
+    );
+
+    if (response.isError) {
+      throw Exception(
+        response.error?.userMessage ?? 'Failed to fetch anticipated games',
+      );
+    }
+
+    final gamesResponse = AnticipatedGamesResponse.fromJson(
+      response.dataOrThrow,
+    );
+    return gamesResponse.games;
+  }
+}
