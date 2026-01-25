@@ -25,6 +25,7 @@ fvm flutter analyze
 3. **Create new tests** for new functionality
 
 **Test coverage expectations:**
+
 - All BLoC events must have corresponding tests
 - All repository methods must be tested
 - Widget tests for critical user flows
@@ -35,11 +36,11 @@ This project uses a distributed documentation strategy. Specific feature details
 
 - **Root (This file)**: High-level patterns, coding standards, and project-wide architecture.
 - **Feature Documentation**: Located at `lib/features/<feature>/CLAUDE.md`.
-    - [Auth Feature](lib/features/auth/CLAUDE.md)
-    - [Home Feature](lib/features/home/CLAUDE.md)
-    - [Settings Feature](lib/features/settings/CLAUDE.md)
+  - [Auth Feature](lib/features/auth/CLAUDE.md)
+  - [Home Feature](lib/features/home/CLAUDE.md)
+  - [Settings Feature](lib/features/settings/CLAUDE.md)
 - **Core Documentation**: Located at `lib/core/CLAUDE.md`.
-    - [Core Module](lib/core/CLAUDE.md)
+  - [Core Module](lib/core/CLAUDE.md)
 
 **Instruction**: When adding a new feature, **always create a `CLAUDE.md` file** in the feature's root directory (`lib/features/<feature_name>/CLAUDE.md`) to capture domain-specific logic, special patterns, and architectural decisions relevant to that feature.
 
@@ -84,6 +85,7 @@ lib/
 ### 3. Feature-First Architecture
 
 Each feature is a self-contained module with its own Clean Architecture layers:
+
 - **Domain**: Pure Dart entities and interfaces.
 - **Data**: Repository implementations and data sources.
 - **Presentation**: BLoC and UI.
@@ -108,14 +110,17 @@ Repositories throw exceptions with user messages; BLoCs catch them and emit Erro
 ## Testing Strategy
 
 **Priority 1 (Must Have)**:
+
 - Repository tests (mocking HTTP/Data Sources)
 - BLoC tests (mocking Repositories)
 
 **Priority 2 (Should Have)**:
+
 - Integration tests for main flows
 - Utility function tests
 
 **Test Commands:**
+
 ```bash
 # Run all tests
 fvm flutter test
@@ -128,6 +133,7 @@ fvm flutter test --coverage
 ```
 
 **Test Location:**
+
 - Tests mirror the `lib/` structure in `test/`
 - Mock services are in `test/mocks/`
 
@@ -139,6 +145,69 @@ fvm flutter test --coverage
 - **Commits**: Conventional Commits (`feat:`, `fix:`, `chore:`, etc.).
 
 ## Common Patterns (Generic Examples)
+
+### Route Configuration with BLoC Providers (app_router.dart)
+
+**All BLoC providers and repository registrations should be defined in `app_router.dart`, NOT in screen files.**
+
+This pattern ensures:
+
+- Centralized dependency management
+- Consistent lifecycle handling
+- Clear separation of concerns
+- BLoCs are automatically disposed when routes are popped
+
+```dart
+// Example: Home route with multiple BLoCs
+GoRoute(
+  path: homePath,
+  name: homeName,
+  builder: (context, state) {
+    // 1. Register repository lazily (only once, stays in memory)
+    _ensureGamesRepositoryRegistered();
+
+    // 2. Provide BLoCs to the screen (auto-disposed by BlocProvider)
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => sl<HomeBloc>()..add(const HomeInitialized()),
+        ),
+        BlocProvider(
+          create: (_) => AnticipatedGamesBloc(
+            gamesRepository: sl<GamesRepository>(),
+          )..add(const AnticipatedGamesLoadRequested()),
+        ),
+      ],
+      child: const HomeScreen(),
+    );
+  },
+),
+
+// Helper method for lazy repository registration
+static void _ensureGamesRepositoryRegistered() {
+  if (!sl.isRegistered<GamesRepository>()) {
+    sl.registerLazySingleton<GamesRepository>(
+      () => GamesRepository(httpClient: sl<IHttpClient>()),
+    );
+  }
+}
+```
+
+**Screen Implementation** (should be simple, no provider setup):
+
+```dart
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Screen just uses the BLoCs provided by the router
+    return Scaffold(
+      // ... UI implementation
+    );
+  }
+}
+```
 
 ### Repository Interface
 
@@ -175,10 +244,12 @@ class FeatureBloc extends Bloc<FeatureEvent, FeatureState> {
 ## Maintenance
 
 **When to Update this Root File**:
+
 - New architectural patterns are introduced.
 - Global standards change.
 
 **When to Update Feature Files**:
+
 - Feature-specific business logic changes.
 - New endpoints or data models are added to a feature.
 - Specific implementation details for that feature change.
