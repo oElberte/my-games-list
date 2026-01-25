@@ -1,45 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_games_list/blocs/sign_up/sign_up_bloc.dart';
-import 'package:my_games_list/blocs/sign_up/sign_up_event.dart';
-import 'package:my_games_list/blocs/sign_up/sign_up_state.dart';
+import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_bloc.dart';
+import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_event.dart';
+import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_state.dart';
 import 'package:validatorless/validatorless.dart';
 
-/// SignUp screen for new user registration.
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+/// SignIn screen with email/password authentication.
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
-    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _handleSignUp() {
-    final isValid = _formKey.currentState?.validate() ?? false;
-    if (isValid) {
-      context.read<SignUpBloc>().add(
-        SignUpSubmitted(
+  void _handleSignIn() {
+    if (_formKey.currentState?.validate() ?? false) {
+      context.read<SignInBloc>().add(
+        SignInSubmitted(
           email: _emailController.text.trim(),
           password: _passwordController.text,
-          username: _usernameController.text.trim(),
         ),
       );
     }
@@ -47,12 +40,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SignUpBloc, SignUpState>(
+    return BlocListener<SignInBloc, SignInState>(
       listener: (context, state) {
-        if (state is SignUpSuccess) {
+        if (state is SignInSuccess) {
           // Navigate to home on success
           context.go('/');
-        } else if (state is SignUpError) {
+        } else if (state is SignInError) {
           // Show error message
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -64,7 +57,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Sign Up'), centerTitle: true),
+        appBar: AppBar(title: const Text('Sign In'), centerTitle: true),
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -79,7 +72,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const Icon(Icons.games, size: 80, color: Colors.blue),
                     const SizedBox(height: 16),
                     const Text(
-                      'Create Account',
+                      'My Games List',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -88,35 +81,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Sign up to get started',
+                      'Sign in to continue',
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 48),
-
-                    // Username Field
-                    TextFormField(
-                      controller: _usernameController,
-                      textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(
-                        labelText: 'Username',
-                        hintText: 'Choose a username',
-                        prefixIcon: Icon(Icons.person_outline),
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: Validatorless.multiple([
-                        Validatorless.required('Username is required'),
-                        Validatorless.min(
-                          3,
-                          'Username must be at least 3 characters',
-                        ),
-                        Validatorless.max(
-                          20,
-                          'Username must be at most 20 characters',
-                        ),
-                      ]),
-                    ),
-                    const SizedBox(height: 16),
 
                     // Email Field
                     TextFormField(
@@ -140,10 +109,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
-                      textInputAction: TextInputAction.next,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => _handleSignIn(),
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        hintText: 'Create a password',
+                        hintText: 'Enter your password',
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -167,50 +137,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ]),
                     ),
-                    const SizedBox(height: 16),
-
-                    // Confirm Password Field
-                    TextFormField(
-                      controller: _confirmPasswordController,
-                      obscureText: _obscureConfirmPassword,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) => _handleSignUp(),
-                      decoration: InputDecoration(
-                        labelText: 'Confirm Password',
-                        hintText: 'Re-enter your password',
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscureConfirmPassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscureConfirmPassword =
-                                  !_obscureConfirmPassword;
-                            });
-                          },
-                        ),
-                        border: const OutlineInputBorder(),
-                      ),
-                      validator: Validatorless.multiple([
-                        Validatorless.required('Please confirm your password'),
-                        Validatorless.compare(
-                          _passwordController,
-                          'Passwords do not match',
-                        ),
-                      ]),
-                    ),
                     const SizedBox(height: 24),
 
-                    // Sign Up Button
-                    BlocBuilder<SignUpBloc, SignUpState>(
+                    // Sign In Button
+                    BlocBuilder<SignInBloc, SignInState>(
                       builder: (context, state) {
-                        final isLoading = state is SignUpLoading;
+                        final isLoading = state is SignInLoading;
 
                         return ElevatedButton(
-                          onPressed: isLoading ? null : _handleSignUp,
+                          onPressed: isLoading ? null : _handleSignIn,
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
@@ -226,7 +161,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                 )
                               : const Text(
-                                  'Sign Up',
+                                  'Sign In',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -237,15 +172,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Sign In Link
+                    // Sign Up Link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Already have an account?'),
+                        const Text("Don't have an account?"),
                         TextButton(
-                          onPressed: () => context.go('/signin'),
+                          onPressed: () => context.go('/signup'),
                           child: const Text(
-                            'Sign In',
+                            'Sign Up',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),

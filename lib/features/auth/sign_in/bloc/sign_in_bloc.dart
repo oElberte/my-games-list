@@ -1,15 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_games_list/blocs/sign_in/sign_in_event.dart';
-import 'package:my_games_list/blocs/sign_in/sign_in_state.dart';
-import 'package:my_games_list/data/models/requests/sign_in_request.dart';
-import 'package:my_games_list/domain/repositories/i_auth_repository.dart';
+import 'package:my_games_list/features/auth/auth_repository.dart';
+import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_event.dart';
+import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_state.dart';
+import 'package:my_games_list/features/auth/sign_in/sign_in_request.dart';
 
 /// BLoC that handles sign-in business logic.
 class SignInBloc extends Bloc<SignInEvent, SignInState> {
   SignInBloc(this._authRepository) : super(const SignInInitial()) {
     on<SignInSubmitted>(_onSignInSubmitted);
   }
-  final IAuthRepository _authRepository;
+  final AuthRepository _authRepository;
 
   Future<void> _onSignInSubmitted(
     SignInSubmitted event,

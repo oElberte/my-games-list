@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_games_list/blocs/auth_bloc.dart';
-import 'package:my_games_list/blocs/auth_event.dart';
-import 'package:my_games_list/blocs/auth_state.dart';
+import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
+import 'package:my_games_list/features/auth/bloc/auth_event.dart';
+import 'package:my_games_list/features/auth/bloc/auth_state.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'Welcome to My Games List',
+                  'Bem Vindo ao My Games List',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),

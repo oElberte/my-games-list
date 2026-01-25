@@ -1,15 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_games_list/blocs/sign_up/sign_up_event.dart';
-import 'package:my_games_list/blocs/sign_up/sign_up_state.dart';
-import 'package:my_games_list/data/models/requests/sign_up_request.dart';
-import 'package:my_games_list/domain/repositories/i_auth_repository.dart';
+import 'package:my_games_list/features/auth/auth_repository.dart';
+import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_event.dart';
+import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_state.dart';
+import 'package:my_games_list/features/auth/sign_up/sign_up_request.dart';
 
 /// BLoC that handles sign-up business logic.
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   SignUpBloc(this._authRepository) : super(const SignUpInitial()) {
     on<SignUpSubmitted>(_onSignUpSubmitted);
   }
-  final IAuthRepository _authRepository;
+  final AuthRepository _authRepository;
 
   Future<void> _onSignUpSubmitted(
     SignUpSubmitted event,

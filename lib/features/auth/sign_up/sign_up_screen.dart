@@ -1,51 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_games_list/blocs/sign_in/sign_in_bloc.dart';
-import 'package:my_games_list/blocs/sign_in/sign_in_event.dart';
-import 'package:my_games_list/blocs/sign_in/sign_in_state.dart';
+import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_bloc.dart';
+import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_event.dart';
+import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_state.dart';
 import 'package:validatorless/validatorless.dart';
 
-/// SignIn screen with email/password authentication.
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+/// SignUp screen for new user registration.
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
+    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _handleSignIn() {
-    if (_formKey.currentState?.validate() ?? false) {
-      context.read<SignInBloc>().add(
-            SignInSubmitted(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-            ),
-          );
+  void _handleSignUp() {
+    final isValid = _formKey.currentState?.validate() ?? false;
+    if (isValid) {
+      context.read<SignUpBloc>().add(
+        SignUpSubmitted(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          username: _usernameController.text.trim(),
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SignInBloc, SignInState>(
+    return BlocListener<SignUpBloc, SignUpState>(
       listener: (context, state) {
-        if (state is SignInSuccess) {
+        if (state is SignUpSuccess) {
           // Navigate to home on success
           context.go('/');
-        } else if (state is SignInError) {
+        } else if (state is SignUpError) {
           // Show error message
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -57,10 +64,7 @@ class _SignInScreenState extends State<SignInScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Sign In'),
-          centerTitle: true,
-        ),
+        appBar: AppBar(title: const Text('Sign Up'), centerTitle: true),
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -72,14 +76,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // App Title/Logo
-                    const Icon(
-                      Icons.games,
-                      size: 80,
-                      color: Colors.blue,
-                    ),
+                    const Icon(Icons.games, size: 80, color: Colors.blue),
                     const SizedBox(height: 16),
                     const Text(
-                      'My Games List',
+                      'Create Account',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -88,14 +88,35 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Sign in to continue',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
+                      'Sign up to get started',
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 48),
+
+                    // Username Field
+                    TextFormField(
+                      controller: _usernameController,
+                      textInputAction: TextInputAction.next,
+                      decoration: const InputDecoration(
+                        labelText: 'Username',
+                        hintText: 'Choose a username',
+                        prefixIcon: Icon(Icons.person_outline),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: Validatorless.multiple([
+                        Validatorless.required('Username is required'),
+                        Validatorless.min(
+                          3,
+                          'Username must be at least 3 characters',
+                        ),
+                        Validatorless.max(
+                          20,
+                          'Username must be at most 20 characters',
+                        ),
+                      ]),
+                    ),
+                    const SizedBox(height: 16),
 
                     // Email Field
                     TextFormField(
@@ -119,11 +140,10 @@ class _SignInScreenState extends State<SignInScreen> {
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) => _handleSignIn(),
+                      textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        hintText: 'Enter your password',
+                        hintText: 'Create a password',
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -147,15 +167,50 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ]),
                     ),
+                    const SizedBox(height: 16),
+
+                    // Confirm Password Field
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      obscureText: _obscureConfirmPassword,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => _handleSignUp(),
+                      decoration: InputDecoration(
+                        labelText: 'Confirm Password',
+                        hintText: 'Re-enter your password',
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureConfirmPassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureConfirmPassword =
+                                  !_obscureConfirmPassword;
+                            });
+                          },
+                        ),
+                        border: const OutlineInputBorder(),
+                      ),
+                      validator: Validatorless.multiple([
+                        Validatorless.required('Please confirm your password'),
+                        Validatorless.compare(
+                          _passwordController,
+                          'Passwords do not match',
+                        ),
+                      ]),
+                    ),
                     const SizedBox(height: 24),
 
-                    // Sign In Button
-                    BlocBuilder<SignInBloc, SignInState>(
+                    // Sign Up Button
+                    BlocBuilder<SignUpBloc, SignUpState>(
                       builder: (context, state) {
-                        final isLoading = state is SignInLoading;
+                        final isLoading = state is SignUpLoading;
 
                         return ElevatedButton(
-                          onPressed: isLoading ? null : _handleSignIn,
+                          onPressed: isLoading ? null : _handleSignUp,
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
@@ -171,7 +226,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   ),
                                 )
                               : const Text(
-                                  'Sign In',
+                                  'Sign Up',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -182,15 +237,15 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Sign Up Link
+                    // Sign In Link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Don't have an account?"),
+                        const Text('Already have an account?'),
                         TextButton(
-                          onPressed: () => context.go('/signup'),
+                          onPressed: () => context.go('/signin'),
                           child: const Text(
-                            'Sign Up',
+                            'Sign In',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
