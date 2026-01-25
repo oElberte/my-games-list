@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
@@ -32,6 +33,7 @@ class MyGamesListApp extends StatefulWidget {
 class _MyGamesListAppState extends State<MyGamesListApp> {
   late final AuthBloc authBloc;
   late final SettingsBloc settingsBloc;
+  late final GoRouter router;
 
   @override
   void initState() {
@@ -39,6 +41,8 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
     // Initialize global BLoCs
     authBloc = sl<AuthBloc>()..add(const AuthStateLoaded());
     settingsBloc = sl<SettingsBloc>()..add(const SettingsInitialized());
+    // Create router once to avoid recreation on theme changes
+    router = AppRouter.createRouter();
   }
 
   @override
@@ -67,7 +71,7 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: AppLocalizations.supportedLocales,
-            routerConfig: AppRouter.createRouter(),
+            routerConfig: router,
             theme: ThemeData(
               useMaterial3: true,
               colorScheme: ColorScheme.fromSeed(
