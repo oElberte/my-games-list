@@ -1,0 +1,61 @@
+{
+    "appTitle": "My Games List",
+    "@appTitle": {
+      "description": "The title of the application"
+    },
+    "errorTitle": "Error",
+    "errorMessage": "Oops! Something went wrong.",
+    "goHome": "Go to Home",
+    "signInTitle": "Sign In",
+    "signInSubtitle": "Sign in to continue",
+    "emailLabel": "Email",
+    "emailHint": "Enter your email",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Enter a valid email address",
+    "passwordLabel": "Password",
+    "passwordHint": "Enter your password",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "signInButton": "Sign In",
+    "noAccount": "Don't have an account?",
+    "signUpLink": "Sign Up",
+    "signUpAppBarTitle": "Sign Up",
+    "signUpBodyTitle": "Create Account",
+    "signUpSubtitle": "Sign up to get started",
+    "usernameLabel": "Username",
+    "usernameHint": "Choose a username",
+    "usernameRequired": "Username is required",
+    "usernameMinLength": "Username must be at least 3 characters",
+    "usernameMaxLength": "Username must be at most 20 characters",
+    "passwordCreateHint": "Create a password",
+    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordHint": "Re-enter your password",
+    "confirmPasswordRequired": "Please confirm your password",
+    "passwordMismatch": "Passwords do not match",
+    "signUpButton": "Sign Up",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInLink": "Sign In",
+    "settingsTitle": "Settings",
+    "userInformationTitle": "User Information",
+    "nameFormat": "Name: {name}",
+    "@nameFormat": {
+      "placeholders": {
+        "name": {
+          "type": "String"
+        }
+      }
+    },
+    "emailFormat": "Email: {email}",
+    "@emailFormat": {
+      "placeholders": {
+        "email": {
+          "type": "String"
+        }
+      }
+    },
+    "unknown": "Unknown",
+    "appearanceTitle": "Appearance",
+    "darkModeTitle": "Dark Mode",
+    "darkModeSubtitle": "Toggle between light and dark theme",
+    "logoutButton": "Logout"
+}
