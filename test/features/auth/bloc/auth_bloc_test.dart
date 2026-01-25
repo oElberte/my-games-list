@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
+import 'package:my_games_list/features/auth/user_model.dart';
 
 import '../../../mocks/mock_services.dart';
 
@@ -158,6 +159,64 @@ void main() {
           return state.user.name == 'johndoe';
         }),
       ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [AuthAuthenticated] when AuthUserAuthenticated is added',
+      build: () => AuthBloc(mockStorageService),
+      act: (bloc) => bloc.add(
+        const AuthUserAuthenticated(
+          User(
+            id: 'api-user-123',
+            email: 'api@example.com',
+            name: 'API User',
+            username: 'apiuser',
+          ),
+        ),
+      ),
+      expect: () => [
+        predicate<AuthAuthenticated>((state) {
+          return state.user.id == 'api-user-123' &&
+              state.user.email == 'api@example.com' &&
+              state.user.name == 'API User' &&
+              state.user.username == 'apiuser';
+        }),
+      ],
+      verify: (_) {
+        // Verify user was saved to storage
+        expect(mockStorageService.setStringCallHistory.length, greaterThan(0));
+        expect(mockStorageService.setBoolCallHistory.length, greaterThan(0));
+      },
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'AuthUserAuthenticated persists user and can be restored via AuthStateLoaded',
+      build: () => AuthBloc(mockStorageService),
+      act: (bloc) async {
+        // First authenticate with user from API
+        bloc.add(
+          const AuthUserAuthenticated(
+            User(
+              id: 'persisted-123',
+              email: 'persisted@example.com',
+              name: 'Persisted User',
+            ),
+          ),
+        );
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      },
+      expect: () => [
+        predicate<AuthAuthenticated>((state) {
+          return state.user.email == 'persisted@example.com';
+        }),
+      ],
+      verify: (_) {
+        // Verify the user was saved
+        final savedUser = mockStorageService.setStringCallHistory.firstWhere(
+          (call) => call['key'] == 'current_user',
+        );
+        expect(savedUser['value'], contains('persisted@example.com'));
+      },
     );
   });
 }
