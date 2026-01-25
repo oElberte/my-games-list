@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
+import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
+import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_bloc.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_event.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_state.dart';
@@ -51,6 +53,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return BlocListener<SignUpBloc, SignUpState>(
       listener: (context, state) {
         if (state is SignUpSuccess) {
+          // Update global auth state with authenticated user
+          context.read<AuthBloc>().add(AuthUserAuthenticated(state.authResponse.user));
           // Navigate to home on success
           context.go('/');
         } else if (state is SignUpError) {
