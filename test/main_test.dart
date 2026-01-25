@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/main.dart';
-import 'package:my_games_list/services/service_locator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

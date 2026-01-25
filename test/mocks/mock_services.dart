@@ -1,4 +1,4 @@
-import 'package:my_games_list/services/local_storage_service.dart';
+import 'package:my_games_list/core/data/services/storage/local_storage_service.dart';
 
 class MockLocalStorageService implements LocalStorageService {
   final Map<String, dynamic> _storage = {};
