@@ -56,25 +56,22 @@ void main() {
 
       // Assert
       expect(result, isA<AuthResponse>());
-      expect(result.token, 'mock_token_abc_123'); // Updated to match mock
-      // expect(result.user.email, 'test@example.com'); // This matches mock
-      // expect(result.user.username, 'testuser');
+      expect(result.token, 'test-token-123');
+      expect(result.user.email, 'test@example.com');
+      expect(result.user.username, 'testuser');
 
-      // Commenting out HTTP verification as repository is mocked
-      /*
       verify(
         () => mockHttpClient.post<Map<String, dynamic>>(
           '/auth/signin',
           data: signInRequest.toJson(),
         ),
       ).called(1);
-      */
 
       verify(
-        () => mockPrefs.setString('auth_token', 'mock_token_abc_123'),
+        () => mockPrefs.setString('auth_token', 'test-token-123'),
       ).called(1);
 
-      verify(() => mockHttpClient.setAuthToken('mock_token_abc_123')).called(1);
+      verify(() => mockHttpClient.setAuthToken('test-token-123')).called(1);
     });
   });
 
@@ -112,15 +109,21 @@ void main() {
 
       // Assert
       expect(result, isA<AuthResponse>());
-      expect(
-        result.token,
-        'mock_token_def_456',
-      ); // Updated to match mock implementation
+      expect(result.token, 'new-token-456');
+      expect(result.user.email, 'newuser@example.com');
+      expect(result.user.username, 'newuser');
 
       verify(
-        () => mockPrefs.setString('auth_token', 'mock_token_def_456'),
+        () => mockHttpClient.post<Map<String, dynamic>>(
+          '/auth/signup',
+          data: signUpRequest.toJson(),
+        ),
       ).called(1);
-      verify(() => mockHttpClient.setAuthToken('mock_token_def_456')).called(1);
+
+      verify(
+        () => mockPrefs.setString('auth_token', 'new-token-456'),
+      ).called(1);
+      verify(() => mockHttpClient.setAuthToken('new-token-456')).called(1);
     });
   });
 
