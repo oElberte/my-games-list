@@ -19,6 +19,9 @@ Future<void> setupServiceLocator() async {
   // Register core services first
   await _registerCoreServices();
 
+  // Restore authentication token if it exists
+  await _restoreAuthToken();
+
   // Register global BLoCs (non-auth)
   _registerGlobalBlocs();
 }
@@ -37,6 +40,18 @@ Future<void> _registerCoreServices() async {
 
   // Register HTTP client as singleton (used globally for all API calls)
   sl.registerLazySingleton<IHttpClient>(() => DioHttpClient());
+}
+
+/// Restores the authentication token from storage to HTTP client if it exists.
+/// This ensures that authenticated users stay logged in after app restarts.
+Future<void> _restoreAuthToken() async {
+  const tokenKey = 'auth_token';
+  final token = sl<SharedPreferences>().getString(tokenKey);
+  
+  if (token != null && token.isNotEmpty) {
+    // Set the token in the HTTP client so subsequent requests are authenticated
+    sl<IHttpClient>().setAuthToken(token);
+  }
 }
 
 /// Registers global BLoCs that are needed throughout the app.

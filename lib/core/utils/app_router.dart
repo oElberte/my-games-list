@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -5,10 +7,17 @@ import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/features/auth/auth_repository.dart';
+import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
+import 'package:my_games_list/features/auth/bloc/auth_state.dart';
 import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_bloc.dart';
 import 'package:my_games_list/features/auth/sign_in/sign_in_screen.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_bloc.dart';
 import 'package:my_games_list/features/auth/sign_up/sign_up_screen.dart';
+import 'package:my_games_list/features/games/bloc/anticipated_games_bloc.dart';
+import 'package:my_games_list/features/games/bloc/anticipated_games_event.dart';
+import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/home/bloc/home_bloc.dart';
+import 'package:my_games_list/features/home/bloc/home_event.dart';
 import 'package:my_games_list/features/home/home_screen.dart';
 import 'package:my_games_list/features/settings/settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,6 +49,27 @@ class AppRouter {
   static GoRouter createRouter() {
     return GoRouter(
       initialLocation: signInPath,
+      refreshListenable: GoRouterRefreshStream(sl<AuthBloc>().stream),
+      redirect: (context, state) {
+        final authState = sl<AuthBloc>().state;
+        final isAuthenticated = authState is AuthAuthenticated;
+        final isGoingToAuth =
+            state.matchedLocation == signInPath ||
+            state.matchedLocation == signUpPath;
+
+        // If authenticated and going to auth pages, redirect to home
+        if (isAuthenticated && isGoingToAuth) {
+          return homePath;
+        }
+
+        // If not authenticated and trying to access protected routes, redirect to signin
+        if (!isAuthenticated && !isGoingToAuth) {
+          return signInPath;
+        }
+
+        // No redirect needed
+        return null;
+      },
       routes: [
         // SignIn Route with modular dependency injection
         GoRoute(
@@ -73,11 +103,29 @@ class AppRouter {
           },
         ),
 
-        // Home Route
+        // Home Route with BLoC providers
         GoRoute(
           path: homePath,
           name: homeName,
-          builder: (context, state) => const HomeScreen(),
+          builder: (context, state) {
+            // Register games repository lazily (only once, stays in memory)
+            _ensureGamesRepositoryRegistered();
+
+            // Provide both HomeBloc and AnticipatedGamesBloc (auto-disposed by BlocProvider)
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => sl<HomeBloc>()..add(const HomeInitialized()),
+                ),
+                BlocProvider(
+                  create: (_) => AnticipatedGamesBloc(
+                    gamesRepository: sl<GamesRepository>(),
+                  )..add(const AnticipatedGamesLoadRequested()),
+                ),
+              ],
+              child: const HomeScreen(),
+            );
+          },
         ),
 
         // Settings Route
@@ -104,6 +152,35 @@ class AppRouter {
         ),
       );
     }
+  }
+
+  /// Ensures GamesRepository is registered in the service locator.
+  /// This is called lazily when home route is accessed.
+  /// The repository stays registered as a singleton for API calls.
+  static void _ensureGamesRepositoryRegistered() {
+    if (!sl.isRegistered<GamesRepository>()) {
+      sl.registerLazySingleton<GamesRepository>(
+        () => GamesRepository(httpClient: sl<IHttpClient>()),
+      );
+    }
+  }
+}
+
+/// Helper class to convert Stream to ChangeNotifier for GoRouter
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen((_) {
+      notifyListeners();
+    });
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
   }
 }
 
