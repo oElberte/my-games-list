@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:my_games_list/models/item_model.dart';
+import 'package:my_games_list/features/home/item_model.dart';
 
 void main() {
   group('Item Model', () {
