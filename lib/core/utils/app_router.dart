@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
+import 'package:my_games_list/core/widgets/bottom_nav_bar.dart';
 import 'package:my_games_list/features/auth/auth_repository.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
@@ -16,10 +17,13 @@ import 'package:my_games_list/features/auth/sign_up/sign_up_screen.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_event.dart';
 import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/games_screen.dart';
 import 'package:my_games_list/features/home/bloc/home_bloc.dart';
 import 'package:my_games_list/features/home/bloc/home_event.dart';
 import 'package:my_games_list/features/home/home_screen.dart';
+import 'package:my_games_list/features/profile/profile_screen.dart';
 import 'package:my_games_list/features/settings/settings_screen.dart';
+import 'package:my_games_list/features/splash/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Application router configuration using GoRouter with modular dependency injection.
@@ -27,35 +31,49 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Architecture Pattern:
 /// - AuthRepository: Lazily registered on first auth route access, stays in memory as singleton
 /// - BLoCs: Created per route via BlocProvider, automatically disposed when route is popped
+/// - Bottom Navigation: Uses StatefulShellRoute for persistent navigation with state preservation
 ///
 /// This approach provides:
 /// - Performance: Auth module not loaded until needed
 /// - Memory efficiency: BLoCs are disposed automatically by Flutter
 /// - Maintainability: Clear separation of concerns
+/// - State preservation: Each bottom nav tab maintains its state when switching
 class AppRouter {
+  static const String splashPath = '/splash';
   static const String signInPath = '/signin';
   static const String signUpPath = '/signup';
-  static const String homePath = '/';
+  static const String homePath = '/home';
+  static const String gamesPath = '/games';
+  static const String profilePath = '/profile';
   static const String settingsPath = '/settings';
 
   /// Route names for named navigation
+  static const String splashName = 'splash';
   static const String signInName = 'signin';
   static const String signUpName = 'signup';
   static const String homeName = 'home';
+  static const String gamesName = 'games';
+  static const String profileName = 'profile';
   static const String settingsName = 'settings';
 
   /// Creates the GoRouter configuration for the app.
   /// Auth-specific dependencies are registered lazily when routes are accessed.
   static GoRouter createRouter() {
     return GoRouter(
-      initialLocation: signInPath,
+      initialLocation: splashPath,
       refreshListenable: GoRouterRefreshStream(sl<AuthBloc>().stream),
       redirect: (context, state) {
         final authState = sl<AuthBloc>().state;
         final isAuthenticated = authState is AuthAuthenticated;
+        final currentPath = state.matchedLocation;
+
+        // Allow splash screen to handle initial navigation
+        if (currentPath == splashPath) {
+          return null;
+        }
+
         final isGoingToAuth =
-            state.matchedLocation == signInPath ||
-            state.matchedLocation == signUpPath;
+            currentPath == signInPath || currentPath == signUpPath;
 
         // If authenticated and going to auth pages, redirect to home
         if (isAuthenticated && isGoingToAuth) {
@@ -71,6 +89,13 @@ class AppRouter {
         return null;
       },
       routes: [
+        // Splash Route - Initial loading screen
+        GoRoute(
+          path: splashPath,
+          name: splashName,
+          builder: (context, state) => const SplashScreen(),
+        ),
+
         // SignIn Route with modular dependency injection
         GoRoute(
           path: signInPath,
@@ -103,32 +128,67 @@ class AppRouter {
           },
         ),
 
-        // Home Route with BLoC providers
-        GoRoute(
-          path: homePath,
-          name: homeName,
-          builder: (context, state) {
-            // Register games repository lazily (only once, stays in memory)
-            _ensureGamesRepositoryRegistered();
+        // Shell Route for bottom navigation with state preservation
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) {
+            return BottomNavBar(navigationShell: navigationShell);
+          },
+          branches: [
+            // Home Branch
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: homePath,
+                  name: homeName,
+                  builder: (context, state) {
+                    // Register games repository lazily (only once, stays in memory)
+                    _ensureGamesRepositoryRegistered();
 
-            // Provide both HomeBloc and AnticipatedGamesBloc (auto-disposed by BlocProvider)
-            return MultiBlocProvider(
-              providers: [
-                BlocProvider(
-                  create: (_) => sl<HomeBloc>()..add(const HomeInitialized()),
-                ),
-                BlocProvider(
-                  create: (_) => AnticipatedGamesBloc(
-                    gamesRepository: sl<GamesRepository>(),
-                  )..add(const AnticipatedGamesLoadRequested()),
+                    // Provide both HomeBloc and AnticipatedGamesBloc (auto-disposed by BlocProvider)
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider(
+                          create: (_) =>
+                              sl<HomeBloc>()..add(const HomeInitialized()),
+                        ),
+                        BlocProvider(
+                          create: (_) => AnticipatedGamesBloc(
+                            gamesRepository: sl<GamesRepository>(),
+                          )..add(const AnticipatedGamesLoadRequested()),
+                        ),
+                      ],
+                      child: const HomeScreen(),
+                    );
+                  },
                 ),
               ],
-              child: const HomeScreen(),
-            );
-          },
+            ),
+
+            // Games Branch
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: gamesPath,
+                  name: gamesName,
+                  builder: (context, state) => const GamesScreen(),
+                ),
+              ],
+            ),
+
+            // Profile Branch
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: profilePath,
+                  name: profileName,
+                  builder: (context, state) => const ProfileScreen(),
+                ),
+              ],
+            ),
+          ],
         ),
 
-        // Settings Route
+        // Settings Route (outside bottom navigation)
         GoRoute(
           path: settingsPath,
           name: settingsName,
