@@ -1,0 +1,106 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_games_list/core/utils/app_router.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
+import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
+import 'package:my_games_list/features/auth/bloc/auth_event.dart';
+import 'package:my_games_list/features/auth/bloc/auth_state.dart';
+
+/// Splash screen that checks authentication status before navigating to the app.
+///
+/// Behavior:
+/// - Shows app branding (name + icon) for minimum 800ms
+/// - Waits for AuthBloc to load authentication state
+/// - If authenticated → navigates to /home
+/// - If not authenticated or error → navigates to /signin
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  static const Duration _minDisplayDuration = Duration(milliseconds: 800);
+
+  DateTime? _splashStartTime;
+  bool _hasNavigated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _splashStartTime = DateTime.now();
+    _startAuthCheck();
+  }
+
+  void _startAuthCheck() {
+    // Trigger auth state load from storage
+    context.read<AuthBloc>().add(const AuthStateLoaded());
+  }
+
+  Future<void> _handleNavigation(String path) async {
+    if (_hasNavigated) return;
+
+    // Ensure minimum display duration
+    final elapsed = DateTime.now().difference(_splashStartTime!);
+    if (elapsed < _minDisplayDuration) {
+      await Future.delayed(_minDisplayDuration - elapsed);
+    }
+
+    if (!mounted) return;
+
+    _hasNavigated = true;
+    context.go(path);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthAuthenticated) {
+          _handleNavigation(AppRouter.homePath);
+        } else if (state is AuthUnauthenticated) {
+          _handleNavigation(AppRouter.signInPath);
+        } else if (state is AuthError) {
+          // Treat auth errors as unauthenticated
+          _handleNavigation(AppRouter.signInPath);
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(child: Center(child: _buildSplashView())),
+      ),
+    );
+  }
+
+  Widget _buildSplashView() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // App Icon
+        Icon(
+          Icons.games,
+          size: 120,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        const SizedBox(height: 24),
+
+        // App Name
+        Text(
+          context.l10n.appTitle,
+          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 48),
+
+        // Loading indicator
+        CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
+      ],
+    );
+  }
+}
