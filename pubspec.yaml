@@ -25,6 +25,9 @@ dependencies:
   carousel_slider: ^5.1.1
   cached_network_image: ^3.4.1
   stream_transform: ^2.1.1
+  flutter_rating_bar: ^4.0.1
+  url_launcher: ^6.2.5
+  youtube_player_iframe: ^5.2.2
 
 dev_dependencies:
   flutter_test:
