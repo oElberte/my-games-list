@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/features/games/widgets/anticipated_games_carousel.dart';
 import 'package:my_games_list/features/home/bloc/home_bloc.dart';
@@ -12,7 +14,16 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.appTitle)),
+      appBar: AppBar(
+        title: Text(context.l10n.appTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () => context.pushNamed(AppRouter.searchName),
+            tooltip: context.l10n.searchGamesTooltip,
+          ),
+        ],
+      ),
       body: const SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
