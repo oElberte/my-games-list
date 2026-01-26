@@ -16,10 +16,14 @@ import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_bloc.dart';
 import 'package:my_games_list/features/auth/sign_up/sign_up_screen.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_event.dart';
+import 'package:my_games_list/features/games/bloc/game_details_bloc.dart';
+import 'package:my_games_list/features/games/bloc/game_details_event.dart';
 import 'package:my_games_list/features/games/bloc/game_search_bloc.dart';
+import 'package:my_games_list/features/games/game_details_screen.dart';
 import 'package:my_games_list/features/games/game_search_screen.dart';
 import 'package:my_games_list/features/games/games_repository.dart';
 import 'package:my_games_list/features/games/games_screen.dart';
+import 'package:my_games_list/features/games/widgets/video_player_screen.dart';
 import 'package:my_games_list/features/home/bloc/home_bloc.dart';
 import 'package:my_games_list/features/home/bloc/home_event.dart';
 import 'package:my_games_list/features/home/home_screen.dart';
@@ -49,6 +53,8 @@ class AppRouter {
   static const String profilePath = '/profile';
   static const String settingsPath = '/settings';
   static const String searchPath = '/search';
+  static const String gameDetailsPath = '/games/:id';
+  static const String videoPlayerPath = '/video/:videoId';
 
   /// Route names for named navigation
   static const String splashName = 'splash';
@@ -59,6 +65,8 @@ class AppRouter {
   static const String profileName = 'profile';
   static const String settingsName = 'settings';
   static const String searchName = 'search';
+  static const String gameDetailsName = 'gameDetails';
+  static const String videoPlayerName = 'videoPlayer';
 
   /// Creates the GoRouter configuration for the app.
   /// Auth-specific dependencies are registered lazily when routes are accessed.
@@ -209,9 +217,43 @@ class AppRouter {
 
             // Provide GameSearchBloc to the screen (auto-disposed by BlocProvider)
             return BlocProvider(
-              create: (_) => GameSearchBloc(gamesRepository: sl<GamesRepository>()),
+              create: (_) =>
+                  GameSearchBloc(gamesRepository: sl<GamesRepository>()),
               child: const GameSearchScreen(),
             );
+          },
+        ),
+
+        // Game Details Route (outside bottom navigation)
+        GoRoute(
+          path: gameDetailsPath,
+          name: gameDetailsName,
+          builder: (context, state) {
+            final gameIdStr = state.pathParameters['id']!;
+            final gameId = int.parse(gameIdStr);
+
+            // Register games repository lazily (only once, stays in memory)
+            _ensureGamesRepositoryRegistered();
+
+            // Provide GameDetailsBloc to the screen (auto-disposed by BlocProvider)
+            return BlocProvider(
+              create: (_) =>
+                  GameDetailsBloc(gamesRepository: sl<GamesRepository>())
+                    ..add(GameDetailsLoadRequested(gameId)),
+              child: GameDetailsScreen(gameId: gameId),
+            );
+          },
+        ),
+
+        // Video Player Route (outside bottom navigation)
+        GoRoute(
+          path: videoPlayerPath,
+          name: videoPlayerName,
+          builder: (context, state) {
+            final videoId = state.pathParameters['videoId']!;
+            final title = state.uri.queryParameters['title'];
+
+            return VideoPlayerScreen(videoId: videoId, title: title);
           },
         ),
       ],
