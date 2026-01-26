@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:my_games_list/core/utils/image_utils.dart';
 import 'package:my_games_list/features/games/search_game_model.dart';
 
 class GameSearchCard extends StatelessWidget {
@@ -17,14 +19,17 @@ class GameSearchCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
-          // TODO: Navigate to game detail screen
+          context.pushNamed(
+            'gameDetails',
+            pathParameters: {'id': game.id.toString()},
+          );
         },
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _GameCover(coverUrl: game.coverUrl),
+              _GameCover(coverUrl: game.coverUrl, gameId: game.id),
               const SizedBox(width: 16),
               Expanded(child: _GameInfo(game: game)),
             ],
@@ -36,28 +41,37 @@ class GameSearchCard extends StatelessWidget {
 }
 
 class _GameCover extends StatelessWidget {
-  const _GameCover({this.coverUrl});
+  const _GameCover({this.coverUrl, required this.gameId});
 
   final String? coverUrl;
+  final int gameId;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: SizedBox(
-        width: 90,
-        height: 120,
-        child: coverUrl != null
-            ? CachedNetworkImage(
-                imageUrl: coverUrl!,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  color: Colors.grey[800],
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-                errorWidget: (context, url, error) => _PlaceholderCover(),
-              )
-            : _PlaceholderCover(),
+    // Use high-res cover URL
+    final highResCoverUrl = coverUrl != null
+        ? getHighResUrl(coverUrl!, ImageSize.coverBig)
+        : null;
+
+    return Hero(
+      tag: 'game-cover-$gameId',
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: SizedBox(
+          width: 90,
+          height: 120,
+          child: highResCoverUrl != null
+              ? CachedNetworkImage(
+                  imageUrl: highResCoverUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[800],
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+                  errorWidget: (context, url, error) => _PlaceholderCover(),
+                )
+              : _PlaceholderCover(),
+        ),
       ),
     );
   }
