@@ -72,5 +72,21 @@
     },
     "searchGamesErrorMessage": "An error occurred",
     "searchGamesOffsetLimitReached": "Maximum search results reached. Please refine your search.",
-    "searchGamesLoadMoreFailed": "Failed to load more results"
+    "searchGamesLoadMoreFailed": "Failed to load more results",
+    "gameDetailsTitle": "Game Details",
+    "developer": "Developer",
+    "rating": "Rating",
+    "genres": "Genres",
+    "platforms": "Platforms",
+    "storyline": "Storyline",
+    "summary": "Summary",
+    "screenshots": "Screenshots",
+    "videos": "Videos",
+    "similarGames": "Similar Games",
+    "whereToBuy": "Where to Buy",
+    "readMore": "Read More",
+    "readLess": "Read Less",
+    "noVideosAvailable": "No videos available",
+    "noScreenshotsAvailable": "No screenshots available",
+    "errorLoadingData": "Error loading data"
 }

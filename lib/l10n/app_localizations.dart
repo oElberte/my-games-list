@@ -397,6 +397,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to load more results'**
   String get searchGamesLoadMoreFailed;
+
+  /// No description provided for @gameDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Game Details'**
+  String get gameDetailsTitle;
+
+  /// No description provided for @developer.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get developer;
+
+  /// No description provided for @rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get rating;
+
+  /// No description provided for @genres.
+  ///
+  /// In en, this message translates to:
+  /// **'Genres'**
+  String get genres;
+
+  /// No description provided for @platforms.
+  ///
+  /// In en, this message translates to:
+  /// **'Platforms'**
+  String get platforms;
+
+  /// No description provided for @storyline.
+  ///
+  /// In en, this message translates to:
+  /// **'Storyline'**
+  String get storyline;
+
+  /// No description provided for @summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get summary;
+
+  /// No description provided for @screenshots.
+  ///
+  /// In en, this message translates to:
+  /// **'Screenshots'**
+  String get screenshots;
+
+  /// No description provided for @videos.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get videos;
+
+  /// No description provided for @similarGames.
+  ///
+  /// In en, this message translates to:
+  /// **'Similar Games'**
+  String get similarGames;
+
+  /// No description provided for @whereToBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Where to Buy'**
+  String get whereToBuy;
+
+  /// No description provided for @readMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Read More'**
+  String get readMore;
+
+  /// No description provided for @readLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Read Less'**
+  String get readLess;
+
+  /// No description provided for @noVideosAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No videos available'**
+  String get noVideosAvailable;
+
+  /// No description provided for @noScreenshotsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No screenshots available'**
+  String get noScreenshotsAvailable;
+
+  /// No description provided for @errorLoadingData.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading data'**
+  String get errorLoadingData;
 }
 
 class _AppLocalizationsDelegate

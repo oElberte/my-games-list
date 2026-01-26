@@ -166,4 +166,52 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get searchGamesLoadMoreFailed => 'Falha ao carregar mais resultados';
+
+  @override
+  String get gameDetailsTitle => 'Game Details';
+
+  @override
+  String get developer => 'Developer';
+
+  @override
+  String get rating => 'Rating';
+
+  @override
+  String get genres => 'Genres';
+
+  @override
+  String get platforms => 'Platforms';
+
+  @override
+  String get storyline => 'Storyline';
+
+  @override
+  String get summary => 'Summary';
+
+  @override
+  String get screenshots => 'Screenshots';
+
+  @override
+  String get videos => 'Videos';
+
+  @override
+  String get similarGames => 'Similar Games';
+
+  @override
+  String get whereToBuy => 'Where to Buy';
+
+  @override
+  String get readMore => 'Read More';
+
+  @override
+  String get readLess => 'Read Less';
+
+  @override
+  String get noVideosAvailable => 'No videos available';
+
+  @override
+  String get noScreenshotsAvailable => 'No screenshots available';
+
+  @override
+  String get errorLoadingData => 'Error loading data';
 }
