@@ -139,4 +139,31 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get logoutButton => 'Sair';
+
+  @override
+  String get searchGamesTitle => 'Buscar Jogos';
+
+  @override
+  String get searchGamesHint => 'Buscar jogos...';
+
+  @override
+  String get searchGamesTooltip => 'Buscar Jogos';
+
+  @override
+  String get searchGamesInitialMessage => 'Busque seus jogos favoritos';
+
+  @override
+  String searchGamesNoResults(String query) {
+    return 'Nenhum resultado encontrado para \"$query\"';
+  }
+
+  @override
+  String get searchGamesErrorMessage => 'Ocorreu um erro';
+
+  @override
+  String get searchGamesOffsetLimitReached =>
+      'Limite máximo de resultados atingido. Por favor, refine sua busca.';
+
+  @override
+  String get searchGamesLoadMoreFailed => 'Falha ao carregar mais resultados';
 }

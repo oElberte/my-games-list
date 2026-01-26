@@ -349,6 +349,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logout'**
   String get logoutButton;
+
+  /// No description provided for @searchGamesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Games'**
+  String get searchGamesTitle;
+
+  /// No description provided for @searchGamesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for games...'**
+  String get searchGamesHint;
+
+  /// No description provided for @searchGamesTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Games'**
+  String get searchGamesTooltip;
+
+  /// No description provided for @searchGamesInitialMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for your favorite games'**
+  String get searchGamesInitialMessage;
+
+  /// No description provided for @searchGamesNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found for \"{query}\"'**
+  String searchGamesNoResults(String query);
+
+  /// No description provided for @searchGamesErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get searchGamesErrorMessage;
+
+  /// No description provided for @searchGamesOffsetLimitReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum search results reached. Please refine your search.'**
+  String get searchGamesOffsetLimitReached;
+
+  /// No description provided for @searchGamesLoadMoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load more results'**
+  String get searchGamesLoadMoreFailed;
 }
 
 class _AppLocalizationsDelegate

@@ -137,4 +137,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logoutButton => 'Logout';
+
+  @override
+  String get searchGamesTitle => 'Search Games';
+
+  @override
+  String get searchGamesHint => 'Search for games...';
+
+  @override
+  String get searchGamesTooltip => 'Search Games';
+
+  @override
+  String get searchGamesInitialMessage => 'Search for your favorite games';
+
+  @override
+  String searchGamesNoResults(String query) {
+    return 'No results found for \"$query\"';
+  }
+
+  @override
+  String get searchGamesErrorMessage => 'An error occurred';
+
+  @override
+  String get searchGamesOffsetLimitReached =>
+      'Maximum search results reached. Please refine your search.';
+
+  @override
+  String get searchGamesLoadMoreFailed => 'Failed to load more results';
 }

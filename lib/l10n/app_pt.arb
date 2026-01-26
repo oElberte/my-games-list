@@ -40,5 +40,13 @@
     "appearanceTitle": "Aparência",
     "darkModeTitle": "Modo Escuro",
     "darkModeSubtitle": "Alternar entre tema claro e escuro",
-    "logoutButton": "Sair"
+    "logoutButton": "Sair",
+    "searchGamesTitle": "Buscar Jogos",
+    "searchGamesHint": "Buscar jogos...",
+    "searchGamesTooltip": "Buscar Jogos",
+    "searchGamesInitialMessage": "Busque seus jogos favoritos",
+    "searchGamesNoResults": "Nenhum resultado encontrado para \"{query}\"",
+    "searchGamesErrorMessage": "Ocorreu um erro",
+    "searchGamesOffsetLimitReached": "Limite máximo de resultados atingido. Por favor, refine sua busca.",
+    "searchGamesLoadMoreFailed": "Falha ao carregar mais resultados"
 }

@@ -57,5 +57,20 @@
     "appearanceTitle": "Appearance",
     "darkModeTitle": "Dark Mode",
     "darkModeSubtitle": "Toggle between light and dark theme",
-    "logoutButton": "Logout"
+    "logoutButton": "Logout",
+    "searchGamesTitle": "Search Games",
+    "searchGamesHint": "Search for games...",
+    "searchGamesTooltip": "Search Games",
+    "searchGamesInitialMessage": "Search for your favorite games",
+    "searchGamesNoResults": "No results found for \"{query}\"",
+    "@searchGamesNoResults": {
+      "placeholders": {
+        "query": {
+          "type": "String"
+        }
+      }
+    },
+    "searchGamesErrorMessage": "An error occurred",
+    "searchGamesOffsetLimitReached": "Maximum search results reached. Please refine your search.",
+    "searchGamesLoadMoreFailed": "Failed to load more results"
 }
