@@ -139,8 +139,10 @@ int? _detectCategoryFromUrl(String url) {
   if (lowerUrl.contains('itch.io')) return WebsiteCategory.itch;
   if (lowerUrl.contains('play.google')) return WebsiteCategory.android;
   if (lowerUrl.contains('apps.apple')) return WebsiteCategory.iphone;
-  if (lowerUrl.contains('store.playstation'))
+  if (lowerUrl.contains('playstation') ||
+      lowerUrl.contains('store.playstation')) {
     return WebsiteCategory.playstation;
+  }
   if (lowerUrl.contains('bsky.app')) return WebsiteCategory.bsky;
 
   return null;
@@ -169,6 +171,11 @@ String? _detectNameFromUrl(String url) {
   if (lowerUrl.contains('itch.io')) return 'Itch.io';
   if (lowerUrl.contains('play.google')) return 'Google Play';
   if (lowerUrl.contains('apps.apple')) return 'App Store';
+  if (lowerUrl.contains('playstation') ||
+      lowerUrl.contains('store.playstation')) {
+    return 'PlayStation Store';
+  }
+  if (lowerUrl.contains('bsky.app')) return 'Bluesky';
 
   return null;
 }
@@ -185,6 +192,7 @@ bool isStoreCategory(int category, [String? url]) {
     WebsiteCategory.ipad,
     WebsiteCategory.android,
     WebsiteCategory.itch,
+    WebsiteCategory.playstation,
   ];
 
   if (storeCategories.contains(category)) {
@@ -214,6 +222,7 @@ bool isSocialCategory(int category, [String? url]) {
     WebsiteCategory.twitch,
     WebsiteCategory.reddit,
     WebsiteCategory.discord,
+    WebsiteCategory.bsky,
   ];
 
   if (socialCategories.contains(category)) {
