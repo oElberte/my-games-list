@@ -19,6 +19,9 @@ class DioHttpClient implements IHttpClient {
         headers: {'Accept': 'application/json'},
       ),
     );
+    _dio.interceptors.add(
+      LogInterceptor(requestBody: true, responseBody: true),
+    );
   }
   late final Dio _dio;
 
