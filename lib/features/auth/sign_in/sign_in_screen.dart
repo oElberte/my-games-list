@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
@@ -47,7 +48,9 @@ class _SignInScreenState extends State<SignInScreen> {
       listener: (context, state) {
         if (state is SignInSuccess) {
           // Update global auth state with authenticated user
-          context.read<AuthBloc>().add(AuthUserAuthenticated(state.authResponse.user));
+          context.read<AuthBloc>().add(
+            AuthUserAuthenticated(state.authResponse.user),
+          );
           // Navigate to home on success
           context.go('/');
         } else if (state is SignInError) {
@@ -183,7 +186,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       children: [
                         Text(context.l10n.noAccount),
                         TextButton(
-                          onPressed: () => context.go('/signup'),
+                          onPressed: () => context.go(AppRouter.signUpPath),
                           child: Text(
                             context.l10n.signUpLink,
                             style: const TextStyle(fontWeight: FontWeight.bold),
