@@ -131,6 +131,7 @@ Manages game search with debouncing, infinite scroll pagination, and offset limi
 - `offsetLimitReached`: Boolean for 10k offset limit
 
 **Computed Properties**:
+
 - `isLoading`: Loading initial results
 - `isLoadingMore`: Loading next page
 - `hasGames`: Has search results
@@ -163,6 +164,7 @@ Main search screen with infinite scroll and state handling.
 - Material 3 design
 
 **State Screens**:
+
 - `_InitialState`: "Search for your favorite games" prompt
 - `_LoadingState`: Circular progress indicator
 - `_ErrorState`: Error icon and message
@@ -175,6 +177,7 @@ Main search screen with infinite scroll and state handling.
 Search result card with game information.
 
 **Layout**:
+
 - Horizontal card (cover left, info right)
 - 90x120 cover image with rounded corners
 - Game title (bold, max 2 lines)
@@ -183,6 +186,7 @@ Search result card with game information.
 - Release date (formatted with calendar icon)
 
 **Features**:
+
 - Cached network images for covers
 - Placeholder for missing covers
 - Material 3 card design (16px radius, 4px elevation)
@@ -190,10 +194,122 @@ Search result card with game information.
 - TODO: Navigate to game detail screen on tap
 
 **Design System**:
+
 - Spacing: 8px horizontal, 6px vertical margin
 - Typography: titleLarge for name, bodyMedium for metadata
 - Icons: 16px size, grey color
 - Colors: Grey text for metadata, dark grey for placeholders
+
+**Navigation**:
+
+- Tapping card navigates to `GameDetailsScreen` using `context.pushNamed('gameDetails', pathParameters: {'id': game.id.toString()})`
+- Cover image wrapped in `Hero` widget with tag `'game-cover-${game.id}'` for smooth transition animation
+
+### Game Details (`game_details_screen.dart`)
+
+Full-screen game details view with collapsible header.
+
+**Layout**:
+
+- `CustomScrollView` with `SliverAppBar` (collapsible header)
+- Hero-animated cover image in app bar
+- Sections: Info, Tags, Description, Screenshots, Videos, Similar Games, Where to Buy
+
+**Sections**:
+
+**`_InfoRow`**:
+
+- Hero-animated cover thumbnail (90x120)
+- Developer name
+- 5-star rating display using `RatingBarIndicator`
+- Rating score converted from 0-100 to 0-5 scale
+
+**`_TagsSection`**:
+
+- Genre chips (primary color)
+- Platform chips (secondary color)
+
+**`_DescriptionSection`**:
+
+- Expandable text with "Read more"/"Read less" toggle
+- Shows first 200 characters when collapsed
+
+**`_ScreenshotsSection`**:
+
+- Horizontal scroll of screenshot thumbnails
+- Tapping opens full-screen image view
+
+**`_VideosSection`**:
+
+- Horizontal scroll of video thumbnail cards
+- Tapping opens in-app YouTube player (`VideoPlayerScreen`)
+
+**`_SimilarGamesSection`**:
+
+- Horizontal scroll of similar game cards
+- Tapping navigates to that game's details
+
+**`_WebsitesSection`**:
+
+- External links (Steam, Official site, Discord, etc.)
+- Uses `url_launcher` to open in browser
+- Icons and names from `website_category.dart` utility
+
+**`VideoPlayerScreen`** (`widgets/video_player_screen.dart`):
+
+- Full-screen in-app YouTube player
+- Uses `youtube_player_iframe` package
+- Extracts video ID from YouTube URL
+- Supports landscape mode, auto-play
+
+**`VideoThumbnailCard`** (`widgets/video_thumbnail_card.dart`):
+
+- Displays YouTube video thumbnail
+- Video name overlay at bottom
+- Play button icon overlay
+- Tappable to open `VideoPlayerScreen`
+
+### Game Details BLoC (`bloc/game_details_*.dart`)
+
+**`GameDetailsBloc`**
+
+Manages game details loading state.
+
+**Events**:
+
+- `GameDetailsLoadRequested`: Fetch game details by ID
+
+**State**: `GameDetailsState`
+
+- `status`: Enum (initial, loading, success, failure)
+- `gameDetail`: The loaded `GameDetail` model
+- `errorMessage`: Error message for failure state
+
+**Business Logic**:
+
+- Calls `GamesRepository.getGameDetails(id)`
+- Handles errors with user-friendly messages
+
+### Game Details Model (`game_detail_model.dart`)
+
+Domain models for game details:
+
+- **`GameDetail`**: Complete game information
+  - `id`, `name`, `summary`, `storyline`
+  - `rating`: 0-100 scale from IGDB
+  - `fiveStarRating`: Computed 0-5 scale (rating / 20)
+  - `cover`: Cover image info
+  - `genres`, `platforms`: Lists
+  - `involvedCompanies`: Developers/publishers
+  - `developer`: First developer name (computed)
+  - `screenshots`, `videos`, `websites`
+  - `similarGames`: Related games
+
+- **`Genre`**, **`Platform`**, **`Company`**, **`InvolvedCompany`**
+- **`Screenshot`**: Screenshot URL
+- **`Video`**: YouTube video ID and name
+- **`Website`**: External link with category
+- **`SimilarGame`**: Basic info for related games
 
 ### UI Widgets (`widgets/`)
 
@@ -247,6 +363,13 @@ Carousel display of anticipated games with modern design.
    - Request body: `{"query": "string", "limit": 1-50, "offset": 0-10000}`
    - Returns paginated search results with metadata
    - Offset limit: 10,000 (IGDB constraint)
+   - Requires valid IGDB OAuth token (handled by backend middleware)
+
+3. `GET /api/v1/games/:id`
+   - Returns detailed information for a specific game
+   - Response includes: cover, genres, platforms, developers, screenshots, videos, websites, similar games
+   - Video URLs converted to YouTube links
+   - Image URLs transformed to high-resolution versions
    - Requires valid IGDB OAuth token (handled by backend middleware)
 
 ### Home Screen Integration
@@ -305,22 +428,82 @@ GoRoute(
 ```
 
 **Navigation**:
+
 - From `HomeScreen`: Search icon in AppBar (top-right)
 - Route: `/search` (outside bottom navigation shell)
 - Named route: `AppRouter.searchName`
 
 **User Flow**:
+
 1. User taps search icon on home screen
 2. Navigates to search screen
 3. Types query (debounced 500ms)
 4. Views results with infinite scroll
 5. Taps back to return to home
 
+### Game Details Screen Integration
+
+Route configuration in `app_router.dart`:
+
+```dart
+// Game Details Route
+GoRoute(
+  path: gameDetailsPath, // '/games/:id'
+  name: gameDetailsName,
+  builder: (context, state) {
+    _ensureGamesRepositoryRegistered();
+    final gameId = int.parse(state.pathParameters['id']!);
+    return BlocProvider(
+      create: (_) => GameDetailsBloc(gamesRepository: sl<GamesRepository>())
+        ..add(GameDetailsLoadRequested(gameId)),
+      child: GameDetailsScreen(gameId: gameId),
+    );
+  },
+),
+```
+
+**Navigation**:
+
+- From `AnticipatedGamesCarousel`: Tap on game card
+- From `GameSearchCard`: Tap on search result
+- From `GameDetailsScreen`: Tap on similar game
+- Route: `/games/:id`
+- Named route: `AppRouter.gameDetailsName`
+
+**Hero Animation**:
+
+- Cover images use `Hero` widget with tag `'game-cover-${game.id}'`
+- Provides smooth transition animation between list and detail views
+
+### Video Player Integration
+
+Route configuration in `app_router.dart`:
+
+```dart
+// Video Player Route
+GoRoute(
+  path: videoPlayerPath, // '/video/:videoId'
+  name: videoPlayerName,
+  builder: (context, state) {
+    final videoId = state.pathParameters['videoId']!;
+    final videoName = state.uri.queryParameters['name'] ?? '';
+    return VideoPlayerScreen(videoId: videoId, videoName: videoName);
+  },
+),
+```
+
+**Navigation**:
+
+- From `GameDetailsScreen`: Tap on video thumbnail
+- Uses `youtube_player_iframe` for in-app playback
+- Supports full-screen landscape mode
+
 ## Testing
 
 ### Repository Tests (`games_repository_test.dart`)
 
 **Anticipated Games**:
+
 - Successful response parsing
 - Empty list handling
 - API error handling
@@ -328,7 +511,8 @@ GoRoute(
 - Countdown text formatting
 - Platform names joining
 
-**Search Games** (To be implemented):
+**Search Games**:
+
 - Successful search response parsing
 - Pagination metadata validation
 - Empty results handling
@@ -336,9 +520,17 @@ GoRoute(
 - Query validation
 - API error scenarios
 
+**Game Details**:
+
+- Successful details response parsing
+- Invalid game ID handling
+- Game not found handling
+- API error scenarios
+
 ### BLoC Tests
 
 **`anticipated_games_bloc_test.dart`**:
+
 - Load success/failure scenarios
 - Duplicate loading prevention
 - Refresh with existing games
@@ -348,7 +540,8 @@ GoRoute(
 - State getters (isLoading, hasGames)
 - Event equality
 
-**`game_search_bloc_test.dart`** (To be implemented):
+**`game_search_bloc_test.dart`**:
+
 - Query changed emits loading then success
 - Empty query clears state
 - Load more appends games
@@ -358,57 +551,103 @@ GoRoute(
 - State computed properties
 - Event equality
 
-### UI Tests (To be implemented)
+**`game_details_bloc_test.dart`**:
 
-**`game_search_screen_test.dart`**:
-- Initial state displays search prompt
-- Loading state shows spinner
-- Results display cards
-- Scroll triggers load more
-- Empty state shows message
-- Error state shows error
-- Clear button resets state
+- Load success emits loaded state
+- Load failure emits error state
+- Invalid game ID handling
+- State equality
+
+### Model Tests
+
+**`game_detail_model_test.dart`**:
+
+- JSON parsing for all nested types
+- `fiveStarRating` computation (0-100 to 0-5 scale)
+- `developer` getter returns first developer name
+- Handles null/missing fields gracefully
+- Equatable equality
+
+### Widget Tests
+
+**`widgets/anticipated_games_carousel_test.dart`**:
+
+- Displays carousel with games
+- Shows game names and countdown badges
+- Has Hero widgets for cover images
+- Displays page indicator dots
+- Allows swiping between games
+- GestureDetector for tapping
+- Empty state handling
+- Games without cover URL
 
 **`widgets/game_search_card_test.dart`**:
-- Renders game information correctly
-- Displays cover image or placeholder
-- Shows genres, platforms, release date
-- Handles missing data gracefully
-- Tap triggers navigation (when implemented)
 
-**Current Test Coverage**: 24 tests (anticipated games only)
+- Displays game name, genres, platforms, release date
+- Has Hero widget with correct tag
+- InkWell tappable with rounded card
+- Icons for category, devices, calendar
+- Handles missing cover, genres, platforms, date
+
+**Current Test Coverage**: 50+ tests across all game feature components
 
 ## Current Implementation Status
 
 ### ✅ Implemented Features
 
 **Anticipated Games**:
+
 - Carousel display with countdown timers
 - Auto-refresh every minute
 - IGDB integration via backend API
 - Pull-to-refresh support
 - Loading, error, and empty states
+- Navigation to game details on tap
+- Hero animation for cover images
 
 **Game Search**:
+
 - Full-text search across IGDB database
 - Debounced search input (500ms)
 - Infinite scroll pagination
 - Offset limit handling (10,000 max)
 - Search result cards with cover images
 - Accessible via search icon on home screen
+- Navigation to game details on tap
+- Hero animation for cover images
+
+**Game Details**:
+
+- Full-screen detail view with collapsible header
+- Hero animation for smooth transitions
+- 5-star rating display (converted from 0-100)
+- Genre and platform chips
+- Expandable description
+- Screenshot gallery with full-screen view
+- In-app YouTube video player
+- Similar games carousel with navigation
+- External links (Steam, Discord, etc.) via url_launcher
+- Developer/publisher information
 
 ### 🚧 In Progress / Next Steps
 
 **Search Enhancements**:
-- Game detail screen navigation from search results
+
 - Advanced filters (genre, platform, year, rating)
 - Sort options (name, rating, release date)
 - Search history and suggestions
 - Caching layer for search results
 
+**Game Details Enhancements**:
+
+- Add to user game lists
+- Mark as played/completed/wishlist
+- User ratings and reviews
+- Social sharing
+
 **Anticipated Games**:
+
 - Pull-to-refresh on home screen
-- Game detail screen on carousel tap
 - Push notifications for release dates
 - Caching layer for IGDB responses
 
@@ -419,6 +658,7 @@ GoRoute(
 The Games screen (`games_screen.dart`) serves as one of the three main tabs in the bottom navigation bar and is a **placeholder** for future games browsing functionality.
 
 **Current State:**
+
 - Simple stateless widget
 - Centered "Coming Soon" message
 - Sports esports icon and description
@@ -427,38 +667,47 @@ The Games screen (`games_screen.dart`) serves as one of the three main tabs in t
 **Future Implementation Plan:**
 
 **Phase 1: Popular/Trending Games**
+
 - Leverage existing `GamesRepository`
 - Create `GamesBrowseBloc` for state management
 - Grid/list view of popular games
 - Pull-to-refresh support
 
 **Phase 2: Browse with Filters**
+
 - Filter by genre, platform, release year
 - Sort by popularity, rating, release date
 - Reuse search infrastructure
 
-**Phase 3: Game Details**
+**Phase 3: Game Details** ✅ **COMPLETED**
+
 - Detailed game information screen
 - Screenshots, videos, and similar games
-- Add to user lists functionality
-- Social sharing features
+- External links (Steam, Discord, official sites)
+- 5-star rating display
+- In-app YouTube video player
+- Hero animation transitions
 
 **Phase 4: User Lists**
+
 - Custom game lists
 - Wishlist functionality
 - Mark as played/completed
 - Personalized recommendations
+- Add to list from game details
 
 **Reuse Opportunity:**
 The Games browse screen can leverage the existing `GamesRepository`, search models, and search card widgets already implemented.
 
 **Related Files:**
+
 - `lib/features/games/games_screen.dart` - Placeholder UI
 - `lib/features/games/games_repository.dart` - API client (can be reused)
 - `lib/features/games/widgets/game_search_card.dart` - Can be reused for browse
 - Bottom navigation integration in `app_router.dart`
 
 **Test Coverage:**
+
 - Placeholder screen tests in `test/features/games/games_screen_test.dart`
 - Tests verify "Coming Soon" UI rendering
 - Future: Add BLoC and widget tests when implemented

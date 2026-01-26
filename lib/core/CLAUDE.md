@@ -13,6 +13,69 @@ This directory contains the foundational building blocks of the application that
 - **Common Widgets**: Reusable UI components (Buttons, Inputs, Loaders) used by multiple features.
 - **Routing**: Global application router configuration.
 
+## Utility Functions
+
+### Image Utilities (`utils/image_utils.dart`)
+
+Helper functions for transforming IGDB image URLs to different resolutions.
+
+**Constants:**
+
+```dart
+class ImageSize {
+  static const thumb = 't_thumb';           // 90x128 (thumbnail)
+  static const coverBig = 't_cover_big';    // 264x374 (cover large)
+  static const p1080 = 't_1080p';           // 1920x1080 (full HD)
+  static const screenshotMed = 't_screenshot_med'; // 569x320 (screenshot)
+}
+```
+
+**Function:**
+
+```dart
+String getHighResUrl(String url, String targetSize)
+```
+
+- Transforms IGDB image URL to specified resolution
+- Replaces `t_thumb` with target size
+- Returns original URL if not IGDB format
+
+**Usage:**
+
+```dart
+final highResUrl = getHighResUrl(
+  'https://images.igdb.com/t_thumb/abc.jpg',
+  ImageSize.coverBig,
+); // Returns 'https://images.igdb.com/t_cover_big/abc.jpg'
+```
+
+### Website Category (`utils/website_category.dart`)
+
+Utility for mapping IGDB website categories to icons and display names.
+
+**Categories:**
+
+- Official Website (1): `Icons.language`
+- Wikia (2): `Icons.menu_book`
+- Wikipedia (3): `Icons.menu_book`
+- Facebook (4): `FontAwesomeIcons.facebook`
+- Twitter (5): `FontAwesomeIcons.xTwitter`
+- Twitch (6): `FontAwesomeIcons.twitch`
+- Instagram (8): `FontAwesomeIcons.instagram`
+- YouTube (9): `FontAwesomeIcons.youtube`
+- Steam (13): `FontAwesomeIcons.steam`
+- Reddit (14): `FontAwesomeIcons.reddit`
+- Discord (18): `FontAwesomeIcons.discord`
+- Epic Games (16): `Icons.videogame_asset`
+- GOG (17): `Icons.storefront`
+
+**Functions:**
+
+```dart
+IconData getWebsiteIcon(int category)   // Returns icon for category
+String getWebsiteName(int category)     // Returns display name
+```
+
 ## Architecture Principles
 
 1.  **No Feature Dependencies**: Core components cannot depend on `features/`.
