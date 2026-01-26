@@ -39,14 +39,50 @@ This project uses a distributed documentation strategy. Specific feature details
   - [Auth Feature](lib/features/auth/CLAUDE.md)
   - [Home Feature](lib/features/home/CLAUDE.md)
   - [Settings Feature](lib/features/settings/CLAUDE.md)
+  - [Splash Feature](lib/features/splash/CLAUDE.md) - Initial auth check and app loading
+  - [Profile Feature](lib/features/profile/CLAUDE.md) - User profile display
+  - [Games Feature](lib/features/games/CLAUDE.md) - Games browsing (placeholder + anticipated games)
 - **Core Documentation**: Located at `lib/core/CLAUDE.md`.
-  - [Core Module](lib/core/CLAUDE.md)
+  - [Core Module](lib/core/CLAUDE.md) - Includes navigation architecture and bottom navigation bar
 
 **Instruction**: When adding a new feature, **always create a `CLAUDE.md` file** in the feature's root directory (`lib/features/<feature_name>/CLAUDE.md`) to capture domain-specific logic, special patterns, and architectural decisions relevant to that feature.
 
 ## Architecture Principles
 
 This project follows **SOLID principles** and **Domain-Driven Design (DDD)** for a clean, maintainable, and scalable codebase.
+
+### Navigation Architecture
+
+**Bottom Navigation with State Preservation:**
+
+- The app uses a persistent bottom navigation bar with three tabs: Home, Games, Profile
+- Implemented using GoRouter's `StatefulShellRoute.indexedStack`
+- Each tab maintains its state when switching (scroll positions, form data, BLoC state)
+- Settings page is outside the bottom navigation shell, accessible from Profile
+
+**Initial Load Flow:**
+
+```
+App Start
+    ↓
+Splash Screen (/splash)
+    ↓
+Auth State Check (800ms-10s)
+    ├─→ Authenticated → /home (bottom nav tab 1)
+    └─→ Unauthenticated → /signin
+```
+
+**Authenticated Navigation:**
+
+```
+Bottom Navigation Shell
+├─ /home (Tab 1: Home) - Main dashboard with anticipated games
+├─ /games (Tab 2: Games) - Games browsing (placeholder)
+└─ /profile (Tab 3: Profile) - User info display
+    └─ /settings (Outside shell) - User settings
+```
+
+For detailed navigation patterns, see [Core Navigation Documentation](lib/core/CLAUDE.md).
 
 ## Project Structure
 

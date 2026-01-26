@@ -180,11 +180,68 @@ GoRoute(
 
 ## Future Enhancements
 
-Potential improvements for the games feature:
+### Anticipated Games (Current Implementation)
+
+Potential improvements for the anticipated games carousel:
 
 - Pull-to-refresh on home screen
 - Game detail screen on carousel tap
-- Search and filter functionality
-- Favorites/wishlist support
 - Push notifications for release dates
 - Caching layer for IGDB responses
+
+### Games Browse Screen (Placeholder - To Be Implemented)
+
+**Status:** Currently displays "Coming Soon" placeholder
+
+The Games screen (`games_screen.dart`) is a **placeholder** for future games browsing functionality. It serves as one of the three main tabs in the bottom navigation bar.
+
+**Current State:**
+
+- Simple stateless widget
+- Centered "Coming Soon" message
+- Sports esports icon and description
+- No BLoC or data layer yet
+
+**Future Implementation Plan:**
+
+**Phase 1: Browse Games**
+
+- Repository: Leverage existing `GamesRepository`
+- BLoC: Create `GamesBrowseBloc` for state management
+- UI: Grid/list view of games with cover art
+- Features: Fetch games, display cards, pull-to-refresh
+
+**Phase 2: Search & Filter**
+
+- Search bar with real-time results
+- Filters: Genre, platform, release year, rating
+- Sorting: Name, rating, release date
+
+**Phase 3: Game Details**
+
+- Navigation to detail screen on card tap
+- Full game information display
+- Screenshots and similar games
+- Add to list functionality
+
+**Phase 4: Advanced Features**
+
+- User lists and wishlist
+- Mark games as played/completed
+- Personalized recommendations
+- Social features and sharing
+
+**Reuse Opportunity:**
+The Games browse screen can leverage the existing `GamesRepository` and IGDB integration already implemented for the anticipated games feature.
+
+**Related Files:**
+
+- `lib/features/games/games_screen.dart` - Placeholder UI
+- `lib/features/games/games_repository.dart` - API client (can be reused)
+- Bottom navigation integration in `app_router.dart`
+
+**Test Coverage:**
+
+- Placeholder screen tests in `test/features/games/games_screen_test.dart`
+- Tests verify "Coming Soon" UI rendering
+- Future: Add BLoC and widget tests when implemented
