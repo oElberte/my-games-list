@@ -180,6 +180,47 @@ fvm flutter test --coverage
 - **Comments**: Document WHY, not WHAT.
 - **Commits**: Conventional Commits (`feat:`, `fix:`, `chore:`, etc.).
 
+### Internationalization (i18n/l10n)
+
+**CRITICAL**: Always use localized strings for user-facing text.
+
+- **Never hardcode strings**: Use `context.l10n.stringKey` for all user-visible text
+- **Add new strings**: Update both `app_en.arb` and `app_pt.arb` files in `lib/l10n/`
+- **Generate l10n**: Run `fvm flutter gen-l10n` after updating ARB files
+- **Format**: Use placeholders for dynamic content (e.g., `"Hello {name}"`)
+
+**Examples:**
+```dart
+// ❌ Bad: Hardcoded string
+Text('Search Games')
+
+// ✅ Good: Localized string
+Text(context.l10n.searchGamesTitle)
+
+// ✅ Good: With placeholder
+Text(context.l10n.searchGamesNoResults(query))
+```
+
+### Navigation
+
+**Use GoRouter methods for navigation:**
+
+- **context.pushNamed()**: Navigate to a new screen (can go back)
+- **context.goNamed()**: Replace current screen (no back navigation)
+- **context.pop()**: Go back to previous screen
+
+**Examples:**
+```dart
+// ❌ Bad: Using deprecated context.go()
+context.go('/search')
+
+// ✅ Good: Using named routes with pushNamed
+context.pushNamed(AppRouter.searchName)
+
+// ✅ Good: Replace current route
+context.goNamed(AppRouter.homeName)
+```
+
 ## Common Patterns (Generic Examples)
 
 ### Route Configuration with BLoC Providers (app_router.dart)
