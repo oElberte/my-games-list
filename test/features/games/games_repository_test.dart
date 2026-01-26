@@ -4,6 +4,7 @@ import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/core/domain/models/api_error.dart';
 import 'package:my_games_list/core/domain/models/api_response.dart';
 import 'package:my_games_list/features/games/anticipated_game_model.dart';
+import 'package:my_games_list/features/games/game_detail_model.dart';
 import 'package:my_games_list/features/games/games_repository.dart';
 
 class MockHttpClient extends Mock implements IHttpClient {}
@@ -102,6 +103,128 @@ void main() {
           () => repository.getAnticipatedGames(),
           throwsA(isA<Exception>()),
         );
+      });
+    });
+
+    group('getGameDetails', () {
+      test('returns game details on successful response', () async {
+        // Arrange
+        final mockResponse = {
+          'game': {
+            'id': 1942,
+            'name': 'The Witcher 3: Wild Hunt',
+            'summary': 'An open-world action RPG',
+            'storyline': 'Geralt continues his journey...',
+            'cover': {'id': 480513, 'url': 'https://images.igdb.com/cover.jpg'},
+            'screenshots': [
+              {'id': 21107, 'url': 'https://images.igdb.com/screenshot.jpg'},
+            ],
+            'videos': [
+              {'id': 9648, 'video_id': 'yowv6_rspoM'},
+            ],
+            'genres': [
+              {'id': 12, 'name': 'Role-playing (RPG)'},
+            ],
+            'platforms': [
+              {'id': 48, 'name': 'PlayStation 4'},
+            ],
+            'first_release_date': 1431993600,
+            'total_rating': 92.82744671539679,
+            'involved_companies': [
+              {
+                'id': 42142,
+                'company': {'id': 908, 'name': 'CD Projekt RED'},
+                'developer': true,
+              },
+            ],
+            'websites': [
+              {
+                'id': 19107,
+                'url': 'https://store.steampowered.com/app/292030',
+                'category': 13,
+              },
+            ],
+            'similar_games': [
+              {
+                'id': 472,
+                'name': 'The Elder Scrolls V: Skyrim',
+                'cover': {
+                  'id': 85100,
+                  'url': 'https://images.igdb.com/skyrim.jpg',
+                },
+              },
+            ],
+          },
+        };
+
+        when(
+          () => mockHttpClient.get<Map<String, dynamic>>('/games/1942'),
+        ).thenAnswer((_) async => ApiResponse.success(mockResponse));
+
+        // Act
+        final game = await repository.getGameDetails(1942);
+
+        // Assert
+        expect(game, isA<GameDetail>());
+        expect(game.id, 1942);
+        expect(game.name, 'The Witcher 3: Wild Hunt');
+        expect(game.summary, 'An open-world action RPG');
+        expect(game.cover, isNotNull);
+        expect(game.screenshots, hasLength(1));
+        expect(game.videos, hasLength(1));
+        expect(game.genres, hasLength(1));
+        expect(game.platforms, hasLength(1));
+        expect(game.totalRating, closeTo(92.827, 0.001));
+        expect(game.involvedCompanies, hasLength(1));
+        expect(game.websites, hasLength(1));
+        expect(game.similarGames, hasLength(1));
+        expect(game.developer?.name, 'CD Projekt RED');
+
+        verify(
+          () => mockHttpClient.get<Map<String, dynamic>>('/games/1942'),
+        ).called(1);
+      });
+
+      test('throws exception on API error', () async {
+        // Arrange
+        const apiError = ApiError(
+          name: 'Not Found',
+          message: 'Game not found',
+          action: 'Check the game ID',
+          statusCode: 404,
+          errorCode: 'error.games.not_found',
+        );
+
+        when(
+          () => mockHttpClient.get<Map<String, dynamic>>('/games/99999'),
+        ).thenAnswer((_) async => ApiResponse.failure(apiError));
+
+        // Act & Assert
+        expect(
+          () => repository.getGameDetails(99999),
+          throwsA(isA<Exception>()),
+        );
+      });
+
+      test('returns game with minimal data', () async {
+        // Arrange
+        final mockResponse = {
+          'game': {'id': 1234, 'name': 'Minimal Game'},
+        };
+
+        when(
+          () => mockHttpClient.get<Map<String, dynamic>>('/games/1234'),
+        ).thenAnswer((_) async => ApiResponse.success(mockResponse));
+
+        // Act
+        final game = await repository.getGameDetails(1234);
+
+        // Assert
+        expect(game.id, 1234);
+        expect(game.name, 'Minimal Game');
+        expect(game.cover, isNull);
+        expect(game.screenshots, isEmpty);
+        expect(game.videos, isEmpty);
       });
     });
   });

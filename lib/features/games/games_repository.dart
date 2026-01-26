@@ -1,5 +1,6 @@
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/features/games/anticipated_game_model.dart';
+import 'package:my_games_list/features/games/game_detail_model.dart';
 import 'package:my_games_list/features/games/search_game_model.dart';
 
 /// Repository for fetching game-related data from the API
@@ -42,5 +43,21 @@ class GamesRepository {
     }
 
     return SearchGamesResponse.fromJson(response.dataOrThrow);
+  }
+
+  /// Fetches detailed information about a specific game
+  Future<GameDetail> getGameDetails(int id) async {
+    final response = await _httpClient.get<Map<String, dynamic>>('/games/$id');
+
+    if (response.isError) {
+      throw Exception(
+        response.error?.userMessage ?? 'Failed to fetch game details',
+      );
+    }
+
+    final gameDetailResponse = GameDetailResponse.fromJson(
+      response.dataOrThrow,
+    );
+    return gameDetailResponse.game;
   }
 }
