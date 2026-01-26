@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/features/auth/auth_repository.dart';
@@ -23,7 +22,7 @@ class SettingsScreen extends StatelessWidget {
         title: Text(context.l10n.settingsTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go(AppRouter.homePath),
+          onPressed: () => context.pop(),
         ),
       ),
       body: Padding(
@@ -94,7 +93,7 @@ class SettingsScreen extends StatelessWidget {
                   if (sl.isRegistered<AuthRepository>()) {
                     await sl<AuthRepository>().clearToken();
                   }
-                  
+
                   // Trigger logout event in AuthBloc
                   if (context.mounted) {
                     context.read<AuthBloc>().add(const AuthLogoutRequested());
