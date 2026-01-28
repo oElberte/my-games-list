@@ -104,6 +104,12 @@ abstract class AppLocalizations {
   /// **'My Games List'**
   String get appTitle;
 
+  /// No description provided for @welcomeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to My Games List'**
+  String get welcomeMessage;
+
   /// No description provided for @errorTitle.
   ///
   /// In en, this message translates to:

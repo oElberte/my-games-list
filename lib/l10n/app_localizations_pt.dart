@@ -12,6 +12,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get appTitle => 'My Games List';
 
   @override
+  String get welcomeMessage => 'Bem Vindo ao My Games List';
+
+  @override
   String get errorTitle => 'Erro';
 
   @override

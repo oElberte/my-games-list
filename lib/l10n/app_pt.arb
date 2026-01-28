@@ -1,5 +1,6 @@
 {
     "appTitle": "My Games List",
+    "welcomeMessage": "Bem Vindo ao My Games List",
     "errorTitle": "Erro",
     "errorMessage": "Ops! Algo deu errado.",
     "goHome": "Ir para o Início",

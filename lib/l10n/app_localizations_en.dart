@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'My Games List';
 
   @override
+  String get welcomeMessage => 'Welcome to My Games List';
+
+  @override
   String get errorTitle => 'Error';
 
   @override

@@ -1,5 +1,6 @@
 {
     "appTitle": "My Games List",
+    "welcomeMessage": "Welcome to My Games List",
     "@appTitle": {
       "description": "The title of the application"
     },
