@@ -1,3 +1,17 @@
-- [x] i18n
 - [] Best way to resize the app for Mobile and Desktop
-- [] Checker flutter_dotenv safe
+- [x] Implement favorite games
+- [x] Implement games on profile:
+  - Status (planned, on hold, playing, finished, dropped)
+  - Start Date
+  - End Date
+  - Playtime
+  - Score
+  - Platform
+  - Difficulty
+  - [] Repeat count
+- [] Firebase
+  - Push notifications
+  - Realtime database for maintenance, current version and etc.
+  - Analytics and crashlytics
+- [] Suggestions, feedbacks, bug reports from user
+- [] App domain, e-mails, social media and INPI
