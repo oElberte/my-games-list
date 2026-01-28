@@ -27,6 +27,9 @@ import 'package:my_games_list/features/games/widgets/video_player_screen.dart';
 import 'package:my_games_list/features/home/bloc/home_bloc.dart';
 import 'package:my_games_list/features/home/bloc/home_event.dart';
 import 'package:my_games_list/features/home/home_screen.dart';
+import 'package:my_games_list/features/library/bloc/library_bloc.dart';
+import 'package:my_games_list/features/library/bloc/library_event.dart';
+import 'package:my_games_list/features/library/library_repository.dart';
 import 'package:my_games_list/features/profile/profile_screen.dart';
 import 'package:my_games_list/features/settings/settings_screen.dart';
 import 'package:my_games_list/features/splash/splash_screen.dart';
@@ -176,13 +179,29 @@ class AppRouter {
               ],
             ),
 
-            // Games Branch
+            // Games Branch (User Library)
             StatefulShellBranch(
               routes: [
                 GoRoute(
                   path: gamesPath,
                   name: gamesName,
-                  builder: (context, state) => const GamesScreen(),
+                  builder: (context, state) {
+                    // Register library repository lazily
+                    _ensureLibraryRepositoryRegistered();
+
+                    // Get the current user ID from AuthBloc
+                    final authState = sl<AuthBloc>().state;
+                    final userId = authState is AuthAuthenticated
+                        ? authState.user.id
+                        : '';
+
+                    // Provide LibraryBloc (auto-disposed by BlocProvider)
+                    return BlocProvider.value(
+                      value: sl<LibraryBloc>()
+                        ..add(LibraryLoadRequested(userId: userId)),
+                      child: const GamesScreen(),
+                    );
+                  },
                 ),
               ],
             ),
@@ -234,12 +253,26 @@ class AppRouter {
 
             // Register games repository lazily (only once, stays in memory)
             _ensureGamesRepositoryRegistered();
+            _ensureLibraryRepositoryRegistered();
 
             // Provide GameDetailsBloc to the screen (auto-disposed by BlocProvider)
-            return BlocProvider(
-              create: (_) =>
-                  GameDetailsBloc(gamesRepository: sl<GamesRepository>())
-                    ..add(GameDetailsLoadRequested(gameId)),
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) =>
+                      GameDetailsBloc(gamesRepository: sl<GamesRepository>())
+                        ..add(GameDetailsLoadRequested(gameId)),
+                ),
+                BlocProvider.value(
+                  value: sl<LibraryBloc>()
+                    ..add(
+                      LibraryLoadRequested(
+                        userId:
+                            (sl<AuthBloc>().state as AuthAuthenticated).user.id,
+                      ),
+                    ),
+                ),
+              ],
               child: GameDetailsScreen(gameId: gameId),
             );
           },
@@ -283,6 +316,23 @@ class AppRouter {
     if (!sl.isRegistered<GamesRepository>()) {
       sl.registerLazySingleton<GamesRepository>(
         () => GamesRepository(httpClient: sl<IHttpClient>()),
+      );
+    }
+  }
+
+  /// Ensures LibraryRepository is registered in the service locator.
+  /// This is called lazily when games (library) route is accessed.
+  /// The repository stays registered as a singleton for API calls.
+  static void _ensureLibraryRepositoryRegistered() {
+    if (!sl.isRegistered<LibraryRepository>()) {
+      sl.registerLazySingleton<LibraryRepository>(
+        () => LibraryRepository(httpClient: sl<IHttpClient>()),
+      );
+    }
+
+    if (!sl.isRegistered<LibraryBloc>()) {
+      sl.registerLazySingleton<LibraryBloc>(
+        () => LibraryBloc(libraryRepository: sl<LibraryRepository>()),
       );
     }
   }
