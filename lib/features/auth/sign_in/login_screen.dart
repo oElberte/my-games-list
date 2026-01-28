@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
+import 'package:my_games_list/core/utils/messages_extensions.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
+import 'package:validatorless/validatorless.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -39,17 +42,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Login failed: ${state.message}'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          context.showErrorMessage('Login failed: ${state.message}');
         }
         // Navigation is handled automatically by GoRouter's refreshListenable
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Login')),
+        appBar: AppBar(title: Text(context.l10n.signInButton)),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
@@ -57,26 +55,24 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'Bem Vindo ao My Games List',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                Text(
+                  context.l10n.welcomeMessage,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.email),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.emailLabel,
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.email),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    return null;
-                  },
+                  validator: Validatorless.email(context.l10n.emailInvalid),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -87,12 +83,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.lock),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    return null;
-                  },
+                  validator: Validatorless.multiple([
+                    Validatorless.required(context.l10n.passwordRequired),
+                    Validatorless.min(6, context.l10n.passwordMinLength),
+                  ]),
                 ),
                 const SizedBox(height: 24),
                 BlocBuilder<AuthBloc, AuthState>(
@@ -106,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             : () => _handleLogin(context),
                         child: isLoading
                             ? const CircularProgressIndicator()
-                            : const Text('Login'),
+                            : Text(context.l10n.signInButton),
                       ),
                     );
                   },
