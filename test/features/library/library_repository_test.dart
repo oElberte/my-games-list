@@ -294,7 +294,9 @@ void main() {
           () => mockHttpClient.delete<Map<String, dynamic>>(
             '/library/entry-uuid-1',
           ),
-        ).thenAnswer((_) async => ApiResponse.success({'message': 'Deleted'}));
+        ).thenAnswer(
+          (_) async => ApiResponse.success(const {'message': 'Deleted'}),
+        );
 
         // Act & Assert - should not throw
         await expectLater(

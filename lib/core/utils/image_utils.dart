@@ -2,6 +2,7 @@
 ///
 /// IGDB returns image URLs with low-resolution size identifiers (e.g., `t_thumb`).
 /// These utilities help transform them to higher resolution versions.
+library;
 
 /// Transforms an IGDB image URL to use a higher resolution size.
 ///
