@@ -42,6 +42,7 @@ This project uses a distributed documentation strategy. Specific feature details
   - [Splash Feature](lib/features/splash/CLAUDE.md) - Initial auth check and app loading
   - [Profile Feature](lib/features/profile/CLAUDE.md) - User profile display
   - [Games Feature](lib/features/games/CLAUDE.md) - Games browsing (placeholder + anticipated games)
+  - [Library Feature](lib/features/library/CLAUDE.md) - User's game collection with status tracking
 - **Core Documentation**: Located at `lib/core/CLAUDE.md`.
   - [Core Module](lib/core/CLAUDE.md) - Includes navigation architecture and bottom navigation bar
 
@@ -190,6 +191,7 @@ fvm flutter test --coverage
 - **Format**: Use placeholders for dynamic content (e.g., `"Hello {name}"`)
 
 **Examples:**
+
 ```dart
 // ❌ Bad: Hardcoded string
 Text('Search Games')
@@ -210,6 +212,7 @@ Text(context.l10n.searchGamesNoResults(query))
 - **context.pop()**: Go back to previous screen
 
 **Examples:**
+
 ```dart
 // ❌ Bad: Using deprecated context.go()
 context.go('/search')
