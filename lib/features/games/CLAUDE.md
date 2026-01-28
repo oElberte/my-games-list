@@ -207,13 +207,73 @@ Search result card with game information.
 
 ### Game Details (`game_details_screen.dart`)
 
-Full-screen game details view with collapsible header.
+Full-screen game details view with collapsible header and library integration.
 
 **Layout**:
 
 - `CustomScrollView` with `SliverAppBar` (collapsible header)
 - Hero-animated cover image in app bar
 - Sections: Info, Tags, Description, Screenshots, Videos, Similar Games, Where to Buy
+- `FloatingActionButton.extended` for library actions
+
+**Library Integration**:
+
+Wrapped in `BlocBuilder<LibraryBloc, LibraryState>` to access library data.
+
+**App Bar Actions**:
+
+- **Favorite Button**: Heart icon (filled when favorite), toggles `LibraryToggleFavoriteRequested`
+  - Only shown when game is in library
+- **Share Button**: Share icon, opens native share sheet or copies to clipboard
+  - Share URL format: `{Env.webBaseUrl}/games/{igdbId}`
+  - Uses `share_plus` package with clipboard fallback
+
+**Floating Action Button**:
+
+- Extended FAB at bottom-right, positioned above content
+- Shows current status (e.g., "Playing") with checkmark if in library
+- Shows "Add" with plus icon if not in library
+- Tapping opens `AddToLibraryBottomSheet`
+
+**Helper Methods**:
+
+```dart
+// Find library entry by IGDB ID
+LibraryEntry? _findLibraryEntry(LibraryState state) {
+  if (state.status != LibraryStatus.success) return null;
+  return state.entries.where((e) => e.game.igdbId == gameId).firstOrNull;
+}
+
+// Share game with fallback
+Future<void> _shareGame(BuildContext context, GameDetail game) async {
+  final url = '${Env.webBaseUrl}/games/${game.id}';
+  final text = '${context.l10n.checkOutThisGame} ${game.name}: $url';
+  await Share.share(text);
+}
+
+// Toggle favorite status
+void _toggleFavorite(BuildContext context, String entryId) {
+  context.read<LibraryBloc>().add(LibraryToggleFavoriteRequested(entryId: entryId));
+}
+
+// Open library bottom sheet
+void _openLibrarySheet(BuildContext context, GameDetail game, LibraryEntry? entry) {
+  AddToLibraryBottomSheet.show(
+    context: context,
+    gameId: game.id,
+    gameName: game.name,
+    coverUrl: game.cover?.url,
+    platforms: game.platforms,
+    existingEntry: entry,
+  );
+}
+```
+
+**Visual Design**:
+
+- Gradient overlay on cover fades to `scaffoldBackgroundColor` (3 stops: 0.0, 0.5, 1.0)
+- Extra bottom padding (80px) to accommodate FAB
+- FAB uses primary color for "in library" state, surface color for "add" state
 
 **Sections**:
 
