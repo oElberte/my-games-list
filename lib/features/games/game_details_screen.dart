@@ -1,16 +1,25 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:my_games_list/core/utils/env.dart';
 import 'package:my_games_list/core/utils/image_utils.dart';
+import 'package:my_games_list/core/utils/messages_extensions.dart';
 import 'package:my_games_list/core/utils/website_category.dart';
 import 'package:my_games_list/features/games/bloc/game_details_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_details_state.dart';
 import 'package:my_games_list/features/games/game_detail_model.dart';
 import 'package:my_games_list/features/games/widgets/video_thumbnail_card.dart';
+import 'package:my_games_list/features/library/bloc/library_bloc.dart';
+import 'package:my_games_list/features/library/bloc/library_event.dart';
+import 'package:my_games_list/features/library/bloc/library_state.dart';
+import 'package:my_games_list/features/library/library_entry_model.dart';
+import 'package:my_games_list/features/library/widgets/add_to_library_bottom_sheet.dart';
 import 'package:my_games_list/l10n/app_localizations.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Screen displaying detailed game information.
@@ -102,10 +111,71 @@ class _GameDetailsContent extends StatefulWidget {
 class _GameDetailsContentState extends State<_GameDetailsContent> {
   bool _isDescriptionExpanded = false;
 
+  LibraryEntry? _findLibraryEntry(LibraryState libraryState) {
+    try {
+      return libraryState.entries.firstWhere(
+        (entry) => entry.game.igdbId == widget.gameId,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _shareGame() async {
+    final shareUrl = '${Env.webBaseUrl}/games/${widget.gameId}';
+    final shareText =
+        'Check out ${widget.game.name} on MyGamesList!\n$shareUrl';
+    final box = context.findRenderObject() as RenderBox?;
+
+    try {
+      await Share.share(
+        shareText,
+        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+      );
+    } catch (e) {
+      debugPrint('Share failed: $e');
+      // Fallback: copy to clipboard
+      if (mounted) {
+        await Clipboard.setData(ClipboardData(text: shareUrl));
+        if (mounted) {
+          context.showMessage('Link copied to clipboard!');
+        }
+      }
+    }
+  }
+
+  void _toggleFavorite(LibraryEntry entry) {
+    context.read<LibraryBloc>().add(
+      LibraryToggleFavoriteRequested(entryId: entry.id),
+    );
+  }
+
+  Future<void> _openLibrarySheet(LibraryEntry? existingEntry) async {
+    final libraryBloc = context.read<LibraryBloc>();
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      anchorPoint: Offset.zero,
+      builder: (sheetContext) => BlocProvider.value(
+        value: libraryBloc,
+        child: AddToLibraryBottomSheet(
+          gameId: widget.gameId,
+          gameName: widget.game.name,
+          platforms: widget.game.platforms,
+          existingEntry: existingEntry,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final game = widget.game;
+    final theme = Theme.of(context);
+    final scaffoldColor = theme.scaffoldBackgroundColor;
 
     // Get a screenshot for the header background
     final headerImageUrl = game.screenshots.isNotEmpty
@@ -114,124 +184,193 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
               ? getHighResUrl(game.cover!.url, ImageSize.coverBig)
               : null);
 
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          // Collapsible App Bar with Screenshot Background
-          SliverAppBar(
-            expandedHeight: 300,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                game.name,
-                style: const TextStyle(
-                  shadows: [
-                    Shadow(
-                      offset: Offset(0, 1),
-                      blurRadius: 4,
-                      color: Colors.black87,
+    return BlocBuilder<LibraryBloc, LibraryState>(
+      builder: (context, libraryState) {
+        final libraryEntry = _findLibraryEntry(libraryState);
+        final isInLibrary = libraryEntry != null;
+        final isFavorite = libraryEntry?.isFavorite ?? false;
+
+        return Scaffold(
+          body: CustomScrollView(
+            slivers: [
+              // Collapsible App Bar with Screenshot Background
+              SliverAppBar(
+                expandedHeight: 300,
+                pinned: true,
+                actions: [
+                  // Favorite button (only if in library)
+                  if (isInLibrary)
+                    IconButton(
+                      onPressed: () => _toggleFavorite(libraryEntry),
+                      icon: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: isFavorite ? Colors.red : Colors.white,
+                      ),
+                      tooltip: isFavorite
+                          ? 'Remove from favorites'
+                          : 'Add to favorites',
                     ),
-                  ],
-                ),
-              ),
-              background: headerImageUrl != null
-                  ? Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: headerImageUrl,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              Container(color: Colors.grey[900]),
-                          errorWidget: (context, url, error) =>
-                              Container(color: Colors.grey[900]),
-                        ),
-                        // Gradient overlay for better text visibility
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Colors.black.withValues(alpha: 0.7),
-                              ],
-                            ),
-                          ),
+                  // Share button
+                  IconButton(
+                    onPressed: _shareGame,
+                    icon: const Icon(Icons.share, color: Colors.white),
+                    tooltip: 'Share',
+                  ),
+                ],
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(
+                    game.name,
+                    style: const TextStyle(
+                      shadows: [
+                        Shadow(
+                          offset: Offset(0, 1),
+                          blurRadius: 4,
+                          color: Colors.black87,
                         ),
                       ],
-                    )
-                  : Container(color: Colors.grey[900]),
-            ),
-          ),
-
-          // Content
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Info Row: Cover, Developer, Rating
-                  _InfoRow(game: game, gameId: widget.gameId),
-
-                  const SizedBox(height: 24),
-
-                  // Genres & Platforms Tags
-                  if (game.genres.isNotEmpty || game.platforms.isNotEmpty)
-                    _TagsSection(game: game),
-
-                  const SizedBox(height: 24),
-
-                  // Description (Storyline + Summary)
-                  if (game.storyline != null || game.summary != null)
-                    _DescriptionSection(
-                      game: game,
-                      isExpanded: _isDescriptionExpanded,
-                      onToggle: () {
-                        setState(() {
-                          _isDescriptionExpanded = !_isDescriptionExpanded;
-                        });
-                      },
-                      l10n: l10n,
                     ),
-
-                  const SizedBox(height: 24),
-
-                  // Screenshots
-                  if (game.screenshots.isNotEmpty)
-                    _ScreenshotsSection(
-                      screenshots: game.screenshots,
-                      l10n: l10n,
-                    ),
-
-                  const SizedBox(height: 24),
-
-                  // Videos
-                  if (game.videos.isNotEmpty)
-                    _VideosSection(videos: game.videos, l10n: l10n),
-
-                  const SizedBox(height: 24),
-
-                  // Similar Games
-                  if (game.similarGames.isNotEmpty)
-                    _SimilarGamesSection(
-                      similarGames: game.similarGames,
-                      l10n: l10n,
-                    ),
-
-                  const SizedBox(height: 24),
-
-                  // Where to Buy / Websites
-                  if (game.websites.isNotEmpty)
-                    _WebsitesSection(websites: game.websites, l10n: l10n),
-
-                  const SizedBox(height: 32),
-                ],
+                  ),
+                  background: headerImageUrl != null
+                      ? Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: headerImageUrl,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  Container(color: Colors.grey[900]),
+                              errorWidget: (context, url, error) =>
+                                  Container(color: Colors.grey[900]),
+                            ),
+                            // Gradient overlay that fades to scaffold background
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  stops: const [0.0, 0.5, 1.0],
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.transparent,
+                                    scaffoldColor,
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(color: Colors.grey[900]),
+                ),
               ),
-            ),
+
+              // Content
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Info Row: Cover, Developer, Rating
+                      _InfoRow(game: game, gameId: widget.gameId),
+
+                      const SizedBox(height: 24),
+
+                      // Genres & Platforms Tags
+                      if (game.genres.isNotEmpty || game.platforms.isNotEmpty)
+                        _TagsSection(game: game),
+
+                      const SizedBox(height: 24),
+
+                      // Description (Storyline + Summary)
+                      if (game.storyline != null || game.summary != null)
+                        _DescriptionSection(
+                          game: game,
+                          isExpanded: _isDescriptionExpanded,
+                          onToggle: () {
+                            setState(() {
+                              _isDescriptionExpanded = !_isDescriptionExpanded;
+                            });
+                          },
+                          l10n: l10n,
+                        ),
+
+                      const SizedBox(height: 24),
+
+                      // Screenshots
+                      if (game.screenshots.isNotEmpty)
+                        _ScreenshotsSection(
+                          screenshots: game.screenshots,
+                          l10n: l10n,
+                        ),
+
+                      const SizedBox(height: 24),
+
+                      // Videos
+                      if (game.videos.isNotEmpty)
+                        _VideosSection(videos: game.videos, l10n: l10n),
+
+                      const SizedBox(height: 24),
+
+                      // Similar Games
+                      if (game.similarGames.isNotEmpty)
+                        _SimilarGamesSection(
+                          similarGames: game.similarGames,
+                          l10n: l10n,
+                        ),
+
+                      const SizedBox(height: 24),
+
+                      // Where to Buy / Websites
+                      if (game.websites.isNotEmpty)
+                        _WebsitesSection(websites: game.websites, l10n: l10n),
+
+                      // Extra padding for FAB
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+          floatingActionButton: _LibraryFab(
+            isInLibrary: isInLibrary,
+            status: libraryEntry?.status,
+            onPressed: () => _openLibrarySheet(libraryEntry),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _LibraryFab extends StatelessWidget {
+  const _LibraryFab({
+    required this.isInLibrary,
+    required this.status,
+    required this.onPressed,
+  });
+
+  final bool isInLibrary;
+  final GameStatus? status;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return FloatingActionButton.extended(
+      onPressed: onPressed,
+      backgroundColor: isInLibrary
+          ? theme.colorScheme.secondaryContainer
+          : theme.colorScheme.primaryContainer,
+      foregroundColor: isInLibrary
+          ? theme.colorScheme.onSecondaryContainer
+          : theme.colorScheme.onPrimaryContainer,
+      elevation: 4,
+      icon: Icon(isInLibrary ? Icons.edit : Icons.add),
+      label: Text(
+        isInLibrary ? status!.displayName : 'Add',
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }
