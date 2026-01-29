@@ -159,16 +159,36 @@ Manages discovery games (trending, indie, upcoming) with pagination and view mod
 - `DiscoveryGamesViewModeToggled`: Toggle between grid and list view
 - `DiscoveryGamesRefreshRequested`: Refresh games (pull-to-refresh)
 
-**State**: `DiscoveryGamesState`
+**State Architecture**:
 
-- `status`: Enum (initial, loading, success, failure, loadingMore)
-- `games`: List of discovery games
-- `discoveryType`: Current discovery type (trending, indie, upcoming)
-- `viewMode`: Current view mode (grid, list)
-- `errorMessage`: Error message for failure state
-- `hasMore`: Boolean indicating more results available
-- `currentOffset`: Current pagination offset
-- `offsetLimitReached`: Boolean for 10k offset limit
+The state uses a per-type architecture to allow multiple discovery widgets to share the same BLoC without overwriting each other's data:
+
+- **`DiscoveryTypeState`**: State for a single discovery type
+  - `status`: Enum (initial, loading, success, failure, loadingMore)
+  - `games`: List of games for this type
+  - `errorMessage`: Error message for failure state
+  - `hasMore`: Boolean indicating more results available
+  - `currentOffset`: Current pagination offset
+  - `offsetLimitReached`: Boolean for 10k offset limit
+
+- **`DiscoveryGamesState`**: Main state container
+  - `stateByType`: `Map<DiscoveryType, DiscoveryTypeState>` - Separate state per discovery type
+  - `viewMode`: Current view mode (grid, list) - shared across types
+  - `activeDiscoveryType`: The discovery type currently active (for legacy getters)
+  - `getStateForType(DiscoveryType)`: Get the state for a specific discovery type
+  - `updateTypeState(type, update)`: Update state for a specific type
+
+**Backward Compatibility**:
+
+- Legacy getters (`games`, `status`, `hasMore`, etc.) still work via `activeDiscoveryType`
+- `DiscoveryGamesState.withLegacyParams()` factory constructor for tests and legacy code
+
+**Key Design Decisions**:
+
+- Each discovery type maintains independent state (trending games won't overwrite indie games)
+- Widgets use `buildWhen` to only rebuild when their specific type's state changes
+- View mode is shared across all types
+- `activeDiscoveryType` is set when `DiscoveryGamesLoadRequested` is received
 
 **Business Logic**:
 
@@ -187,7 +207,10 @@ Domain models for discovery games functionality:
   - `trending`: Games sorted by popularity
   - `indie`: Indie genre games sorted by rating
   - `upcoming`: Unreleased games sorted by hype
-  - **Methods**: `queryParam`, `displayName`, `fromQueryParam()`
+  - **Properties**: `queryParam`, `displayName`
+  - **Methods**:
+    - `localizedName(BuildContext context)`: Returns the localized display name for the discovery type (e.g., "Trending Now", "Indie Gems", "Upcoming Games"). Uses `context.l10n` for i18n support.
+    - `fromQueryParam(String param)`: Creates a DiscoveryType from a query parameter string
 
 - **`DiscoveryGame`**: Represents a game from discovery results
   - `id`: Game identifier
@@ -210,14 +233,45 @@ Domain models for discovery games functionality:
 
 **`DiscoveryGamesWidget`** (`widgets/discovery_games_widget.dart`)
 
-Horizontal scrolling widget for home screen.
+Horizontal scrolling widget for home screen. Loads data immediately when mounted.
 
 **Features**:
 
-- Header with icon, title (based on discovery type), and "See All" button
+- Header with icon, title (localized based on discovery type), and "See All" button
 - Horizontal ListView of game tiles
 - Loading, error, and empty states
 - Navigates to full discovery screen on "See All" tap
+- Uses `discoveryType.localizedName(context)` for i18n titles
+
+**`LazyDiscoveryGamesWidget`** (`widgets/discovery_games_widget.dart`)
+
+Lazy-loading wrapper for DiscoveryGamesWidget. Only triggers data loading when the widget becomes visible in the viewport.
+
+**Properties**:
+
+- `discoveryType`: The type of discovery games to load
+- `icon`: Optional custom icon override
+- `visibilityThreshold`: Fraction of widget that must be visible to trigger loading (default: 0.1 = 10%)
+
+**Features**:
+
+- Uses `VisibilityDetector` package to detect when widget enters viewport
+- Prevents duplicate load requests with `_hasTriggeredLoad` flag
+- Calls `setState()` when visibility is detected to trigger widget rebuild
+- Uses `buildWhen` to only rebuild when the specific discovery type's state changes
+- Uses `state.getStateForType(discoveryType)` to access type-specific data
+- Shows loading placeholder until visibility threshold is met
+- Ideal for sections below the fold (e.g., Indie Gems on home screen)
+- Same loading/error/success states as `DiscoveryGamesWidget`
+
+**Usage on Home Screen**:
+
+The home screen uses both widgets with a shared BLoC:
+
+- `DiscoveryGamesWidget(discoveryType: DiscoveryType.trending)` - Loads immediately (visible on mount)
+- `LazyDiscoveryGamesWidget(discoveryType: DiscoveryType.indie)` - Lazy loaded when scrolled into view
+
+Each widget maintains independent data via the per-type state architecture.
 
 **`DiscoveryGameTile`** (`widgets/discovery_game_tile.dart`)
 

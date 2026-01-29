@@ -215,4 +215,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorLoadingData => 'Error loading data';
+
+  @override
+  String get discoveryTrending => 'Trending Now';
+
+  @override
+  String get discoveryIndie => 'Indie Gems';
+
+  @override
+  String get discoveryUpcoming => 'Upcoming Games';
 }

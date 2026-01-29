@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 
 /// Represents the type of discovery query
 enum DiscoveryType {
@@ -11,8 +13,20 @@ enum DiscoveryType {
   /// The query parameter value for the API
   final String queryParam;
 
-  /// The display name shown in the UI
+  /// The display name shown in the UI (non-localized fallback)
   final String displayName;
+
+  /// Returns the localized display name for this discovery type
+  String localizedName(BuildContext context) {
+    switch (this) {
+      case DiscoveryType.trending:
+        return context.l10n.discoveryTrending;
+      case DiscoveryType.indie:
+        return context.l10n.discoveryIndie;
+      case DiscoveryType.upcoming:
+        return context.l10n.discoveryUpcoming;
+    }
+  }
 
   /// Creates a DiscoveryType from a query parameter string
   static DiscoveryType fromQueryParam(String param) {

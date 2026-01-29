@@ -499,6 +499,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error loading data'**
   String get errorLoadingData;
+
+  /// No description provided for @discoveryTrending.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending Now'**
+  String get discoveryTrending;
+
+  /// No description provided for @discoveryIndie.
+  ///
+  /// In en, this message translates to:
+  /// **'Indie Gems'**
+  String get discoveryIndie;
+
+  /// No description provided for @discoveryUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Games'**
+  String get discoveryUpcoming;
 }
 
 class _AppLocalizationsDelegate

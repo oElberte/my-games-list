@@ -89,5 +89,8 @@
     "readLess": "Read Less",
     "noVideosAvailable": "No videos available",
     "noScreenshotsAvailable": "No screenshots available",
-    "errorLoadingData": "Error loading data"
+    "errorLoadingData": "Error loading data",
+    "discoveryTrending": "Trending Now",
+    "discoveryIndie": "Indie Gems",
+    "discoveryUpcoming": "Upcoming Games"
 }

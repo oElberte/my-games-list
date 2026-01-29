@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_games_list/features/games/discovery_game_model.dart';
 import 'package:my_games_list/features/games/games_repository.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_event.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_state.dart';
@@ -24,41 +25,48 @@ class DiscoveryGamesBloc
     DiscoveryGamesLoadRequested event,
     Emitter<DiscoveryGamesState> emit,
   ) async {
+    final type = event.type;
+
+    // Update state for this specific discovery type
     emit(
-      state.copyWith(
-        status: DiscoveryGamesStatus.loading,
-        discoveryType: event.type,
-        games: [],
-        currentOffset: 0,
-        offsetLimitReached: false,
-        hasMore: true,
-      ),
+      state
+          .updateTypeState(type, (typeState) {
+            return typeState.copyWith(
+              status: DiscoveryGamesStatus.loading,
+              games: [],
+              currentOffset: 0,
+              offsetLimitReached: false,
+              hasMore: true,
+            );
+          })
+          .copyWith(activeDiscoveryType: type),
     );
 
     try {
       final response = await _gamesRepository.getDiscoveryGames(
-        event.type,
+        type,
         limit: _pageSize,
         offset: 0,
       );
 
-      print(
-        'passou aqui hasMore: ${response.hasMore}, $_maxOffset pageSize: $_pageSize',
-      );
       emit(
-        state.copyWith(
-          status: DiscoveryGamesStatus.success,
-          games: response.games,
-          hasMore: response.hasMore,
-          currentOffset: _pageSize,
-        ),
+        state.updateTypeState(type, (typeState) {
+          return typeState.copyWith(
+            status: DiscoveryGamesStatus.success,
+            games: response.games,
+            hasMore: response.hasMore,
+            currentOffset: _pageSize,
+          );
+        }),
       );
     } catch (e) {
       emit(
-        state.copyWith(
-          status: DiscoveryGamesStatus.failure,
-          errorMessage: e.toString(),
-        ),
+        state.updateTypeState(type, (typeState) {
+          return typeState.copyWith(
+            status: DiscoveryGamesStatus.failure,
+            errorMessage: e.toString(),
+          );
+        }),
       );
     }
   }
@@ -67,28 +75,39 @@ class DiscoveryGamesBloc
     DiscoveryGamesLoadMore event,
     Emitter<DiscoveryGamesState> emit,
   ) async {
+    final type = state.activeDiscoveryType;
+    final typeState = state.getStateForType(type);
+
     // Prevent duplicate loads
-    if (state.isLoadingMore) {
+    if (typeState.isLoadingMore) {
       return;
     }
 
     // Check if we have more data to load
-    if (!state.hasMore || state.offsetLimitReached) {
+    if (!typeState.hasMore || typeState.offsetLimitReached) {
       return;
     }
 
     // Check if next offset would exceed limit
-    final nextOffset = state.currentOffset;
+    final nextOffset = typeState.currentOffset;
     if (nextOffset >= _maxOffset) {
-      emit(state.copyWith(offsetLimitReached: true, hasMore: false));
+      emit(
+        state.updateTypeState(type, (ts) {
+          return ts.copyWith(offsetLimitReached: true, hasMore: false);
+        }),
+      );
       return;
     }
 
-    emit(state.copyWith(status: DiscoveryGamesStatus.loadingMore));
+    emit(
+      state.updateTypeState(type, (ts) {
+        return ts.copyWith(status: DiscoveryGamesStatus.loadingMore);
+      }),
+    );
 
     try {
       final response = await _gamesRepository.getDiscoveryGames(
-        state.discoveryType,
+        type,
         limit: _pageSize,
         offset: nextOffset,
       );
@@ -98,21 +117,25 @@ class DiscoveryGamesBloc
       final canLoadMoreAfterThis = response.hasMore && newOffset < _maxOffset;
 
       emit(
-        state.copyWith(
-          status: DiscoveryGamesStatus.success,
-          games: [...state.games, ...response.games],
-          hasMore: canLoadMoreAfterThis,
-          currentOffset: newOffset,
-          offsetLimitReached: newOffset >= _maxOffset,
-        ),
+        state.updateTypeState(type, (ts) {
+          return ts.copyWith(
+            status: DiscoveryGamesStatus.success,
+            games: [...ts.games, ...response.games],
+            hasMore: canLoadMoreAfterThis,
+            currentOffset: newOffset,
+            offsetLimitReached: newOffset >= _maxOffset,
+          );
+        }),
       );
     } catch (e) {
       // On error, revert to success status but keep existing games
       emit(
-        state.copyWith(
-          status: DiscoveryGamesStatus.success,
-          errorMessage: e.toString(),
-        ),
+        state.updateTypeState(type, (ts) {
+          return ts.copyWith(
+            status: DiscoveryGamesStatus.success,
+            errorMessage: e.toString(),
+          );
+        }),
       );
     }
   }
@@ -131,37 +154,45 @@ class DiscoveryGamesBloc
     DiscoveryGamesRefreshRequested event,
     Emitter<DiscoveryGamesState> emit,
   ) async {
+    final type = state.activeDiscoveryType;
+
     // Keep existing games visible while refreshing
     emit(
-      state.copyWith(
-        status: DiscoveryGamesStatus.loading,
-        currentOffset: 0,
-        offsetLimitReached: false,
-        hasMore: true,
-      ),
+      state.updateTypeState(type, (ts) {
+        return ts.copyWith(
+          status: DiscoveryGamesStatus.loading,
+          currentOffset: 0,
+          offsetLimitReached: false,
+          hasMore: true,
+        );
+      }),
     );
 
     try {
       final response = await _gamesRepository.getDiscoveryGames(
-        state.discoveryType,
+        type,
         limit: _pageSize,
         offset: 0,
       );
 
       emit(
-        state.copyWith(
-          status: DiscoveryGamesStatus.success,
-          games: response.games,
-          hasMore: response.hasMore,
-          currentOffset: _pageSize,
-        ),
+        state.updateTypeState(type, (ts) {
+          return ts.copyWith(
+            status: DiscoveryGamesStatus.success,
+            games: response.games,
+            hasMore: response.hasMore,
+            currentOffset: _pageSize,
+          );
+        }),
       );
     } catch (e) {
       emit(
-        state.copyWith(
-          status: DiscoveryGamesStatus.failure,
-          errorMessage: e.toString(),
-        ),
+        state.updateTypeState(type, (ts) {
+          return ts.copyWith(
+            status: DiscoveryGamesStatus.failure,
+            errorMessage: e.toString(),
+          );
+        }),
       );
     }
   }

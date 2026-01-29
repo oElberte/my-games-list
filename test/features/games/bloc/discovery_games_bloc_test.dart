@@ -72,7 +72,7 @@ void main() {
         act: (bloc) =>
             bloc.add(const DiscoveryGamesLoadRequested(DiscoveryType.trending)),
         expect: () => [
-          const DiscoveryGamesState(
+          DiscoveryGamesState.withLegacyParams(
             status: DiscoveryGamesStatus.loading,
             discoveryType: DiscoveryType.trending,
           ),
@@ -109,7 +109,7 @@ void main() {
         act: (bloc) =>
             bloc.add(const DiscoveryGamesLoadRequested(DiscoveryType.trending)),
         expect: () => [
-          const DiscoveryGamesState(
+          DiscoveryGamesState.withLegacyParams(
             status: DiscoveryGamesStatus.loading,
             discoveryType: DiscoveryType.trending,
           ),
@@ -136,7 +136,7 @@ void main() {
         act: (bloc) =>
             bloc.add(const DiscoveryGamesLoadRequested(DiscoveryType.indie)),
         expect: () => [
-          const DiscoveryGamesState(
+          DiscoveryGamesState.withLegacyParams(
             status: DiscoveryGamesStatus.loading,
             discoveryType: DiscoveryType.indie,
           ),
@@ -162,7 +162,7 @@ void main() {
           ).thenAnswer((_) async => mockResponseNoMore);
           return DiscoveryGamesBloc(gamesRepository: mockRepository);
         },
-        seed: () => DiscoveryGamesState(
+        seed: () => DiscoveryGamesState.withLegacyParams(
           status: DiscoveryGamesStatus.success,
           games: mockGames,
           hasMore: true,
@@ -195,7 +195,7 @@ void main() {
       blocTest<DiscoveryGamesBloc, DiscoveryGamesState>(
         'does nothing when already loading more',
         build: () => DiscoveryGamesBloc(gamesRepository: mockRepository),
-        seed: () => const DiscoveryGamesState(
+        seed: () => DiscoveryGamesState.withLegacyParams(
           status: DiscoveryGamesStatus.loadingMore,
           hasMore: true,
         ),
@@ -215,7 +215,7 @@ void main() {
       blocTest<DiscoveryGamesBloc, DiscoveryGamesState>(
         'does nothing when hasMore is false',
         build: () => DiscoveryGamesBloc(gamesRepository: mockRepository),
-        seed: () => const DiscoveryGamesState(
+        seed: () => DiscoveryGamesState.withLegacyParams(
           status: DiscoveryGamesStatus.success,
           hasMore: false,
         ),
@@ -226,7 +226,7 @@ void main() {
       blocTest<DiscoveryGamesBloc, DiscoveryGamesState>(
         'sets offsetLimitReached when offset exceeds max',
         build: () => DiscoveryGamesBloc(gamesRepository: mockRepository),
-        seed: () => const DiscoveryGamesState(
+        seed: () => DiscoveryGamesState.withLegacyParams(
           status: DiscoveryGamesStatus.success,
           hasMore: true,
           currentOffset: 10000,
@@ -279,7 +279,7 @@ void main() {
           ).thenAnswer((_) async => mockResponse);
           return DiscoveryGamesBloc(gamesRepository: mockRepository);
         },
-        seed: () => DiscoveryGamesState(
+        seed: () => DiscoveryGamesState.withLegacyParams(
           status: DiscoveryGamesStatus.success,
           games: mockGames,
           currentOffset: 100,

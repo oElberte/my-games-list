@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:my_games_list/features/games/discovery_game_model.dart';
@@ -10,6 +11,8 @@ import 'package:my_games_list/features/games/bloc/discovery_games_event.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_state.dart';
 import 'package:my_games_list/features/games/widgets/discovery_game_tile.dart';
 import 'package:my_games_list/features/games/widgets/discovery_games_widget.dart';
+import 'package:my_games_list/l10n/app_localizations.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class MockDiscoveryGamesBloc
     extends MockBloc<DiscoveryGamesEvent, DiscoveryGamesState>
@@ -160,16 +163,24 @@ void main() {
       mockBloc = MockDiscoveryGamesBloc();
     });
 
-    Widget createWidget({required DiscoveryGamesState state}) {
+    Widget createWidget({
+      required DiscoveryGamesState state,
+      DiscoveryType discoveryType = DiscoveryType.trending,
+    }) {
       when(() => mockBloc.state).thenReturn(state);
 
       return MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: BlocProvider<DiscoveryGamesBloc>.value(
             value: mockBloc,
-            child: const DiscoveryGamesWidget(
-              discoveryType: DiscoveryType.trending,
-            ),
+            child: DiscoveryGamesWidget(discoveryType: discoveryType),
           ),
         ),
       );
@@ -178,7 +189,7 @@ void main() {
     testWidgets('should display title based on discovery type', (tester) async {
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          DiscoveryGamesState(
+          DiscoveryGamesState.withLegacyParams(
             status: DiscoveryGamesStatus.success,
             games: mockGames,
             discoveryType: DiscoveryType.trending,
@@ -188,7 +199,7 @@ void main() {
 
       await tester.pumpWidget(
         createWidget(
-          state: DiscoveryGamesState(
+          state: DiscoveryGamesState.withLegacyParams(
             status: DiscoveryGamesStatus.success,
             games: mockGames,
             discoveryType: DiscoveryType.trending,
@@ -205,13 +216,15 @@ void main() {
     ) async {
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          const DiscoveryGamesState(status: DiscoveryGamesStatus.loading),
+          DiscoveryGamesState.withLegacyParams(
+            status: DiscoveryGamesStatus.loading,
+          ),
         ),
       );
 
       await tester.pumpWidget(
         createWidget(
-          state: const DiscoveryGamesState(
+          state: DiscoveryGamesState.withLegacyParams(
             status: DiscoveryGamesStatus.loading,
           ),
         ),
@@ -225,7 +238,7 @@ void main() {
       const errorMessage = 'Failed to load games';
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          const DiscoveryGamesState(
+          DiscoveryGamesState.withLegacyParams(
             status: DiscoveryGamesStatus.failure,
             errorMessage: errorMessage,
           ),
@@ -234,7 +247,7 @@ void main() {
 
       await tester.pumpWidget(
         createWidget(
-          state: const DiscoveryGamesState(
+          state: DiscoveryGamesState.withLegacyParams(
             status: DiscoveryGamesStatus.failure,
             errorMessage: errorMessage,
           ),
@@ -248,7 +261,7 @@ void main() {
     testWidgets('should display games when loaded', (tester) async {
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          DiscoveryGamesState(
+          DiscoveryGamesState.withLegacyParams(
             status: DiscoveryGamesStatus.success,
             games: mockGames,
           ),
@@ -257,7 +270,7 @@ void main() {
 
       await tester.pumpWidget(
         createWidget(
-          state: DiscoveryGamesState(
+          state: DiscoveryGamesState.withLegacyParams(
             status: DiscoveryGamesStatus.success,
             games: mockGames,
           ),
@@ -272,7 +285,7 @@ void main() {
     testWidgets('should display See All button', (tester) async {
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          DiscoveryGamesState(
+          DiscoveryGamesState.withLegacyParams(
             status: DiscoveryGamesStatus.success,
             games: mockGames,
           ),
@@ -281,7 +294,7 @@ void main() {
 
       await tester.pumpWidget(
         createWidget(
-          state: DiscoveryGamesState(
+          state: DiscoveryGamesState.withLegacyParams(
             status: DiscoveryGamesStatus.success,
             games: mockGames,
           ),
@@ -290,6 +303,207 @@ void main() {
       await tester.pump();
 
       expect(find.text('See All'), findsOneWidget);
+    });
+
+    testWidgets('should display localized title for indie type', (
+      tester,
+    ) async {
+      when(() => mockBloc.stream).thenAnswer(
+        (_) => Stream.value(
+          DiscoveryGamesState.withLegacyParams(
+            status: DiscoveryGamesStatus.success,
+            games: mockGames,
+            discoveryType: DiscoveryType.indie,
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        createWidget(
+          state: DiscoveryGamesState.withLegacyParams(
+            status: DiscoveryGamesStatus.success,
+            games: mockGames,
+            discoveryType: DiscoveryType.indie,
+          ),
+          discoveryType: DiscoveryType.indie,
+        ),
+      );
+      await tester.pump();
+
+      // Should display "Indie Gems" (localized title)
+      expect(find.text('Indie Gems'), findsOneWidget);
+    });
+  });
+
+  group('LazyDiscoveryGamesWidget', () {
+    late MockDiscoveryGamesBloc mockBloc;
+
+    final mockGames = [
+      const DiscoveryGame(
+        id: 1942,
+        name: 'Indie Game 1',
+        coverUrl: 'https://example.com/cover1.jpg',
+        totalRating: 92.82,
+      ),
+      const DiscoveryGame(
+        id: 12345,
+        name: 'Indie Game 2',
+        coverUrl: 'https://example.com/cover2.jpg',
+        totalRating: 85.0,
+      ),
+    ];
+
+    setUp(() {
+      mockBloc = MockDiscoveryGamesBloc();
+      // Set update interval to zero for immediate updates in tests
+      VisibilityDetectorController.instance.updateInterval = Duration.zero;
+    });
+
+    tearDown(() {
+      // Reset to default after tests
+      VisibilityDetectorController.instance.updateInterval = const Duration(
+        milliseconds: 500,
+      );
+    });
+
+    Widget createLazyWidget({
+      required DiscoveryGamesState state,
+      DiscoveryType discoveryType = DiscoveryType.indie,
+    }) {
+      when(() => mockBloc.state).thenReturn(state);
+
+      return MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: BlocProvider<DiscoveryGamesBloc>.value(
+            value: mockBloc,
+            child: LazyDiscoveryGamesWidget(discoveryType: discoveryType),
+          ),
+        ),
+      );
+    }
+
+    testWidgets('should display loading state initially', (tester) async {
+      when(() => mockBloc.stream).thenAnswer(
+        (_) => Stream.value(
+          DiscoveryGamesState.withLegacyParams(
+            status: DiscoveryGamesStatus.loading,
+            discoveryType: DiscoveryType.indie,
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        createLazyWidget(
+          state: DiscoveryGamesState.withLegacyParams(
+            status: DiscoveryGamesStatus.loading,
+            discoveryType: DiscoveryType.indie,
+          ),
+          discoveryType: DiscoveryType.indie,
+        ),
+      );
+      // Allow the widget to build
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Loading state shows the title with loading placeholder
+      expect(find.text('Indie Gems'), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsWidgets);
+    });
+
+    testWidgets('should display Indie Gems title for indie type', (
+      tester,
+    ) async {
+      when(() => mockBloc.stream).thenAnswer(
+        (_) => Stream.value(
+          DiscoveryGamesState.withLegacyParams(
+            status: DiscoveryGamesStatus.success,
+            games: mockGames,
+            discoveryType: DiscoveryType.indie,
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        createLazyWidget(
+          state: DiscoveryGamesState.withLegacyParams(
+            status: DiscoveryGamesStatus.success,
+            games: mockGames,
+            discoveryType: DiscoveryType.indie,
+          ),
+          discoveryType: DiscoveryType.indie,
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Indie Gems'), findsOneWidget);
+    });
+
+    testWidgets('should trigger load when widget becomes visible', (
+      tester,
+    ) async {
+      when(() => mockBloc.stream).thenAnswer(
+        (_) => Stream.value(
+          DiscoveryGamesState.withLegacyParams(
+            status: DiscoveryGamesStatus.initial,
+            discoveryType: DiscoveryType.indie,
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        createLazyWidget(
+          state: DiscoveryGamesState.withLegacyParams(
+            status: DiscoveryGamesStatus.initial,
+            discoveryType: DiscoveryType.indie,
+          ),
+          discoveryType: DiscoveryType.indie,
+        ),
+      );
+
+      // Pump to trigger visibility callback
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Verify that the load event was triggered
+      verify(
+        () => mockBloc.add(
+          const DiscoveryGamesLoadRequested(DiscoveryType.indie),
+        ),
+      ).called(1);
+    });
+
+    testWidgets('should display games when loaded', (tester) async {
+      final stateWithGames = DiscoveryGamesState.withLegacyParams(
+        status: DiscoveryGamesStatus.success,
+        games: mockGames,
+        discoveryType: DiscoveryType.indie,
+      );
+
+      when(
+        () => mockBloc.stream,
+      ).thenAnswer((_) => Stream.value(stateWithGames));
+
+      await tester.pumpWidget(
+        createLazyWidget(
+          state: stateWithGames,
+          discoveryType: DiscoveryType.indie,
+        ),
+      );
+
+      // Pump to trigger visibility callback (same as trigger load test)
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('Indie Gems'), findsOneWidget);
+      expect(find.text('Indie Game 1'), findsOneWidget);
+      expect(find.text('Indie Game 2'), findsOneWidget);
     });
   });
 }

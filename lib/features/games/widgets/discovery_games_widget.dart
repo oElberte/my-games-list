@@ -7,6 +7,7 @@ import 'package:my_games_list/features/games/bloc/discovery_games_event.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_state.dart';
 import 'package:my_games_list/features/games/discovery_game_model.dart';
 import 'package:my_games_list/features/games/widgets/discovery_game_tile.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 /// A horizontal scrollable widget displaying discovery games on the home screen
 class DiscoveryGamesWidget extends StatelessWidget {
@@ -44,39 +45,168 @@ class DiscoveryGamesWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DiscoveryGamesBloc, DiscoveryGamesState>(
+      buildWhen: (previous, current) {
+        // Only rebuild when the state for this specific discovery type changes
+        final prevTypeState = previous.getStateForType(discoveryType);
+        final currTypeState = current.getStateForType(discoveryType);
+        return prevTypeState != currTypeState;
+      },
       builder: (context, state) {
-        if (state.isLoading && !state.hasGames) {
+        final typeState = state.getStateForType(discoveryType);
+
+        if (typeState.isLoading && !typeState.hasGames) {
           return _WidgetLoading(
-            title: discoveryType.displayName,
+            title: discoveryType.localizedName(context),
             icon: icon ?? _defaultIcon,
             iconColor: _iconColor,
           );
         }
 
-        if (state.status == DiscoveryGamesStatus.failure && !state.hasGames) {
+        if (typeState.status == DiscoveryGamesStatus.failure &&
+            !typeState.hasGames) {
           return _WidgetError(
-            title: discoveryType.displayName,
+            title: discoveryType.localizedName(context),
             icon: icon ?? _defaultIcon,
             iconColor: _iconColor,
-            message: state.errorMessage ?? 'Failed to load games',
+            message: typeState.errorMessage ?? 'Failed to load games',
             onRetry: () => context.read<DiscoveryGamesBloc>().add(
               DiscoveryGamesLoadRequested(discoveryType),
             ),
           );
         }
 
-        if (!state.hasGames) {
+        if (!typeState.hasGames) {
           return const SizedBox.shrink();
         }
 
         return _WidgetContent(
-          title: discoveryType.displayName,
+          title: discoveryType.localizedName(context),
           icon: icon ?? _defaultIcon,
           iconColor: _iconColor,
-          games: state.games,
+          games: typeState.games,
           discoveryType: discoveryType,
         );
       },
+    );
+  }
+}
+
+/// A lazy-loading wrapper for DiscoveryGamesWidget that only triggers
+/// data loading when the widget becomes visible in the viewport.
+class LazyDiscoveryGamesWidget extends StatefulWidget {
+  const LazyDiscoveryGamesWidget({
+    required this.discoveryType,
+    this.icon,
+    this.visibilityThreshold = 0.1,
+    super.key,
+  });
+
+  final DiscoveryType discoveryType;
+  final IconData? icon;
+
+  /// The fraction of the widget that must be visible to trigger loading (0.0 to 1.0)
+  final double visibilityThreshold;
+
+  @override
+  State<LazyDiscoveryGamesWidget> createState() =>
+      _LazyDiscoveryGamesWidgetState();
+}
+
+class _LazyDiscoveryGamesWidgetState extends State<LazyDiscoveryGamesWidget> {
+  bool _hasTriggeredLoad = false;
+
+  IconData get _defaultIcon {
+    switch (widget.discoveryType) {
+      case DiscoveryType.trending:
+        return Icons.trending_up;
+      case DiscoveryType.indie:
+        return Icons.lightbulb_outline;
+      case DiscoveryType.upcoming:
+        return Icons.schedule;
+    }
+  }
+
+  Color get _iconColor {
+    switch (widget.discoveryType) {
+      case DiscoveryType.trending:
+        return Colors.orange;
+      case DiscoveryType.indie:
+        return Colors.purple;
+      case DiscoveryType.upcoming:
+        return Colors.blue;
+    }
+  }
+
+  void _onVisibilityChanged(VisibilityInfo info) {
+    if (!_hasTriggeredLoad &&
+        info.visibleFraction >= widget.visibilityThreshold) {
+      setState(() {
+        _hasTriggeredLoad = true;
+      });
+      context.read<DiscoveryGamesBloc>().add(
+        DiscoveryGamesLoadRequested(widget.discoveryType),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return VisibilityDetector(
+      key: Key('lazy_discovery_${widget.discoveryType.queryParam}'),
+      onVisibilityChanged: _onVisibilityChanged,
+      child: BlocBuilder<DiscoveryGamesBloc, DiscoveryGamesState>(
+        buildWhen: (previous, current) {
+          // Only rebuild when the state for this specific discovery type changes
+          final prevTypeState = previous.getStateForType(widget.discoveryType);
+          final currTypeState = current.getStateForType(widget.discoveryType);
+          return prevTypeState != currTypeState;
+        },
+        builder: (context, state) {
+          final typeState = state.getStateForType(widget.discoveryType);
+
+          // Show placeholder if load hasn't been triggered yet
+          if (!_hasTriggeredLoad) {
+            return _WidgetLoading(
+              title: widget.discoveryType.localizedName(context),
+              icon: widget.icon ?? _defaultIcon,
+              iconColor: _iconColor,
+            );
+          }
+
+          if (typeState.isLoading && !typeState.hasGames) {
+            return _WidgetLoading(
+              title: widget.discoveryType.localizedName(context),
+              icon: widget.icon ?? _defaultIcon,
+              iconColor: _iconColor,
+            );
+          }
+
+          if (typeState.status == DiscoveryGamesStatus.failure &&
+              !typeState.hasGames) {
+            return _WidgetError(
+              title: widget.discoveryType.localizedName(context),
+              icon: widget.icon ?? _defaultIcon,
+              iconColor: _iconColor,
+              message: typeState.errorMessage ?? 'Failed to load games',
+              onRetry: () => context.read<DiscoveryGamesBloc>().add(
+                DiscoveryGamesLoadRequested(widget.discoveryType),
+              ),
+            );
+          }
+
+          if (!typeState.hasGames) {
+            return const SizedBox.shrink();
+          }
+
+          return _WidgetContent(
+            title: widget.discoveryType.localizedName(context),
+            icon: widget.icon ?? _defaultIcon,
+            iconColor: _iconColor,
+            games: typeState.games,
+            discoveryType: widget.discoveryType,
+          );
+        },
+      ),
     );
   }
 }
