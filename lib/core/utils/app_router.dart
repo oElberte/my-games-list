@@ -16,9 +16,13 @@ import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_bloc.dart';
 import 'package:my_games_list/features/auth/sign_up/sign_up_screen.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_event.dart';
+import 'package:my_games_list/features/games/bloc/discovery_games_bloc.dart';
+import 'package:my_games_list/features/games/bloc/discovery_games_event.dart';
 import 'package:my_games_list/features/games/bloc/game_details_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_details_event.dart';
 import 'package:my_games_list/features/games/bloc/game_search_bloc.dart';
+import 'package:my_games_list/features/games/discovery_game_model.dart';
+import 'package:my_games_list/features/games/discovery_games_screen.dart';
 import 'package:my_games_list/features/games/game_details_screen.dart';
 import 'package:my_games_list/features/games/game_search_screen.dart';
 import 'package:my_games_list/features/games/games_repository.dart';
@@ -58,6 +62,7 @@ class AppRouter {
   static const String searchPath = '/search';
   static const String gameDetailsPath = '/games/:id';
   static const String videoPlayerPath = '/video/:videoId';
+  static const String discoveryPath = '/discovery/:type';
 
   /// Route names for named navigation
   static const String splashName = 'splash';
@@ -70,6 +75,7 @@ class AppRouter {
   static const String searchName = 'search';
   static const String gameDetailsName = 'gameDetails';
   static const String videoPlayerName = 'videoPlayer';
+  static const String discoveryName = 'discovery';
 
   /// Creates the GoRouter configuration for the app.
   /// Auth-specific dependencies are registered lazily when routes are accessed.
@@ -159,7 +165,7 @@ class AppRouter {
                     // Register games repository lazily (only once, stays in memory)
                     _ensureGamesRepositoryRegistered();
 
-                    // Provide both HomeBloc and AnticipatedGamesBloc (auto-disposed by BlocProvider)
+                    // Provide HomeBloc, AnticipatedGamesBloc, and DiscoveryGamesBloc (auto-disposed by BlocProvider)
                     return MultiBlocProvider(
                       providers: [
                         BlocProvider(
@@ -170,6 +176,16 @@ class AppRouter {
                           create: (_) => AnticipatedGamesBloc(
                             gamesRepository: sl<GamesRepository>(),
                           )..add(const AnticipatedGamesLoadRequested()),
+                        ),
+                        BlocProvider(
+                          create: (_) =>
+                              DiscoveryGamesBloc(
+                                gamesRepository: sl<GamesRepository>(),
+                              )..add(
+                                const DiscoveryGamesLoadRequested(
+                                  DiscoveryType.trending,
+                                ),
+                              ),
                         ),
                       ],
                       child: const HomeScreen(),
@@ -187,7 +203,7 @@ class AppRouter {
                   name: gamesName,
                   builder: (context, state) {
                     // Register library repository lazily
-                    _ensureLibraryRepositoryRegistered();
+                    _ensureLibraryRepositoryAndBlocRegistered();
 
                     // Get the current user ID from AuthBloc
                     final authState = sl<AuthBloc>().state;
@@ -253,7 +269,7 @@ class AppRouter {
 
             // Register games repository lazily (only once, stays in memory)
             _ensureGamesRepositoryRegistered();
-            _ensureLibraryRepositoryRegistered();
+            _ensureLibraryRepositoryAndBlocRegistered();
 
             // Provide GameDetailsBloc to the screen (auto-disposed by BlocProvider)
             return MultiBlocProvider(
@@ -289,6 +305,27 @@ class AppRouter {
             return VideoPlayerScreen(videoId: videoId, title: title);
           },
         ),
+
+        // Discovery Games Route (outside bottom navigation)
+        GoRoute(
+          path: discoveryPath,
+          name: discoveryName,
+          builder: (context, state) {
+            final typeParam = state.pathParameters['type']!;
+            final discoveryType = DiscoveryType.fromQueryParam(typeParam);
+
+            // Register games repository lazily (only once, stays in memory)
+            _ensureGamesRepositoryRegistered();
+
+            // Provide DiscoveryGamesBloc to the screen (auto-disposed by BlocProvider)
+            return BlocProvider(
+              create: (_) =>
+                  DiscoveryGamesBloc(gamesRepository: sl<GamesRepository>())
+                    ..add(DiscoveryGamesLoadRequested(discoveryType)),
+              child: DiscoveryGamesScreen(discoveryType: discoveryType),
+            );
+          },
+        ),
       ],
       errorBuilder: (context, state) => _ErrorScreen(error: state.error),
       debugLogDiagnostics: true,
@@ -320,10 +357,10 @@ class AppRouter {
     }
   }
 
-  /// Ensures LibraryRepository is registered in the service locator.
+  /// Ensures LibraryRepository and LibraryBloc are registered in the service locator.
   /// This is called lazily when games (library) route is accessed.
   /// The repository stays registered as a singleton for API calls.
-  static void _ensureLibraryRepositoryRegistered() {
+  static void _ensureLibraryRepositoryAndBlocRegistered() {
     if (!sl.isRegistered<LibraryRepository>()) {
       sl.registerLazySingleton<LibraryRepository>(
         () => LibraryRepository(httpClient: sl<IHttpClient>()),
