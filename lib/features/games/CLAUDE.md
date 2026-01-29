@@ -148,6 +148,118 @@ Manages game search with debouncing, infinite scroll pagination, and offset limi
 - **Error Handling**: Keeps existing games on load more failure
 - **Lifecycle**: Cancels debounce timer on bloc disposal
 
+**`DiscoveryGamesBloc`**
+
+Manages discovery games (trending, indie, upcoming) with pagination and view mode toggle.
+
+**Events**:
+
+- `DiscoveryGamesLoadRequested(DiscoveryType type)`: Initial load of discovery games
+- `DiscoveryGamesLoadMore`: Load next page of results (infinite scroll)
+- `DiscoveryGamesViewModeToggled`: Toggle between grid and list view
+- `DiscoveryGamesRefreshRequested`: Refresh games (pull-to-refresh)
+
+**State**: `DiscoveryGamesState`
+
+- `status`: Enum (initial, loading, success, failure, loadingMore)
+- `games`: List of discovery games
+- `discoveryType`: Current discovery type (trending, indie, upcoming)
+- `viewMode`: Current view mode (grid, list)
+- `errorMessage`: Error message for failure state
+- `hasMore`: Boolean indicating more results available
+- `currentOffset`: Current pagination offset
+- `offsetLimitReached`: Boolean for 10k offset limit
+
+**Business Logic**:
+
+- **Discovery Types**: trending (popularity), indie (genre), upcoming (unreleased with hype)
+- **Pagination**: 20 results per page, offset-based
+- **View Toggle**: Grid (3 columns) or List view persistence
+- **Cache**: Backend caches results for 1 hour per type/offset/limit
+- **Error Handling**: Keeps existing games on load more failure
+- **Offset Limit**: IGDB API limits offset to 10,000 results
+
+### Discovery Models (`discovery_game_model.dart`)
+
+Domain models for discovery games functionality:
+
+- **`DiscoveryType`**: Enum for discovery categories
+  - `trending`: Games sorted by popularity
+  - `indie`: Indie genre games sorted by rating
+  - `upcoming`: Unreleased games sorted by hype
+  - **Methods**: `queryParam`, `displayName`, `fromQueryParam()`
+
+- **`DiscoveryGame`**: Represents a game from discovery results
+  - `id`: Game identifier
+  - `name`: Game title
+  - `coverUrl`: Cover image URL (optional)
+  - `totalRating`: IGDB rating 0-100 (optional)
+  - **Computed Properties**:
+    - `ratingPercentage`: Formatted rating (e.g., "93%")
+    - `hasRating`: Boolean for rating availability
+
+- **`DiscoveryGamesResponse`**: API response wrapper with pagination
+  - `games`: List of discovery results
+  - `type`: Discovery type string
+  - `totalCount`: Number of results in response
+  - `hasMore`: Boolean indicating more results
+  - `offset`: Current offset value
+  - `limit`: Page size
+
+### Discovery Widgets
+
+**`DiscoveryGamesWidget`** (`widgets/discovery_games_widget.dart`)
+
+Horizontal scrolling widget for home screen.
+
+**Features**:
+
+- Header with icon, title (based on discovery type), and "See All" button
+- Horizontal ListView of game tiles
+- Loading, error, and empty states
+- Navigates to full discovery screen on "See All" tap
+
+**`DiscoveryGameTile`** (`widgets/discovery_game_tile.dart`)
+
+Grid tile widget for discovery games.
+
+**Layout**:
+
+- Cover image with gradient overlay
+- Rating badge (color-coded: green > yellow > red)
+- Game name at bottom
+- Rounded corners with shadow
+
+**Features**:
+
+- Cached network images
+- Placeholder icon for missing covers
+- Material 3 design
+- Navigates to game details on tap
+
+**`DiscoveryGameListTile`** (`widgets/discovery_game_tile.dart`)
+
+List tile variant for discovery games.
+
+**Layout**:
+
+- Horizontal card (cover left, info right)
+- Rating badge next to title
+- Chevron arrow on right
+
+**`DiscoveryGamesScreen`** (`discovery_games_screen.dart`)
+
+Full screen for browsing discovery games.
+
+**Features**:
+
+- AppBar with title and grid/list toggle button
+- Infinite scroll pagination (triggers at 90% scroll)
+- Pull-to-refresh
+- GridView (3 columns) or ListView based on view mode
+- Loading, error, and empty states
+- Offset limit reached message
+
 ### UI Components
 
 **`GameSearchScreen`** (`game_search_screen.dart`)

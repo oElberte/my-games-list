@@ -1,112 +1,136 @@
 # My Games List
 
-A Flutter application for managing your personal games collection with favorites and preferences.
+A Flutter application for managing your personal games collection, discovering new games, and tracking your gaming journey.
 
 ## Overview
 
 My Games List is a cross-platform mobile application built with Flutter that allows users to:
 
-- Browse and discover games
+- Discover upcoming and anticipated games via IGDB integration
+- Track games in a personal library with status, scores, and playtime
 - Mark games as favorites
+- Search and browse detailed game information
 - Manage personal preferences and settings
-- Authenticate and maintain personal lists
-- Toggle between light and dark themes
 
 ## Features
 
-### 🎮 Game Management
+### 🎮 Game Discovery
 
-- Browse a curated list of popular games
-- View detailed game information including descriptions and images
-- Add/remove games from your favorites list
-- Persistent favorites storage across app sessions
+- Browse most anticipated upcoming games
+- Search games with real-time results
+- View detailed game information including:
+  - Cover art and screenshots
+  - Trailers and videos
+  - Genres, platforms, and release dates
+  - Involved companies (developers/publishers)
+  - Similar games recommendations
+
+### 📚 Game Library
+
+- Add games to your personal library
+- Track game status: Planned, Playing, Finished, Dropped, On Hold
+- Record scores (0-100), playtime, and difficulty
+- Mark games as favorites
+- Filter library by status or favorites
+- Platform-specific tracking
 
 ### 🔐 User Authentication
 
-- Secure user login and registration
-- Persistent authentication state
-- User profile management
+- Secure user registration and login
+- JWT-based authentication
+- Persistent session management
 
 ### ⚙️ Settings & Preferences
 
 - Toggle between light and dark themes
-- Preference persistence across app restarts
+- Multi-language support (English/Portuguese)
 - User-friendly settings interface
-
-### 🌐 Web Integration
-
-- Built-in web view for additional content
-- Seamless navigation between native and web content
 
 ## Architecture
 
 ### State Management
 
-- **MobX**: Reactive state management for real-time UI updates
-- **Stores**: Organized business logic with AuthStore, HomeStore, and SettingsStore
-- **Observables**: Automatic UI updates when data changes
+- **Flutter BLoC**: Predictable state management with events and states
+- **Cubit**: Simplified BLoC for simpler state scenarios
+- **Equatable**: Value equality for state comparisons
 
 ### Dependency Injection
 
 - **GetIt**: Service locator pattern for dependency management
-- **Service Layer**: Clean separation of concerns with abstract interfaces
+- **Interface Segregation**: Abstract interfaces for testability
 
 ### Navigation
 
 - **GoRouter**: Declarative routing with authentication guards
-- **Route Protection**: Automatic redirection based on authentication state
+- **StatefulShellRoute**: Bottom navigation with state preservation
+- **Route Protection**: Automatic redirection based on auth state
 
-### Data Persistence
+### Data Layer
 
-- **SharedPreferences**: Local storage for user preferences and favorites
-- **JSON Serialization**: Type-safe data models with automatic serialization
+- **Dio**: HTTP client for API communication
+- **Repository Pattern**: Clean separation of data sources
+- **SharedPreferences**: Local storage for preferences
+
+### Internationalization
+
+- **Flutter Localizations**: Built-in i18n support
+- **ARB Files**: Localized strings for English and Portuguese
 
 ## Project Structure
 
 ```
 lib/
-├── main.dart                 # Application entry point
-├── models/                   # Data models
-│   ├── user_model.dart      # User data structure
-│   └── item_model.dart      # Game item structure
-├── services/                 # Service layer
-│   ├── local_storage_service.dart      # Storage abstraction
-│   └── shared_preferences_service.dart # SharedPreferences implementation
-├── stores/                   # MobX state management
-│   ├── auth_store.dart      # Authentication state
-│   ├── home_store.dart      # Games and favorites state
-│   └── settings_store.dart  # User preferences state
-├── ui/                      # User interface
-│   ├── login_screen.dart    # Authentication interface
-│   ├── home_screen.dart     # Main games list
-│   ├── settings_screen.dart # User preferences
-│   └── webview_screen.dart  # Web content viewer
-└── config/
-    └── app_router.dart      # Navigation configuration
+├── main.dart                    # Application entry point
+├── core/                        # Shared/core functionality
+│   ├── data/                    # HTTP client, API configuration
+│   ├── domain/                  # Shared models and interfaces
+│   └── utils/                   # Extensions, router, environment
+├── features/                    # Feature modules
+│   ├── auth/                    # Authentication
+│   │   ├── data/               # Auth repository implementation
+│   │   ├── domain/             # User model, auth interfaces
+│   │   └── presentation/       # BLoC, screens, widgets
+│   ├── games/                   # Game discovery & details
+│   │   ├── data/               # Games repository, IGDB integration
+│   │   ├── domain/             # Game models
+│   │   └── presentation/       # Search, details screens
+│   ├── home/                    # Home dashboard
+│   ├── library/                 # User's game library
+│   │   ├── data/               # Library repository
+│   │   ├── domain/             # Library entry models
+│   │   └── presentation/       # Library BLoC, widgets
+│   ├── profile/                 # User profile
+│   ├── settings/                # App settings
+│   └── splash/                  # Initial loading
+└── l10n/                        # Localization files
+    ├── app_en.arb              # English strings
+    └── app_pt.arb              # Portuguese strings
 
-test/                        # Comprehensive test suite
-├── models/                  # Model tests
-├── stores/                  # Store tests
-├── services/                # Service tests
-├── ui/                      # UI widget tests
-└── mocks/                   # Test utilities
+test/                            # Test suite
+├── core/                        # Core tests
+├── features/                    # Feature tests
+│   ├── auth/                   # Auth BLoC and repository tests
+│   ├── library/                # Library BLoC and repository tests
+│   └── ...
+└── mocks/                       # Test utilities and mocks
 ```
 
 ## Technologies Used
 
 ### Core Framework
 
-- **Flutter**: Multi-platform UI toolkit
-- **Dart**: Programming language
+- **Flutter 3.8+**: Multi-platform UI toolkit
+- **Dart 3.8+**: Programming language
 
 ### State Management
 
-- **MobX**: Reactive state management
-- **MobX Codegen**: Code generation for MobX
+- **flutter_bloc**: BLoC pattern implementation
+- **bloc**: Core BLoC library
+- **equatable**: Value equality
 
-### Dependency Injection
+### Networking
 
-- **GetIt**: Service locator
+- **Dio**: HTTP client with interceptors
 
 ### Navigation
 
@@ -116,35 +140,44 @@ test/                        # Comprehensive test suite
 
 - **SharedPreferences**: Local data persistence
 
-### Web Integration
+### UI Components
 
-- **WebView Flutter**: In-app web browser
+- **cached_network_image**: Efficient image loading with caching
+- **carousel_slider**: Image carousels
+- **flutter_rating_bar**: Rating display
+- **youtube_player_iframe**: Video playback
+
+### Utilities
+
+- **share_plus**: Native sharing functionality
+- **url_launcher**: External URL handling
+- **validatorless**: Form validation
 
 ### Development Tools
 
-- **Build Runner**: Code generation
-- **Flutter Lints**: Dart linting rules
+- **flutter_lints**: Dart linting rules
+- **bloc_test**: BLoC testing utilities
+- **mocktail**: Mocking framework
 
 ## Getting Started
 
 ### Prerequisites
 
-- **FVM (Flutter Version Manager)** - Recommended for managing Flutter SDK versions
-- Flutter SDK 3.24.0 or later (managed via FVM)
-- Dart SDK 3.5.0 or later (comes with Flutter)
+- **FVM (Flutter Version Manager)** - Required for managing Flutter SDK versions
+- Flutter SDK 3.8+ (managed via FVM)
+- Dart SDK 3.8+ (comes with Flutter)
 - Android Studio / VS Code with Flutter extensions
 - Android SDK for Android development
 - Xcode for iOS development (macOS only)
 
-### FVM Setup (Recommended)
+### FVM Setup (Required)
 
-**FVM (Flutter Version Manager)** allows you to easily manage multiple Flutter SDK versions and ensures consistent development environments across your team.
-
-#### Verify Installation
+This project uses FVM to ensure consistent Flutter versions across all developers.
 
 ```bash
+# Verify FVM installation
 fvm --version
-fvm doctor  # Diagnose any issues
+fvm doctor
 ```
 
 ### Installation
@@ -153,17 +186,15 @@ fvm doctor  # Diagnose any issues
 
    ```bash
    git clone <repository-url>
-   cd my_games_list
+   cd my_games_list/app
    ```
 
 2. **Set up Flutter SDK version**
 
    ```bash
    # Install and use the project's Flutter version
-   fvm use 3.35.4
-
-   # This creates .fvmrc and configures the project
-   # VS Code will automatically detect the FVM configuration
+   fvm install
+   fvm use
    ```
 
 3. **Install dependencies**
@@ -172,10 +203,10 @@ fvm doctor  # Diagnose any issues
    fvm flutter pub get
    ```
 
-4. **Generate code**
+4. **Generate localization files**
 
    ```bash
-   fvm flutter packages pub run build_runner build
+   fvm flutter gen-l10n
    ```
 
 5. **Run the application**
@@ -183,64 +214,55 @@ fvm doctor  # Diagnose any issues
    fvm flutter run
    ```
 
-### Development Setup
+### Environment Configuration
 
-1. **Code Generation** (for MobX stores)
+Create a `.env` file in the app root:
 
-   ```bash
-   # One-time generation
-   fvm flutter packages pub run build_runner build
+```
+API_BASE_URL=http://localhost:8080/api/v1
+WEB_BASE_URL=https://mygameslist.com
+```
 
-   # Watch mode for development
-   fvm flutter packages pub run build_runner watch
-   ```
-
-2. **Running Tests**
-
-   ```bash
-   # Run all tests
-   fvm flutter test
-
-   # Run with coverage
-   fvm flutter test --coverage
-   ```
-
-3. **Code Analysis**
-   ```bash
-   fvm flutter analyze
-   ```
-
-## Testing
-
-The project includes comprehensive test coverage:
-
-### Test Types
-
-- **Unit Tests**: Model and service logic
-- **Widget Tests**: UI component behavior
-- **Store Tests**: State management logic
-- **Integration Tests**: End-to-end workflows
+## Development
 
 ### Running Tests
 
 ```bash
-# All tests
+# Run all tests
 fvm flutter test
 
-# Specific test file
-fvm flutter test test/stores/auth_store_test.dart
+# Run specific test file
+fvm flutter test test/features/library/bloc/library_bloc_test.dart
 
-# With coverage report
+# Run with coverage
 fvm flutter test --coverage
+
+# Generate coverage report (requires lcov)
+genhtml coverage/lcov.info -o coverage/html
 ```
 
-### Test Coverage
+### Code Generation
 
-- 75+ test cases covering all major functionality
-- Model serialization and validation
-- Store state management and persistence
-- Service layer implementations
-- UI widget behavior
+```bash
+# Generate localization files
+fvm flutter gen-l10n
+
+# Or use Makefile
+make l10n
+```
+
+### Code Analysis
+
+```bash
+fvm flutter analyze
+```
+
+### Project Conventions
+
+- **Commits**: Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`, etc.)
+- **Naming**: PascalCase for classes, snake_case for files, camelCase for variables
+- **Testing**: Mandatory for all BLoC events and repository methods
+- **Localization**: Always use `context.l10n.stringKey` for user-facing text
 
 ## Building for Production
 
@@ -264,89 +286,47 @@ fvm flutter build ios --release
 fvm flutter build web --release
 ```
 
-## Configuration
+## API Integration
 
-### Environment Setup
+This app connects to a Go backend API that integrates with IGDB (Internet Game Database) for game information.
 
-The app uses service locator pattern for dependency injection. All services are registered in `main.dart`:
+### Key Endpoints
 
-```dart
-void setupServiceLocator() {
-  GetIt.instance.registerLazySingleton<LocalStorageService>(
-    () => SharedPreferencesService(),
-  );
-  // Additional services...
-}
-```
+- `/auth/*` - Authentication (signup, signin, logout)
+- `/games/*` - Game discovery and search
+- `/library/*` - User's game library management
+- `/users/:id/library` - Public library viewing
 
-### Router Configuration
-
-Navigation is handled by GoRouter with authentication guards:
-
-```dart
-final appRouter = GoRouter(
-  initialLocation: '/login',
-  redirect: (context, state) {
-    // Authentication logic
-  },
-  routes: [
-    // Route definitions
-  ],
-);
-```
-
-## Performance Considerations
-
-### State Management
-
-- MobX provides efficient reactive updates
-- Computed values for derived state
-- Automatic disposal of observers
-
-### Storage
-
-- Asynchronous operations for non-blocking UI
-- Efficient JSON serialization
-- Minimal storage footprint
-
-### UI
-
-- Material 3 design system
-- Responsive layouts
-- Smooth animations and transitions
+For API documentation, see the [API README](../api/README.md).
 
 ## Contributing
 
 ### Code Style
 
 - Follow Dart/Flutter conventions
-- Use `flutter analyze` to check code quality
+- Use `fvm flutter analyze` to check code quality
 - Maintain test coverage for new features
+- Always use localized strings for UI text
 
 ### Development Workflow
 
-1. Create feature branch
+1. Create feature branch from `main`
 2. Implement changes with tests
 3. Run `fvm flutter analyze` and `fvm flutter test`
 4. Submit pull request
 
-### Commit Messages
+### Adding New Features
 
-Follow conventional commit format:
-
-- `feat: add new feature`
-- `fix: resolve bug`
-- `test: add test coverage`
-- `docs: update documentation`
+1. Create feature directory under `lib/features/<feature_name>/`
+2. Add `CLAUDE.md` documentation file
+3. Implement Clean Architecture layers (data, domain, presentation)
+4. Write comprehensive tests
+5. Update localization files if needed
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Support
-
-For questions, issues, or contributions, please refer to the project's issue tracker or contact the development team.
-
 ---
 
-Built with ❤️ using Flutter
+Built with ❤️ using Flutter and BLoC
