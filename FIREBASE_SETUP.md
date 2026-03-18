@@ -58,6 +58,8 @@ cp android/app/google-services.json firebase/production/google-services.json
 cp ios/Runner/GoogleService-Info.plist firebase/production/GoogleService-Info.plist
 ```
 
+⚠️ **Important:** After completing both configure runs, your native config files (`android/app/google-services.json` and `ios/Runner/GoogleService-Info.plist`) now point to production. Run `make setup-staging` (or manually copy the staging files back) before doing local development to avoid using the production Firebase project.
+
 ## 5. iOS — Add REVERSED_CLIENT_ID URL Scheme
 
 For Google Sign-In on iOS, you must add the `REVERSED_CLIENT_ID` URL scheme to `ios/Runner/Info.plist`. Find the value in `firebase/staging/GoogleService-Info.plist` (or production) under the key `REVERSED_CLIENT_ID`, then add:
@@ -78,7 +80,7 @@ For Google Sign-In on iOS, you must add the `REVERSED_CLIENT_ID` URL scheme to `
 
 ## 6. Using the Makefile
 
-The `Makefile` at the root of `app/` manages copying the correct native config files based on the target environment. See the Makefile targets for `run-staging`, `run-production`, `build-staging`, and `build-production`.
+The `Makefile` at the root of `app/` manages copying the correct native config files based on the target environment. See the `app/Makefile` for `setup-staging`, `run-staging`, `run-production`, `build-staging`, and `build-production` targets.
 
 ## 7. Go Backend — Service Account
 
