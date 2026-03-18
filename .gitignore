@@ -49,3 +49,16 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+
+# Firebase environment config files
+firebase/staging/google-services.json
+firebase/staging/GoogleService-Info.plist
+firebase/production/google-services.json
+firebase/production/GoogleService-Info.plist
+
+# Firebase native config files (managed by Makefile)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# Production env
+.env.production
