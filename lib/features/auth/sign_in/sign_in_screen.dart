@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -189,6 +192,73 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 24),
+
+                    // Social Sign-In Divider
+                    Row(
+                      children: [
+                        const Expanded(child: Divider()),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Text(
+                            context.l10n.orContinueWith,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                        const Expanded(child: Divider()),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Google Sign-In Button
+                    BlocBuilder<SignInBloc, SignInState>(
+                      builder: (context, state) {
+                        final isLoading = state is SignInLoading;
+                        return OutlinedButton.icon(
+                          onPressed: isLoading
+                              ? null
+                              : () => context.read<SignInBloc>().add(
+                                    const GoogleSignInRequested(),
+                                  ),
+                          icon: const Icon(Icons.g_mobiledata, size: 24),
+                          label: Text(context.l10n.signInWithGoogle),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+
+                    // Apple Sign-In Button (iOS and Web only)
+                    if (kIsWeb || Platform.isIOS) ...[
+                      const SizedBox(height: 12),
+                      BlocBuilder<SignInBloc, SignInState>(
+                        builder: (context, state) {
+                          final isLoading = state is SignInLoading;
+                          return OutlinedButton.icon(
+                            onPressed: isLoading
+                                ? null
+                                : () => context.read<SignInBloc>().add(
+                                      const AppleSignInRequested(),
+                                    ),
+                            icon: const Icon(Icons.apple, size: 24),
+                            label: Text(context.l10n.signInWithApple),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ],
                 ),
               ),

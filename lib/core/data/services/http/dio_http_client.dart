@@ -111,6 +111,35 @@ class DioHttpClient implements IHttpClient {
   }
 
   @override
+  Future<ApiResponse<T>> patch<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    try {
+      final response = await _dio.patch<T>(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+      );
+      return ApiResponse.success(response.data as T);
+    } on DioException catch (e) {
+      final apiError = _handleError(e);
+      return ApiResponse.failure(apiError);
+    } catch (e) {
+      return ApiResponse.failure(
+        const ApiError(
+          name: 'Unexpected Error',
+          message: 'An unexpected error occurred',
+          action: 'Please try again later',
+          statusCode: 500,
+          errorCode: 'error.unexpected',
+        ),
+      );
+    }
+  }
+
+  @override
   Future<ApiResponse<T>> delete<T>(
     String path, {
     Map<String, dynamic>? queryParameters,

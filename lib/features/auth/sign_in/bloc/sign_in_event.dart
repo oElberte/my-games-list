@@ -17,3 +17,13 @@ final class SignInSubmitted extends SignInEvent {
   @override
   List<Object?> get props => [email, password];
 }
+
+/// Event triggered when the user requests Google sign-in.
+final class GoogleSignInRequested extends SignInEvent {
+  const GoogleSignInRequested();
+}
+
+/// Event triggered when the user requests Apple sign-in.
+final class AppleSignInRequested extends SignInEvent {
+  const AppleSignInRequested();
+}

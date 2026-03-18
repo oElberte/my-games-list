@@ -517,6 +517,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Upcoming Games'**
   String get discoveryUpcoming;
+
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get signInWithGoogle;
+
+  /// No description provided for @signInWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get signInWithApple;
+
+  /// No description provided for @orContinueWith.
+  ///
+  /// In en, this message translates to:
+  /// **'or continue with'**
+  String get orContinueWith;
 }
 
 class _AppLocalizationsDelegate

@@ -226,4 +226,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get discoveryUpcoming => 'Upcoming Games';
+
+  @override
+  String get signInWithGoogle => 'Continuar com Google';
+
+  @override
+  String get signInWithApple => 'Continuar com Apple';
+
+  @override
+  String get orContinueWith => 'ou continuar com';
 }

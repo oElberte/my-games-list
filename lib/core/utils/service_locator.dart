@@ -4,6 +4,7 @@ import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/core/data/services/storage/local_storage_service.dart';
 import 'package:my_games_list/core/data/services/storage/shared_preferences_service.dart';
 import 'package:my_games_list/core/services/analytics_service.dart';
+import 'package:my_games_list/core/services/notification_service.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/home/bloc/home_bloc.dart';
 import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
@@ -44,6 +45,11 @@ Future<void> _registerCoreServices() async {
 
   // Register Analytics service as lazy singleton
   sl.registerLazySingleton<AnalyticsService>(() => AnalyticsService());
+
+  // Register NotificationService as lazy singleton
+  sl.registerLazySingleton<NotificationService>(
+    () => NotificationService(httpClient: sl<IHttpClient>()),
+  );
 }
 
 /// Restores the authentication token from storage to HTTP client if it exists.

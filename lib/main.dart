@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_games_list/core/services/notification_service.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/env.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
@@ -66,6 +68,7 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
   late final AuthBloc authBloc;
   late final SettingsBloc settingsBloc;
   late final GoRouter router;
+  StreamSubscription<String>? _notificationNavSubscription;
 
   @override
   void initState() {
@@ -75,10 +78,30 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
     settingsBloc = sl<SettingsBloc>()..add(const SettingsInitialized());
     // Create router once to avoid recreation on theme changes
     router = AppRouter.createRouter();
+
+    // Initialize NotificationService and wire up navigation from tapped notifications
+    _initNotificationService();
+  }
+
+  void _initNotificationService() {
+    final notificationService = sl<NotificationService>();
+
+    // Forward notification tap routes to the GoRouter
+    _notificationNavSubscription = notificationService.navigationStream.listen(
+      (route) => router.go(route),
+    );
+
+    // Initialize the service (request permissions, get token, register listeners).
+    // Called without await so it runs asynchronously and does not block the UI.
+    // Failures are handled internally by the service (e.g. in test environments
+    // where Firebase is not initialized).
+    notificationService.initialize().catchError((_) {});
   }
 
   @override
   void dispose() {
+    _notificationNavSubscription?.cancel();
+    sl<NotificationService>().dispose();
     // Note: These are singletons, but we close them here when the app terminates
     authBloc.close();
     settingsBloc.close();
