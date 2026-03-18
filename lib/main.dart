@@ -1,8 +1,14 @@
+import 'dart:ui';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
+import 'package:my_games_list/core/utils/env.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
@@ -10,14 +16,40 @@ import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
 import 'package:my_games_list/features/settings/bloc/settings_event.dart';
 import 'package:my_games_list/features/settings/bloc/settings_state.dart';
+import 'package:my_games_list/firebase_options_production.dart';
+import 'package:my_games_list/firebase_options_staging.dart';
 import 'package:my_games_list/l10n/app_localizations.dart';
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(
+    options: Env.isProduction
+        ? ProductionFirebaseOptions.currentPlatform
+        : StagingFirebaseOptions.currentPlatform,
+  );
+}
 
 void main() async {
   // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: Env.isProduction
+        ? ProductionFirebaseOptions.currentPlatform
+        : StagingFirebaseOptions.currentPlatform,
+  );
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   // Setup dependency injection (loads env variables and registers global services)
   await setupServiceLocator();
+
+  // Register FCM background message handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // Run the app
   runApp(const MyGamesListApp());
