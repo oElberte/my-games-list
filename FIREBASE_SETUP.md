@@ -11,7 +11,7 @@ In the [Firebase Console](https://console.firebase.google.com/), create two proj
 
 For each project, enable the following services:
 
-- **Authentication** — enable Google and Apple sign-in providers
+- **Authentication** — enable Google sign-in provider
 - **Analytics** — enable Google Analytics
 - **Crashlytics** — enable crash reporting
 - **Cloud Messaging (FCM)** — enable push notifications
@@ -60,23 +60,9 @@ cp ios/Runner/GoogleService-Info.plist firebase/production/GoogleService-Info.pl
 
 ⚠️ **Important:** After completing both configure runs, your native config files (`android/app/google-services.json` and `ios/Runner/GoogleService-Info.plist`) now point to production. Run `make setup-staging` (or manually copy the staging files back) before doing local development to avoid using the production Firebase project.
 
-## 5. iOS — Add REVERSED_CLIENT_ID URL Scheme
+## 5. iOS — REVERSED_CLIENT_ID URL Scheme
 
-For Google Sign-In on iOS, you must add the `REVERSED_CLIENT_ID` URL scheme to `ios/Runner/Info.plist`. Find the value in `firebase/staging/GoogleService-Info.plist` (or production) under the key `REVERSED_CLIENT_ID`, then add:
-
-```xml
-<key>CFBundleURLTypes</key>
-<array>
-  <dict>
-    <key>CFBundleTypeRole</key>
-    <string>Editor</string>
-    <key>CFBundleURLSchemes</key>
-    <array>
-      <string><!-- REVERSED_CLIENT_ID value here --></string>
-    </array>
-  </dict>
-</array>
-```
+The `ios/Runner/Info.plist` file includes a `CFBundleURLTypes` entry required for Google Sign-In on iOS. The `REVERSED_CLIENT_ID` value is automatically updated by the Makefile when you run `make setup-staging` or `make setup-production`, so no manual editing is needed.
 
 ## 6. Using the Makefile
 

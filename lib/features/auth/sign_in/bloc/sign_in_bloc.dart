@@ -9,7 +9,6 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   SignInBloc(this._authRepository) : super(const SignInInitial()) {
     on<SignInSubmitted>(_onSignInSubmitted);
     on<GoogleSignInRequested>(_onGoogleSignInRequested);
-    on<AppleSignInRequested>(_onAppleSignInRequested);
   }
   final AuthRepository _authRepository;
 
@@ -40,19 +39,6 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     emit(const SignInLoading());
     try {
       final authResponse = await _authRepository.signInWithGoogle();
-      emit(SignInSuccess(authResponse));
-    } catch (e) {
-      emit(SignInError(e.toString().replaceFirst('Exception: ', '')));
-    }
-  }
-
-  Future<void> _onAppleSignInRequested(
-    AppleSignInRequested event,
-    Emitter<SignInState> emit,
-  ) async {
-    emit(const SignInLoading());
-    try {
-      final authResponse = await _authRepository.signInWithApple();
       emit(SignInSuccess(authResponse));
     } catch (e) {
       emit(SignInError(e.toString().replaceFirst('Exception: ', '')));

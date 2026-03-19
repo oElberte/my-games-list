@@ -141,42 +141,5 @@ void main() {
         verify(() => mockAuthRepository.signInWithGoogle()).called(1);
       },
     );
-
-    // Apple Sign-In tests
-    blocTest<SignInBloc, SignInState>(
-      'emits [SignInLoading, SignInSuccess] when Apple sign-in succeeds',
-      build: () {
-        when(
-          () => mockAuthRepository.signInWithApple(),
-        ).thenAnswer((_) async => mockAuthResponse);
-        return bloc;
-      },
-      act: (bloc) => bloc.add(const AppleSignInRequested()),
-      expect: () => [
-        const SignInLoading(),
-        const SignInSuccess(mockAuthResponse),
-      ],
-      verify: (_) {
-        verify(() => mockAuthRepository.signInWithApple()).called(1);
-      },
-    );
-
-    blocTest<SignInBloc, SignInState>(
-      'emits [SignInLoading, SignInError] when Apple sign-in fails',
-      build: () {
-        when(
-          () => mockAuthRepository.signInWithApple(),
-        ).thenThrow(Exception('Apple sign-in failed. Please try again.'));
-        return bloc;
-      },
-      act: (bloc) => bloc.add(const AppleSignInRequested()),
-      expect: () => [
-        const SignInLoading(),
-        const SignInError('Apple sign-in failed. Please try again.'),
-      ],
-      verify: (_) {
-        verify(() => mockAuthRepository.signInWithApple()).called(1);
-      },
-    );
   });
 }

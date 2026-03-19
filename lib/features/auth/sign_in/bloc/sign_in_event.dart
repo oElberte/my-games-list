@@ -22,8 +22,3 @@ final class SignInSubmitted extends SignInEvent {
 final class GoogleSignInRequested extends SignInEvent {
   const GoogleSignInRequested();
 }
-
-/// Event triggered when the user requests Apple sign-in.
-final class AppleSignInRequested extends SignInEvent {
-  const AppleSignInRequested();
-}

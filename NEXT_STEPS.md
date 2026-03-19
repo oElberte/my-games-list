@@ -9,6 +9,7 @@
   - Platform
   - Difficulty
   - [] Repeat count
+- [] Refresh Token
 - [] Firebase
   - Push notifications
   - Realtime database for maintenance, current version and etc.

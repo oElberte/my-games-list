@@ -229,8 +229,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInWithGoogle => 'Continue with Google';
 
   @override
-  String get signInWithApple => 'Continue with Apple';
-
-  @override
   String get orContinueWith => 'or continue with';
 }

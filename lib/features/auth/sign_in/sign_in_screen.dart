@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -234,31 +231,6 @@ class _SignInScreenState extends State<SignInScreen> {
                         );
                       },
                     ),
-
-                    // Apple Sign-In Button (iOS and Web only)
-                    if (kIsWeb || Platform.isIOS) ...[
-                      const SizedBox(height: 12),
-                      BlocBuilder<SignInBloc, SignInState>(
-                        builder: (context, state) {
-                          final isLoading = state is SignInLoading;
-                          return OutlinedButton.icon(
-                            onPressed: isLoading
-                                ? null
-                                : () => context.read<SignInBloc>().add(
-                                      const AppleSignInRequested(),
-                                    ),
-                            icon: const Icon(Icons.apple, size: 24),
-                            label: Text(context.l10n.signInWithApple),
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
                   ],
                 ),
               ),

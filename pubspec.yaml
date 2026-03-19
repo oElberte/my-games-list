@@ -36,7 +36,6 @@ dependencies:
   firebase_crashlytics: ^5.0.8
   firebase_messaging: ^16.1.2
   google_sign_in: ^7.2.0
-  sign_in_with_apple: ^7.0.1
   flutter_local_notifications: ^20.1.0
   crypto: ^3.0.7
 

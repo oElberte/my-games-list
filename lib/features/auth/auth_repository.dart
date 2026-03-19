@@ -1,7 +1,3 @@
-import 'dart:convert';
-import 'dart:math';
-
-import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/features/auth/auth_response.dart';
@@ -9,8 +5,6 @@ import 'package:my_games_list/features/auth/domain/social_auth_request.dart';
 import 'package:my_games_list/features/auth/sign_in/sign_in_request.dart';
 import 'package:my_games_list/features/auth/sign_up/sign_up_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-
 /// Implementation of AuthRepository that handles authentication operations
 /// using the HTTP client and local storage.
 class AuthRepository {
@@ -79,34 +73,6 @@ class AuthRepository {
     }
   }
 
-  Future<AuthResponse> signInWithApple() async {
-    try {
-      final rawNonce = _generateNonce();
-      final nonce = _sha256ofString(rawNonce);
-
-      final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-        nonce: nonce,
-      );
-
-      final oauthCredential = OAuthProvider('apple.com').credential(
-        idToken: appleCredential.identityToken,
-        rawNonce: rawNonce,
-      );
-      final userCredential =
-          await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-      final idToken = await userCredential.user?.getIdToken();
-      if (idToken == null) throw Exception('Failed to get Firebase ID token');
-
-      return await _exchangeFirebaseToken('apple', idToken);
-    } catch (e) {
-      throw Exception('Apple sign-in failed. Please try again.');
-    }
-  }
-
   /// Exchanges a Firebase ID token for an app JWT by calling POST /auth/social.
   /// Mirrors the token saving pattern of [signIn] and [signUp] exactly.
   Future<AuthResponse> _exchangeFirebaseToken(
@@ -136,22 +102,6 @@ class AuthRepository {
     _httpClient.setAuthToken(authResponse.token);
 
     return authResponse;
-  }
-
-  String _generateNonce([int length = 32]) {
-    const charset =
-        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
-    final random = Random.secure();
-    return List.generate(
-      length,
-      (_) => charset[random.nextInt(charset.length)],
-    ).join();
-  }
-
-  String _sha256ofString(String input) {
-    final bytes = utf8.encode(input);
-    final digest = sha256.convert(bytes);
-    return digest.toString();
   }
 
   Future<void> saveToken(String token) async {
