@@ -171,61 +171,61 @@ class AppLocalizationsPt extends AppLocalizations {
   String get searchGamesLoadMoreFailed => 'Falha ao carregar mais resultados';
 
   @override
-  String get gameDetailsTitle => 'Game Details';
+  String get gameDetailsTitle => 'Detalhes do Jogo';
 
   @override
-  String get developer => 'Developer';
+  String get developer => 'Desenvolvedor';
 
   @override
-  String get rating => 'Rating';
+  String get rating => 'Avaliação';
 
   @override
-  String get genres => 'Genres';
+  String get genres => 'Gêneros';
 
   @override
-  String get platforms => 'Platforms';
+  String get platforms => 'Plataformas';
 
   @override
-  String get storyline => 'Storyline';
+  String get storyline => 'Enredo';
 
   @override
-  String get summary => 'Summary';
+  String get summary => 'Resumo';
 
   @override
-  String get screenshots => 'Screenshots';
+  String get screenshots => 'Capturas de Tela';
 
   @override
-  String get videos => 'Videos';
+  String get videos => 'Vídeos';
 
   @override
-  String get similarGames => 'Similar Games';
+  String get similarGames => 'Jogos Similares';
 
   @override
-  String get whereToBuy => 'Where to Buy';
+  String get whereToBuy => 'Onde Comprar';
 
   @override
-  String get readMore => 'Read More';
+  String get readMore => 'Ler Mais';
 
   @override
-  String get readLess => 'Read Less';
+  String get readLess => 'Ler Menos';
 
   @override
-  String get noVideosAvailable => 'No videos available';
+  String get noVideosAvailable => 'Nenhum vídeo disponível';
 
   @override
-  String get noScreenshotsAvailable => 'No screenshots available';
+  String get noScreenshotsAvailable => 'Nenhuma captura de tela disponível';
 
   @override
-  String get errorLoadingData => 'Error loading data';
+  String get errorLoadingData => 'Erro ao carregar dados';
 
   @override
-  String get discoveryTrending => 'Trending Now';
+  String get discoveryTrending => 'Em Alta';
 
   @override
-  String get discoveryIndie => 'Indie Gems';
+  String get discoveryIndie => 'Indie';
 
   @override
-  String get discoveryUpcoming => 'Upcoming Games';
+  String get discoveryUpcoming => 'Em Breve';
 
   @override
   String get signInWithGoogle => 'Continuar com Google';
