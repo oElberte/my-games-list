@@ -23,6 +23,7 @@ setup-staging: ## Copy staging Firebase config to native paths
 	cp firebase/staging/GoogleService-Info.plist ios/Runner/GoogleService-Info.plist
 	$(eval REVERSED_ID := $(shell /usr/libexec/PlistBuddy -c "Print :REVERSED_CLIENT_ID" firebase/staging/GoogleService-Info.plist))
 	@/usr/libexec/PlistBuddy -c "Set :CFBundleURLTypes:0:CFBundleURLSchemes:0 $(REVERSED_ID)" ios/Runner/Info.plist
+	cp firebase/staging/firebase.json firebase.json
 	@echo "✅ Staging Firebase config applied."
 
 setup-production: ## Copy production Firebase config to native paths
@@ -40,6 +41,7 @@ setup-production: ## Copy production Firebase config to native paths
 	cp firebase/production/GoogleService-Info.plist ios/Runner/GoogleService-Info.plist
 	$(eval REVERSED_ID := $(shell /usr/libexec/PlistBuddy -c "Print :REVERSED_CLIENT_ID" firebase/production/GoogleService-Info.plist))
 	@/usr/libexec/PlistBuddy -c "Set :CFBundleURLTypes:0:CFBundleURLSchemes:0 $(REVERSED_ID)" ios/Runner/Info.plist
+	cp firebase/production/firebase.json firebase.json
 	@echo "✅ Production Firebase config applied."
 
 # ─── Run ──────────────────────────────────────────────────────────────────────

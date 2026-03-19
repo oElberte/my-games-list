@@ -60,6 +60,7 @@ firebase/production/GoogleService-Info.plist
 # Firebase native config files (managed by Makefile)
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+firebase.json
 
 # Production env
 .env.production

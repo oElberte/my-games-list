@@ -70,14 +70,34 @@ The `Makefile` at the root of `app/` manages copying the correct native config f
 
 ## 7. Go Backend — Service Account
 
-The Go API uses a Firebase Admin SDK service account for token verification. Download the service account JSON from the Firebase Console:
+The Go API uses a Firebase Admin SDK service account for token verification.
+
+**Download service account JSON files** from the Firebase Console for each project:
 
 - **Project Settings → Service Accounts → Generate new private key**
 
-Store the path in `api/.env`:
+Store them in the `api/firebase/` directory (already gitignored via `*service-account*.json`):
 
 ```
-FIREBASE_SERVICE_ACCOUNT_PATH=/path/to/service-account.json
+api/firebase/
+  staging-service-account.json     ← from mygameslist-staging project
+  production-service-account.json  ← from mygameslist-production project
 ```
 
-See `api/.env.example` for the full list of required keys.
+The API supports environment switching via Makefile targets (mirrors the Flutter app):
+
+```bash
+make dev-staging     # or: make dev  — uses api/.env (staging Firebase)
+make dev-production                  # uses api/.env.production (production Firebase)
+```
+
+Both `.env` and `.env.production` are gitignored. `.env` already has staging Firebase vars configured. `.env.production` has production Firebase vars configured — update `JWT_SECRET` and database credentials as needed for your production setup.
+
+For deployed environments (CI/CD, Docker, cloud), set env vars directly — no `.env` file needed:
+
+```
+FIREBASE_PROJECT_ID=mygameslist-production
+FIREBASE_SERVICE_ACCOUNT_PATH=/secrets/production-service-account.json
+```
+
+> **Note:** If `FIREBASE_PROJECT_ID` is left empty, the API starts normally but social sign-in (`POST /auth/social`) will return an error. This is useful for running locally without Firebase.
