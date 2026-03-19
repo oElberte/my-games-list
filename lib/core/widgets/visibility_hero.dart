@@ -13,6 +13,11 @@ import 'package:flutter/widgets.dart';
 /// Uses [RenderBox.localToGlobal] for the check — synchronous, correct for
 /// any combination of vertical/horizontal/carousel scrollables.
 ///
+/// The check is always deferred to [addPostFrameCallback] because
+/// [ScrollPosition.notifyListeners] fires during the `transientCallbacks`
+/// phase, **before** layout runs for the new scroll offset. Deferring ensures
+/// [localToGlobal] reflects the current frame's real positions.
+///
 /// Intended for **source** heroes in scrollable lists. Do NOT use on the
 /// destination hero (e.g. the cover on a details screen): the destination
 /// widget is off-screen while sliding in, which would disable it before the
@@ -37,14 +42,16 @@ class _VisibilityHeroState extends State<VisibilityHero> {
   // Start enabled — hero is active before the first frame is measured.
   bool _isVisible = true;
 
+  // Deduplication flag: ensures at most one post-frame check per frame,
+  // even if multiple ancestor scroll positions fire in the same frame.
+  bool _pendingVisibilityCheck = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _unsubscribe();
     _subscribe();
-    // Schedule the first visibility check after layout is complete so that
-    // findRenderObject() returns a properly sized RenderBox.
-    SchedulerBinding.instance.addPostFrameCallback((_) => _updateVisibility());
+    _scheduleVisibilityCheck();
   }
 
   @override
@@ -63,7 +70,7 @@ class _VisibilityHeroState extends State<VisibilityHero> {
     while (ctx != null) {
       final scrollable = Scrollable.maybeOf(ctx);
       if (scrollable == null) break;
-      scrollable.position.addListener(_updateVisibility);
+      scrollable.position.addListener(_scheduleVisibilityCheck);
       _subscriptions.add(scrollable.position);
       // Move up to the Scrollable widget's own context so the next iteration
       // finds the parent scrollable, not this one again.
@@ -73,9 +80,23 @@ class _VisibilityHeroState extends State<VisibilityHero> {
 
   void _unsubscribe() {
     for (final pos in _subscriptions) {
-      pos.removeListener(_updateVisibility);
+      pos.removeListener(_scheduleVisibilityCheck);
     }
     _subscriptions.clear();
+  }
+
+  /// Queues a single [_updateVisibility] call for the end of the current frame.
+  ///
+  /// Scroll listeners fire before layout, so [localToGlobal] would return
+  /// stale positions if called immediately. Deferring to [addPostFrameCallback]
+  /// ensures layout has already applied the new scroll offset.
+  void _scheduleVisibilityCheck() {
+    if (_pendingVisibilityCheck) return;
+    _pendingVisibilityCheck = true;
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _pendingVisibilityCheck = false;
+      _updateVisibility();
+    });
   }
 
   void _updateVisibility() {
