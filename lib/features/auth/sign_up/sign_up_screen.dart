@@ -60,7 +60,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             AuthUserAuthenticated(state.authResponse.user),
           );
           // Navigate to home on success
-          context.go('/');
+          context.goNamed(AppRouter.homeName);
         } else if (state is SignUpError) {
           // Show error message
           context.showErrorMessage(state.message);

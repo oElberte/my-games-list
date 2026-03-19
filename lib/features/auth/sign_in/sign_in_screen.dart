@@ -53,7 +53,7 @@ class _SignInScreenState extends State<SignInScreen> {
             AuthUserAuthenticated(state.authResponse.user),
           );
           // Navigate to home on success
-          context.go('/');
+          context.goNamed(AppRouter.homeName);
         } else if (state is SignInError) {
           // Show error message
           context.showErrorMessage(state.message);
