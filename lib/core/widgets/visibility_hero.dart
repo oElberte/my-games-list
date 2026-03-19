@@ -1,12 +1,18 @@
 import 'package:flutter/widgets.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-/// A drop-in replacement for [Hero] that only activates the hero animation
-/// when the widget is visible in the viewport.
+/// Wraps a [Hero] with visibility awareness so that only heroes actually
+/// visible in the viewport can participate in flight animations.
 ///
-/// When the widget is fully scrolled off-screen (visibleFraction == 0), it
-/// renders the child directly without a Hero, preventing animations from
-/// flying in from invisible positions when multiple screens show the same item.
+/// Uses [HeroMode] (not conditional Hero removal) so the Hero widget always
+/// stays in the tree — only its `enabled` flag changes. This avoids the
+/// widget-identity problems that occur when Hero is added/removed dynamically.
+///
+/// Intended for **source** heroes in scrollable lists. Do NOT use this on
+/// destination heroes (e.g. the cover on a details screen) because the
+/// destination widget is off-screen while it slides in, which would cause the
+/// first [VisibilityDetector] callback to fire with fraction = 0 and
+/// prematurely disable the hero before the flight completes.
 class VisibilityHero extends StatefulWidget {
   const VisibilityHero({
     super.key,
@@ -22,12 +28,11 @@ class VisibilityHero extends StatefulWidget {
 }
 
 class _VisibilityHeroState extends State<VisibilityHero> {
-  // Stored in State so it remains stable across rebuilds, preventing conflicts
-  // when the same tag appears in multiple places on screen.
+  // UniqueKey stored in State — stable across rebuilds, prevents key conflicts
+  // when the same tag appears in multiple places on the same screen.
   final Key _detectorKey = UniqueKey();
 
-  // Start visible so the Hero is active on first render — avoids missing the
-  // animation on the initial navigation before visibility has been measured.
+  // Start enabled so the first navigation works before visibility is measured.
   bool _isVisible = true;
 
   @override
@@ -40,9 +45,13 @@ class _VisibilityHeroState extends State<VisibilityHero> {
           setState(() => _isVisible = visible);
         }
       },
-      child: _isVisible
-          ? Hero(tag: widget.tag, child: widget.child)
-          : widget.child,
+      // HeroMode.enabled=false tells Flutter's hero controller to skip this
+      // hero entirely — no flight is started and no duplicate-tag error occurs.
+      // The Hero widget itself stays in the tree, keeping widget identity stable.
+      child: HeroMode(
+        enabled: _isVisible,
+        child: Hero(tag: widget.tag, child: widget.child),
+      ),
     );
   }
 }

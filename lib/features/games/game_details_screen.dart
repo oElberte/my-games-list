@@ -392,7 +392,7 @@ class _InfoRow extends StatelessWidget {
       children: [
         // Cover Image with Hero animation
         if (game.hasCover)
-          VisibilityHero(
+          Hero(
             tag: 'game-cover-$gameId',
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
