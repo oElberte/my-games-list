@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/image_utils.dart';
+import 'package:my_games_list/core/widgets/visibility_hero.dart';
 import 'package:my_games_list/features/games/discovery_game_model.dart';
 
 /// A tile widget displaying a discovery game with cover, name, and rating
@@ -49,8 +50,8 @@ class DiscoveryGameTile extends StatelessWidget {
             children: [
               // Cover image
               if (coverUrl != null)
-                Hero(
-                  tag: 'game_cover_${game.id}',
+                VisibilityHero(
+                  tag: 'game-cover-${game.id}',
                   child: CachedNetworkImage(
                     imageUrl: coverUrl,
                     fit: BoxFit.cover,
@@ -200,8 +201,8 @@ class DiscoveryGameListTile extends StatelessWidget {
                   width: 60,
                   height: 80,
                   child: coverUrl != null
-                      ? Hero(
-                          tag: 'game_cover_${game.id}',
+                      ? VisibilityHero(
+                          tag: 'game-cover-${game.id}',
                           child: CachedNetworkImage(
                             imageUrl: coverUrl,
                             fit: BoxFit.cover,

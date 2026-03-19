@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/image_utils.dart';
+import 'package:my_games_list/core/widgets/visibility_hero.dart';
 import 'package:my_games_list/features/games/anticipated_game_model.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_event.dart';
@@ -129,7 +130,7 @@ class _GameCard extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               // Background image with Hero animation
-              Hero(
+              VisibilityHero(
                 tag: 'game-cover-${game.id}',
                 child: _GameCoverImage(coverUrl: highResCoverUrl),
               ),
