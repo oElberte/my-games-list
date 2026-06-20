@@ -22,33 +22,31 @@ import 'package:my_games_list/firebase_options_production.dart';
 import 'package:my_games_list/firebase_options_staging.dart';
 import 'package:my_games_list/l10n/app_localizations.dart';
 
+/// Firebase options for the active build flavor.
+FirebaseOptions get _firebaseOptions => Env.isProduction
+    ? ProductionFirebaseOptions.currentPlatform
+    : StagingFirebaseOptions.currentPlatform;
+
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: Env.isProduction
-        ? ProductionFirebaseOptions.currentPlatform
-        : StagingFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: _firebaseOptions);
 }
 
 void main() async {
   // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: Env.isProduction
-        ? ProductionFirebaseOptions.currentPlatform
-        : StagingFirebaseOptions.currentPlatform,
-  );
+  // Firebase and the service locator are independent; initialize concurrently.
+  await Future.wait([
+    Firebase.initializeApp(options: _firebaseOptions),
+    setupServiceLocator(),
+  ]);
+
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
-
-  // Setup dependency injection (loads env variables and registers global services)
-  await setupServiceLocator();
 
   // Register FCM background message handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);

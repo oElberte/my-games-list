@@ -28,15 +28,7 @@ class AuthRepository {
       throw Exception(response.error?.userMessage ?? 'Sign in failed');
     }
 
-    final authResponse = AuthResponse.fromJson(response.dataOrThrow);
-
-    // Save token to local storage
-    await saveToken(authResponse.token);
-
-    // Set token in HTTP client for subsequent requests
-    _httpClient.setAuthToken(authResponse.token);
-
-    return authResponse;
+    return _persistAuthResponse(AuthResponse.fromJson(response.dataOrThrow));
   }
 
   Future<AuthResponse> signUp(SignUpRequest request) async {
@@ -49,15 +41,7 @@ class AuthRepository {
       throw Exception(response.error?.userMessage ?? 'Sign up failed');
     }
 
-    final authResponse = AuthResponse.fromJson(response.dataOrThrow);
-
-    // Save token to local storage
-    await saveToken(authResponse.token);
-
-    // Set token in HTTP client for subsequent requests
-    _httpClient.setAuthToken(authResponse.token);
-
-    return authResponse;
+    return _persistAuthResponse(AuthResponse.fromJson(response.dataOrThrow));
   }
 
   Future<AuthResponse> signInWithGoogle() async {
@@ -74,7 +58,6 @@ class AuthRepository {
   }
 
   /// Exchanges a Firebase ID token for an app JWT by calling POST /auth/social.
-  /// Mirrors the token saving pattern of [signIn] and [signUp] exactly.
   Future<AuthResponse> _exchangeFirebaseToken(
     String provider,
     String idToken,
@@ -93,14 +76,13 @@ class AuthRepository {
       throw Exception(response.error?.userMessage ?? 'Social sign-in failed');
     }
 
-    final authResponse = AuthResponse.fromJson(response.dataOrThrow);
+    return _persistAuthResponse(AuthResponse.fromJson(response.dataOrThrow));
+  }
 
-    // Save token to local storage
+  /// Persists the auth token to local storage and the HTTP client.
+  Future<AuthResponse> _persistAuthResponse(AuthResponse authResponse) async {
     await saveToken(authResponse.token);
-
-    // Set token in HTTP client for subsequent requests
     _httpClient.setAuthToken(authResponse.token);
-
     return authResponse;
   }
 

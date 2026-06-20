@@ -25,20 +25,15 @@ class DioHttpClient implements IHttpClient {
   }
   late final Dio _dio;
 
-  @override
-  Future<ApiResponse<T>> get<T>(
-    String path, {
-    Map<String, dynamic>? queryParameters,
-  }) async {
+  /// Runs a Dio request and maps the result/errors into an [ApiResponse].
+  Future<ApiResponse<T>> _request<T>(
+    Future<Response<T>> Function() send,
+  ) async {
     try {
-      final response = await _dio.get<T>(
-        path,
-        queryParameters: queryParameters,
-      );
+      final response = await send();
       return ApiResponse.success(response.data as T);
     } on DioException catch (e) {
-      final apiError = _handleError(e);
-      return ApiResponse.failure(apiError);
+      return ApiResponse.failure(_handleError(e));
     } catch (e) {
       return ApiResponse.failure(
         const ApiError(
@@ -51,120 +46,45 @@ class DioHttpClient implements IHttpClient {
       );
     }
   }
+
+  @override
+  Future<ApiResponse<T>> get<T>(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) => _request(() => _dio.get<T>(path, queryParameters: queryParameters));
 
   @override
   Future<ApiResponse<T>> post<T>(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-  }) async {
-    try {
-      final response = await _dio.post<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-      );
-      return ApiResponse.success(response.data as T);
-    } on DioException catch (e) {
-      final apiError = _handleError(e);
-      return ApiResponse.failure(apiError);
-    } catch (e) {
-      return ApiResponse.failure(
-        const ApiError(
-          name: 'Unexpected Error',
-          message: 'An unexpected error occurred',
-          action: 'Please try again later',
-          statusCode: 500,
-          errorCode: 'error.unexpected',
-        ),
-      );
-    }
-  }
+  }) => _request(
+    () => _dio.post<T>(path, data: data, queryParameters: queryParameters),
+  );
 
   @override
   Future<ApiResponse<T>> put<T>(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-  }) async {
-    try {
-      final response = await _dio.put<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-      );
-      return ApiResponse.success(response.data as T);
-    } on DioException catch (e) {
-      final apiError = _handleError(e);
-      return ApiResponse.failure(apiError);
-    } catch (e) {
-      return ApiResponse.failure(
-        const ApiError(
-          name: 'Unexpected Error',
-          message: 'An unexpected error occurred',
-          action: 'Please try again later',
-          statusCode: 500,
-          errorCode: 'error.unexpected',
-        ),
-      );
-    }
-  }
+  }) => _request(
+    () => _dio.put<T>(path, data: data, queryParameters: queryParameters),
+  );
 
   @override
   Future<ApiResponse<T>> patch<T>(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-  }) async {
-    try {
-      final response = await _dio.patch<T>(
-        path,
-        data: data,
-        queryParameters: queryParameters,
-      );
-      return ApiResponse.success(response.data as T);
-    } on DioException catch (e) {
-      final apiError = _handleError(e);
-      return ApiResponse.failure(apiError);
-    } catch (e) {
-      return ApiResponse.failure(
-        const ApiError(
-          name: 'Unexpected Error',
-          message: 'An unexpected error occurred',
-          action: 'Please try again later',
-          statusCode: 500,
-          errorCode: 'error.unexpected',
-        ),
-      );
-    }
-  }
+  }) => _request(
+    () => _dio.patch<T>(path, data: data, queryParameters: queryParameters),
+  );
 
   @override
   Future<ApiResponse<T>> delete<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
-  }) async {
-    try {
-      final response = await _dio.delete<T>(
-        path,
-        queryParameters: queryParameters,
-      );
-      return ApiResponse.success(response.data as T);
-    } on DioException catch (e) {
-      final apiError = _handleError(e);
-      return ApiResponse.failure(apiError);
-    } catch (e) {
-      return ApiResponse.failure(
-        const ApiError(
-          name: 'Unexpected Error',
-          message: 'An unexpected error occurred',
-          action: 'Please try again later',
-          statusCode: 500,
-          errorCode: 'error.unexpected',
-        ),
-      );
-    }
-  }
+  }) => _request(() => _dio.delete<T>(path, queryParameters: queryParameters));
 
   @override
   void setAuthToken(String token) {

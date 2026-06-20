@@ -24,6 +24,9 @@ class NotificationService {
   FirebaseMessaging get _messaging => FirebaseMessaging.instance;
   final _localNotifications = FlutterLocalNotificationsPlugin();
   final _navigationController = StreamController<String>.broadcast();
+  StreamSubscription<String>? _tokenRefreshSubscription;
+  StreamSubscription<RemoteMessage>? _onMessageSubscription;
+  StreamSubscription<RemoteMessage>? _onMessageOpenedAppSubscription;
 
   /// Stream of route strings to navigate to when a notification is tapped.
   Stream<String> get navigationStream => _navigationController.stream;
@@ -44,13 +47,19 @@ class NotificationService {
     if (token != null) await _sendTokenToBackend(token);
 
     // 4. Listen for token refreshes
-    _messaging.onTokenRefresh.listen(_sendTokenToBackend);
+    _tokenRefreshSubscription = _messaging.onTokenRefresh.listen(
+      _sendTokenToBackend,
+    );
 
     // 5. Foreground message handler (show local notification)
-    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+    _onMessageSubscription = FirebaseMessaging.onMessage.listen(
+      _handleForegroundMessage,
+    );
 
     // 6. Notification tap: app was in background, user tapped notification
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
+    _onMessageOpenedAppSubscription = FirebaseMessaging.onMessageOpenedApp.listen(
+      _handleNotificationTap,
+    );
 
     // 7. Notification tap: app was terminated, opened from notification
     final initialMessage = await _messaging.getInitialMessage();
@@ -121,6 +130,9 @@ class NotificationService {
   }
 
   void dispose() {
+    _tokenRefreshSubscription?.cancel();
+    _onMessageSubscription?.cancel();
+    _onMessageOpenedAppSubscription?.cancel();
     _navigationController.close();
   }
 }
