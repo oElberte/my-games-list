@@ -9,7 +9,6 @@ import 'package:my_games_list/features/auth/user_model.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this._storageService) : super(const AuthInitial()) {
     on<AuthStateLoaded>(_onAuthStateLoaded);
-    on<AuthLoginRequested>(_onAuthLoginRequested);
     on<AuthUserAuthenticated>(_onAuthUserAuthenticated);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
   }
@@ -35,31 +34,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (e) {
       await _clearAuthState();
       emit(const AuthUnauthenticated());
-    }
-  }
-
-  Future<void> _onAuthLoginRequested(
-    AuthLoginRequested event,
-    Emitter<AuthState> emit,
-  ) async {
-    emit(const AuthLoading());
-
-    try {
-      // Mock login - in a real app, you'd validate credentials with a server
-      if (event.email.isNotEmpty && event.password.isNotEmpty) {
-        final user = User(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          email: event.email,
-          name: event.email.split('@')[0], // Use email prefix as name
-        );
-
-        await _saveAuthState(user);
-        emit(AuthAuthenticated(user));
-      } else {
-        emit(const AuthError('Email and password cannot be empty'));
-      }
-    } catch (e) {
-      emit(AuthError(e.toString()));
     }
   }
 
