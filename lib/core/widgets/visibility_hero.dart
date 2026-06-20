@@ -23,11 +23,7 @@ import 'package:flutter/widgets.dart';
 /// widget is off-screen while sliding in, which would disable it before the
 /// flight can land.
 class VisibilityHero extends StatefulWidget {
-  const VisibilityHero({
-    super.key,
-    required this.tag,
-    required this.child,
-  });
+  const VisibilityHero({super.key, required this.tag, required this.child});
 
   final Object tag;
   final Widget child;

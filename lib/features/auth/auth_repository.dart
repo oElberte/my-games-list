@@ -5,6 +5,7 @@ import 'package:my_games_list/features/auth/domain/social_auth_request.dart';
 import 'package:my_games_list/features/auth/sign_in/sign_in_request.dart';
 import 'package:my_games_list/features/auth/sign_up/sign_up_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 /// Implementation of AuthRepository that handles authentication operations
 /// using the HTTP client and local storage.
 class AuthRepository {
@@ -46,8 +47,9 @@ class AuthRepository {
 
   Future<AuthResponse> signInWithGoogle() async {
     try {
-      final userCredential = await FirebaseAuth.instance
-          .signInWithProvider(GoogleAuthProvider());
+      final userCredential = await FirebaseAuth.instance.signInWithProvider(
+        GoogleAuthProvider(),
+      );
       final idToken = await userCredential.user?.getIdToken();
       if (idToken == null) throw Exception('Failed to get Firebase ID token');
 

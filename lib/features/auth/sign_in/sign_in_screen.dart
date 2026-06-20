@@ -218,8 +218,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           onPressed: isLoading
                               ? null
                               : () => context.read<SignInBloc>().add(
-                                    const GoogleSignInRequested(),
-                                  ),
+                                  const GoogleSignInRequested(),
+                                ),
                           icon: const Icon(Icons.g_mobiledata, size: 24),
                           label: Text(context.l10n.signInWithGoogle),
                           style: OutlinedButton.styleFrom(

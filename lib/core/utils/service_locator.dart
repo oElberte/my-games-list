@@ -57,7 +57,7 @@ Future<void> _registerCoreServices() async {
 Future<void> _restoreAuthToken() async {
   const tokenKey = 'auth_token';
   final token = sl<SharedPreferences>().getString(tokenKey);
-  
+
   if (token != null && token.isNotEmpty) {
     // Set the token in the HTTP client so subsequent requests are authenticated
     sl<IHttpClient>().setAuthToken(token);
