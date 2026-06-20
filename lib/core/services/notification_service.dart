@@ -16,7 +16,7 @@ import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 /// - Emitting navigation events when a notification tap contains a route
 class NotificationService {
   NotificationService({required IHttpClient httpClient})
-      : _httpClient = httpClient;
+    : _httpClient = httpClient;
 
   final IHttpClient _httpClient;
   // Accessed lazily so construction does not throw in test environments
@@ -33,11 +33,7 @@ class NotificationService {
 
   Future<void> initialize() async {
     // 1. Request permissions
-    await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    await _messaging.requestPermission(alert: true, badge: true, sound: true);
 
     // 2. Initialize flutter_local_notifications for foreground display
     await _initLocalNotifications();
@@ -57,9 +53,8 @@ class NotificationService {
     );
 
     // 6. Notification tap: app was in background, user tapped notification
-    _onMessageOpenedAppSubscription = FirebaseMessaging.onMessageOpenedApp.listen(
-      _handleNotificationTap,
-    );
+    _onMessageOpenedAppSubscription = FirebaseMessaging.onMessageOpenedApp
+        .listen(_handleNotificationTap);
 
     // 7. Notification tap: app was terminated, opened from notification
     final initialMessage = await _messaging.getInitialMessage();
@@ -67,8 +62,9 @@ class NotificationService {
   }
 
   Future<void> _initLocalNotifications() async {
-    const androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
     const iosSettings = DarwinInitializationSettings();
     const initSettings = InitializationSettings(
       android: androidSettings,

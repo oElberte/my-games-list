@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: 3.35.4
+
+jobs:
+  analyze-test:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Provision .env (Flutter asset; real config comes from --dart-define)
+        run: cp .env.example .env
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Verify l10n is up to date
+        run: |
+          flutter gen-l10n
+          git diff --exit-code lib/l10n
+      - name: Format check
+        run: dart format --output=none --set-exit-if-changed lib test
+      - name: Analyze
+        run: flutter analyze
+      - name: Test
+        run: flutter test
+
+  build-web:
+    name: Build Web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Provision .env (Flutter asset; real config comes from --dart-define)
+        run: cp .env.example .env
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Generate l10n
+        run: flutter gen-l10n
+      - name: Build web
+        run: flutter build web --release

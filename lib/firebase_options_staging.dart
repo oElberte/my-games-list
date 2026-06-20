@@ -70,8 +70,8 @@ class StagingFirebaseOptions {
     messagingSenderId: '916696334729',
     projectId: 'mygameslist-staging',
     storageBucket: 'mygameslist-staging.firebasestorage.app',
-    iosClientId: '916696334729-q9j8ogeuukcmcp2adr0l62bvce0smtsq.apps.googleusercontent.com',
+    iosClientId:
+        '916696334729-q9j8ogeuukcmcp2adr0l62bvce0smtsq.apps.googleusercontent.com',
     iosBundleId: 'com.elberte.mygameslist',
   );
-
 }
