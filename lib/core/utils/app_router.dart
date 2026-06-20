@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
+import 'package:my_games_list/core/data/services/storage/token_storage.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/core/widgets/bottom_nav_bar.dart';
@@ -37,7 +38,6 @@ import 'package:my_games_list/features/library/library_repository.dart';
 import 'package:my_games_list/features/profile/profile_screen.dart';
 import 'package:my_games_list/features/settings/settings_screen.dart';
 import 'package:my_games_list/features/splash/splash_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// Application router configuration using GoRouter with modular dependency injection.
 ///
@@ -340,7 +340,7 @@ class AppRouter {
       sl.registerLazySingleton<AuthRepository>(
         () => AuthRepository(
           httpClient: sl<IHttpClient>(),
-          prefs: sl<SharedPreferences>(),
+          tokenStorage: sl<TokenStorage>(),
         ),
       );
     }

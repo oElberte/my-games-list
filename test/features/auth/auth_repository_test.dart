@@ -1,26 +1,29 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
+import 'package:my_games_list/core/data/services/storage/token_storage.dart';
 import 'package:my_games_list/core/domain/models/api_response.dart';
 import 'package:my_games_list/features/auth/auth_repository.dart';
 import 'package:my_games_list/features/auth/auth_response.dart';
 import 'package:my_games_list/features/auth/sign_in/sign_in_request.dart';
 import 'package:my_games_list/features/auth/sign_up/sign_up_request.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MockHttpClient extends Mock implements IHttpClient {}
 
-class MockSharedPreferences extends Mock implements SharedPreferences {}
+class MockTokenStorage extends Mock implements TokenStorage {}
 
 void main() {
   late AuthRepository repository;
   late MockHttpClient mockHttpClient;
-  late MockSharedPreferences mockPrefs;
+  late MockTokenStorage mockTokenStorage;
 
   setUp(() {
     mockHttpClient = MockHttpClient();
-    mockPrefs = MockSharedPreferences();
-    repository = AuthRepository(httpClient: mockHttpClient, prefs: mockPrefs);
+    mockTokenStorage = MockTokenStorage();
+    repository = AuthRepository(
+      httpClient: mockHttpClient,
+      tokenStorage: mockTokenStorage,
+    );
   });
 
   group('AuthRepository SignIn Tests', () {
@@ -47,9 +50,7 @@ void main() {
         ),
       ).thenAnswer((_) async => ApiResponse.success(mockAuthData));
 
-      when(
-        () => mockPrefs.setString(any(), any()),
-      ).thenAnswer((_) async => true);
+      when(() => mockTokenStorage.write(any())).thenAnswer((_) async {});
 
       // Act
       final result = await repository.signIn(signInRequest);
@@ -67,10 +68,7 @@ void main() {
         ),
       ).called(1);
 
-      verify(
-        () => mockPrefs.setString('auth_token', 'test-token-123'),
-      ).called(1);
-
+      verify(() => mockTokenStorage.write('test-token-123')).called(1);
       verify(() => mockHttpClient.setAuthToken('test-token-123')).called(1);
     });
   });
@@ -100,9 +98,7 @@ void main() {
         ),
       ).thenAnswer((_) async => ApiResponse.success(mockAuthData));
 
-      when(
-        () => mockPrefs.setString(any(), any()),
-      ).thenAnswer((_) async => true);
+      when(() => mockTokenStorage.write(any())).thenAnswer((_) async {});
 
       // Act
       final result = await repository.signUp(signUpRequest);
@@ -120,61 +116,59 @@ void main() {
         ),
       ).called(1);
 
-      verify(
-        () => mockPrefs.setString('auth_token', 'new-token-456'),
-      ).called(1);
+      verify(() => mockTokenStorage.write('new-token-456')).called(1);
       verify(() => mockHttpClient.setAuthToken('new-token-456')).called(1);
     });
   });
 
   group('AuthRepository Token Management Tests', () {
-    test('saveToken stores token in SharedPreferences', () async {
+    test('saveToken stores token in secure storage', () async {
       // Arrange
-      when(
-        () => mockPrefs.setString(any(), any()),
-      ).thenAnswer((_) async => true);
+      when(() => mockTokenStorage.write(any())).thenAnswer((_) async {});
 
       // Act
       await repository.saveToken('test-token');
 
       // Assert
-      verify(() => mockPrefs.setString('auth_token', 'test-token')).called(1);
+      verify(() => mockTokenStorage.write('test-token')).called(1);
     });
 
-    test('getToken retrieves token from SharedPreferences', () async {
+    test('getToken retrieves token from secure storage', () async {
       // Arrange
-      when(() => mockPrefs.getString(any())).thenReturn('stored-token');
+      when(
+        () => mockTokenStorage.read(),
+      ).thenAnswer((_) async => 'stored-token');
 
       // Act
       final result = await repository.getToken();
 
       // Assert
       expect(result, 'stored-token');
-      verify(() => mockPrefs.getString('auth_token')).called(1);
+      verify(() => mockTokenStorage.read()).called(1);
     });
 
     test('getToken returns null when no token is stored', () async {
       // Arrange
-      when(() => mockPrefs.getString(any())).thenReturn(null);
+      when(() => mockTokenStorage.read()).thenAnswer((_) async => null);
 
       // Act
       final result = await repository.getToken();
 
       // Assert
       expect(result, isNull);
-      verify(() => mockPrefs.getString('auth_token')).called(1);
+      verify(() => mockTokenStorage.read()).called(1);
     });
 
     test('clearToken removes token and clears auth header', () async {
       // Arrange
-      when(() => mockPrefs.remove(any())).thenAnswer((_) async => true);
+      when(() => mockTokenStorage.delete()).thenAnswer((_) async {});
       when(() => mockHttpClient.clearAuthToken()).thenReturn(null);
 
       // Act
       await repository.clearToken();
 
       // Assert
-      verify(() => mockPrefs.remove('auth_token')).called(1);
+      verify(() => mockTokenStorage.delete()).called(1);
       verify(() => mockHttpClient.clearAuthToken()).called(1);
     });
   });

@@ -38,6 +38,7 @@ dependencies:
   google_sign_in: ^7.2.0
   flutter_local_notifications: ^20.1.0
   crypto: ^3.0.7
+  flutter_secure_storage: ^10.3.1
 
 dev_dependencies:
   flutter_test:

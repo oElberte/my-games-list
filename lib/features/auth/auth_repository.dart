@@ -4,20 +4,18 @@ import 'package:my_games_list/features/auth/auth_response.dart';
 import 'package:my_games_list/features/auth/domain/social_auth_request.dart';
 import 'package:my_games_list/features/auth/sign_in/sign_in_request.dart';
 import 'package:my_games_list/features/auth/sign_up/sign_up_request.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:my_games_list/core/data/services/storage/token_storage.dart';
 
 /// Implementation of AuthRepository that handles authentication operations
 /// using the HTTP client and local storage.
 class AuthRepository {
   AuthRepository({
     required IHttpClient httpClient,
-    required SharedPreferences prefs,
+    required TokenStorage tokenStorage,
   }) : _httpClient = httpClient,
-       _prefs = prefs;
+       _tokenStorage = tokenStorage;
   final IHttpClient _httpClient;
-  final SharedPreferences _prefs;
-
-  static const String _tokenKey = 'auth_token';
+  final TokenStorage _tokenStorage;
 
   Future<AuthResponse> signIn(SignInRequest request) async {
     final response = await _httpClient.post<Map<String, dynamic>>(
@@ -89,15 +87,13 @@ class AuthRepository {
   }
 
   Future<void> saveToken(String token) async {
-    await _prefs.setString(_tokenKey, token);
+    await _tokenStorage.write(token);
   }
 
-  Future<String?> getToken() async {
-    return _prefs.getString(_tokenKey);
-  }
+  Future<String?> getToken() => _tokenStorage.read();
 
   Future<void> clearToken() async {
-    await _prefs.remove(_tokenKey);
+    await _tokenStorage.delete();
     _httpClient.clearAuthToken();
   }
 }
