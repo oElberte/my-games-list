@@ -2,7 +2,9 @@ import 'package:get_it/get_it.dart';
 import 'package:my_games_list/core/data/services/http/dio_http_client.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/core/data/services/storage/local_storage_service.dart';
+import 'package:my_games_list/core/data/services/storage/secure_token_storage.dart';
 import 'package:my_games_list/core/data/services/storage/shared_preferences_service.dart';
+import 'package:my_games_list/core/data/services/storage/token_storage.dart';
 import 'package:my_games_list/core/services/analytics_service.dart';
 import 'package:my_games_list/core/services/notification_service.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
@@ -40,6 +42,9 @@ Future<void> _registerCoreServices() async {
     SharedPreferencesService(sharedPreferences),
   );
 
+  // Register secure storage for the auth token (Keychain/Keystore on mobile)
+  sl.registerLazySingleton<TokenStorage>(() => SecureTokenStorage());
+
   // Register HTTP client as singleton (used globally for all API calls)
   sl.registerLazySingleton<IHttpClient>(() => DioHttpClient());
 
@@ -55,12 +60,15 @@ Future<void> _registerCoreServices() async {
 /// Restores the authentication token from storage to HTTP client if it exists.
 /// This ensures that authenticated users stay logged in after app restarts.
 Future<void> _restoreAuthToken() async {
-  const tokenKey = 'auth_token';
-  final token = sl<SharedPreferences>().getString(tokenKey);
-
-  if (token != null && token.isNotEmpty) {
-    // Set the token in the HTTP client so subsequent requests are authenticated
-    sl<IHttpClient>().setAuthToken(token);
+  try {
+    final token = await sl<TokenStorage>().read();
+    if (token != null && token.isNotEmpty) {
+      // Set the token in the HTTP client so subsequent requests are authenticated
+      sl<IHttpClient>().setAuthToken(token);
+    }
+  } catch (_) {
+    // Secure storage can be unavailable (e.g. tests or a locked keystore);
+    // proceed unauthenticated rather than blocking app startup.
   }
 }
 
