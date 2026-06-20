@@ -8,16 +8,6 @@ abstract class AuthEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class AuthLoginRequested extends AuthEvent {
-  const AuthLoginRequested({required this.email, required this.password});
-
-  final String email;
-  final String password;
-
-  @override
-  List<Object?> get props => [email, password];
-}
-
 /// Event to set authenticated state with a user from API response
 class AuthUserAuthenticated extends AuthEvent {
   const AuthUserAuthenticated(this.user);
