@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/core/domain/models/api_error.dart';
 import 'package:my_games_list/core/domain/models/api_response.dart';
@@ -19,9 +20,13 @@ class DioHttpClient implements IHttpClient {
         headers: {'Accept': 'application/json'},
       ),
     );
-    _dio.interceptors.add(
-      LogInterceptor(requestBody: true, responseBody: true),
-    );
+    // Only log request/response bodies in debug builds — they can contain
+    // auth tokens and personal data that must never be logged in release.
+    if (kDebugMode) {
+      _dio.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+    }
   }
   late final Dio _dio;
 
