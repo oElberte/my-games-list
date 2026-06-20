@@ -8,6 +8,7 @@ import 'package:my_games_list/features/auth/sign_in/sign_in_request.dart';
 class SignInBloc extends Bloc<SignInEvent, SignInState> {
   SignInBloc(this._authRepository) : super(const SignInInitial()) {
     on<SignInSubmitted>(_onSignInSubmitted);
+    on<GoogleSignInRequested>(_onGoogleSignInRequested);
   }
   final AuthRepository _authRepository;
 
@@ -25,6 +26,19 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
 
       final authResponse = await _authRepository.signIn(request);
 
+      emit(SignInSuccess(authResponse));
+    } catch (e) {
+      emit(SignInError(e.toString().replaceFirst('Exception: ', '')));
+    }
+  }
+
+  Future<void> _onGoogleSignInRequested(
+    GoogleSignInRequested event,
+    Emitter<SignInState> emit,
+  ) async {
+    emit(const SignInLoading());
+    try {
+      final authResponse = await _authRepository.signInWithGoogle();
       emit(SignInSuccess(authResponse));
     } catch (e) {
       emit(SignInError(e.toString().replaceFirst('Exception: ', '')));

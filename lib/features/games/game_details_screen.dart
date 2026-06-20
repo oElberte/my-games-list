@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:my_games_list/core/utils/env.dart';
 import 'package:my_games_list/core/utils/image_utils.dart';
 import 'package:my_games_list/core/utils/messages_extensions.dart';
+import 'package:my_games_list/core/widgets/visibility_hero.dart';
 import 'package:my_games_list/core/utils/website_category.dart';
 import 'package:my_games_list/features/games/bloc/game_details_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_details_state.dart';
@@ -742,7 +743,7 @@ class _SimilarGamesSection extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Hero(
+                      VisibilityHero(
                         tag: 'game-cover-${game.id}',
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),

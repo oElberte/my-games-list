@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
+import 'package:my_games_list/core/widgets/visibility_hero.dart';
 import 'package:my_games_list/features/library/bloc/library_bloc.dart';
 import 'package:my_games_list/features/library/bloc/library_event.dart';
 import 'package:my_games_list/features/library/bloc/library_state.dart';
@@ -177,7 +178,7 @@ class _LibraryEntryCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Game cover
-              Hero(
+              VisibilityHero(
                 tag: 'game-cover-${entry.game.igdbId}',
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),

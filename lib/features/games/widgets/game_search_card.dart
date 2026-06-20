@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:my_games_list/core/utils/image_utils.dart';
+import 'package:my_games_list/core/widgets/visibility_hero.dart';
 import 'package:my_games_list/features/games/search_game_model.dart';
 
 class GameSearchCard extends StatelessWidget {
@@ -53,7 +54,7 @@ class _GameCover extends StatelessWidget {
         ? getHighResUrl(coverUrl!, ImageSize.coverBig)
         : null;
 
-    return Hero(
+    return VisibilityHero(
       tag: 'game-cover-$gameId',
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),

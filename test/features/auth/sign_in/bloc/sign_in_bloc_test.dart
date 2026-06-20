@@ -104,5 +104,42 @@ void main() {
         const SignInError('No internet connection. Please check your network.'),
       ],
     );
+
+    // Google Sign-In tests
+    blocTest<SignInBloc, SignInState>(
+      'emits [SignInLoading, SignInSuccess] when Google sign-in succeeds',
+      build: () {
+        when(
+          () => mockAuthRepository.signInWithGoogle(),
+        ).thenAnswer((_) async => mockAuthResponse);
+        return bloc;
+      },
+      act: (bloc) => bloc.add(const GoogleSignInRequested()),
+      expect: () => [
+        const SignInLoading(),
+        const SignInSuccess(mockAuthResponse),
+      ],
+      verify: (_) {
+        verify(() => mockAuthRepository.signInWithGoogle()).called(1);
+      },
+    );
+
+    blocTest<SignInBloc, SignInState>(
+      'emits [SignInLoading, SignInError] when Google sign-in fails',
+      build: () {
+        when(
+          () => mockAuthRepository.signInWithGoogle(),
+        ).thenThrow(Exception('Google sign-in failed. Please try again.'));
+        return bloc;
+      },
+      act: (bloc) => bloc.add(const GoogleSignInRequested()),
+      expect: () => [
+        const SignInLoading(),
+        const SignInError('Google sign-in failed. Please try again.'),
+      ],
+      verify: (_) {
+        verify(() => mockAuthRepository.signInWithGoogle()).called(1);
+      },
+    );
   });
 }

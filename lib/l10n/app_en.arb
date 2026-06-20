@@ -92,5 +92,7 @@
     "errorLoadingData": "Error loading data",
     "discoveryTrending": "Trending Now",
     "discoveryIndie": "Indie Gems",
-    "discoveryUpcoming": "Upcoming Games"
+    "discoveryUpcoming": "Upcoming Games",
+    "signInWithGoogle": "Continue with Google",
+    "orContinueWith": "or continue with"
 }

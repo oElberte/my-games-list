@@ -1,0 +1,31 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "mygameslist-staging",
+          "appId": "1:916696334729:android:041ab40e9756cf8f93e158",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "mygameslist-staging",
+          "appId": "1:916696334729:ios:794568b005fae27993e158",
+          "uploadDebugSymbols": true,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options_staging.dart": {
+          "projectId": "mygameslist-staging",
+          "configurations": {
+            "android": "1:916696334729:android:041ab40e9756cf8f93e158",
+            "ios": "1:916696334729:ios:794568b005fae27993e158",
+            "web": "1:916696334729:web:832d32110ad27f6b93e158"
+          }
+        }
+      }
+    }
+  }
+}

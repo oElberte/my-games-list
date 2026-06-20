@@ -35,6 +35,17 @@ abstract class IHttpClient {
     Map<String, dynamic>? queryParameters,
   });
 
+  /// Performs a PATCH request to the specified [path].
+  ///
+  /// [data] is the request body.
+  /// [queryParameters] are optional query parameters to append to the URL.
+  /// Returns an [ApiResponse] with the response data or error.
+  Future<ApiResponse<T>> patch<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+  });
+
   /// Performs a DELETE request to the specified [path].
   ///
   /// [queryParameters] are optional query parameters to append to the URL.

@@ -53,7 +53,7 @@ class _SignInScreenState extends State<SignInScreen> {
             AuthUserAuthenticated(state.authResponse.user),
           );
           // Navigate to home on success
-          context.go('/');
+          context.goNamed(AppRouter.homeName);
         } else if (state is SignInError) {
           // Show error message
           context.showErrorMessage(state.message);
@@ -188,6 +188,48 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Social Sign-In Divider
+                    Row(
+                      children: [
+                        const Expanded(child: Divider()),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Text(
+                            context.l10n.orContinueWith,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                        const Expanded(child: Divider()),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Google Sign-In Button
+                    BlocBuilder<SignInBloc, SignInState>(
+                      builder: (context, state) {
+                        final isLoading = state is SignInLoading;
+                        return OutlinedButton.icon(
+                          onPressed: isLoading
+                              ? null
+                              : () => context.read<SignInBloc>().add(
+                                    const GoogleSignInRequested(),
+                                  ),
+                          icon: const Icon(Icons.g_mobiledata, size: 24),
+                          label: Text(context.l10n.signInWithGoogle),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

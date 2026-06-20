@@ -1,4 +1,4 @@
-package com.example.my_games_list
+package com.elberte.mygameslist
 
 import io.flutter.embedding.android.FlutterActivity
 
