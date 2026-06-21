@@ -5,6 +5,7 @@ import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/features/games/discovery_game_model.dart';
 import 'package:my_games_list/features/games/widgets/anticipated_games_carousel.dart';
 import 'package:my_games_list/features/games/widgets/discovery_games_widget.dart';
+import 'package:my_games_list/features/games/widgets/featured_banners_carousel.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -26,7 +27,9 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Anticipated games carousel at the top
+            // Featured banners hero carousel at the very top
+            FeaturedBannersCarousel(),
+            // Anticipated games carousel
             AnticipatedGamesCarousel(),
             // Trending games section
             DiscoveryGamesWidget(discoveryType: DiscoveryType.trending),
