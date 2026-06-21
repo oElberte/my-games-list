@@ -611,12 +611,11 @@ GoRoute(
     // Register games repository lazily
     _ensureGamesRepositoryRegistered();
 
-    // Provide both HomeBloc and AnticipatedGamesBloc
+    // Provide the home dashboard blocs (AnticipatedGamesBloc,
+    // DiscoveryGamesBloc, FeaturedBannersBloc, RecommendationsBloc,
+    // CollectionsBloc)
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => sl<HomeBloc>()..add(const HomeInitialized()),
-        ),
         BlocProvider(
           create: (_) => AnticipatedGamesBloc(
             gamesRepository: sl<GamesRepository>(),
