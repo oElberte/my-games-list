@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -32,6 +31,10 @@ class NotificationService {
   Stream<String> get navigationStream => _navigationController.stream;
 
   Future<void> initialize() async {
+    // Push notifications (FCM + flutter_local_notifications) are not supported
+    // on web in this app, so skip all setup there.
+    if (kIsWeb) return;
+
     // 1. Request permissions
     await _messaging.requestPermission(alert: true, badge: true, sound: true);
 
@@ -113,7 +116,7 @@ class NotificationService {
       String platform = 'android';
       if (kIsWeb) {
         platform = 'web';
-      } else if (Platform.isIOS) {
+      } else if (defaultTargetPlatform == TargetPlatform.iOS) {
         platform = 'ios';
       }
       await _httpClient.patch(
