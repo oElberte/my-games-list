@@ -207,7 +207,7 @@ class DiscoveryGameListTile extends StatelessWidget {
                   height: 80,
                   child: coverUrl != null
                       ? VisibilityHero(
-                          tag: '${heroTagPrefix}game-cover-${game.id}',
+                          tag: 'game-cover-${game.id}',
                           child: CachedNetworkImage(
                             imageUrl: coverUrl,
                             fit: BoxFit.cover,
