@@ -373,4 +373,84 @@ class AppLocalizationsEn extends AppLocalizations {
   String shareGameMessage(String gameName, String url) {
     return 'Check out $gameName on MyGamesList!\n$url';
   }
+
+  @override
+  String get removeFromLibrary => 'Remove from Library';
+
+  @override
+  String removeFromLibraryConfirm(String gameName) {
+    return 'Are you sure you want to remove \"$gameName\" from your library?';
+  }
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get remove => 'Remove';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get libraryEntryUpdated => 'Library entry updated successfully.';
+
+  @override
+  String get gameAddedToLibrary => 'Game added to library successfully.';
+
+  @override
+  String get editEntry => 'Edit Entry';
+
+  @override
+  String get addToLibrary => 'Add to Library';
+
+  @override
+  String get statusLabel => 'Status';
+
+  @override
+  String get platformLabel => 'Platform';
+
+  @override
+  String get selectPlatformHint => 'Select platform (optional)';
+
+  @override
+  String get noneOption => 'None';
+
+  @override
+  String get score => 'Score';
+
+  @override
+  String get favorite => 'Favorite';
+
+  @override
+  String get playtime => 'Playtime';
+
+  @override
+  String get hours => 'Hours';
+
+  @override
+  String get minutes => 'Minutes';
+
+  @override
+  String get dates => 'Dates';
+
+  @override
+  String get startDate => 'Start Date';
+
+  @override
+  String get endDate => 'End Date';
+
+  @override
+  String get difficulty => 'Difficulty';
+
+  @override
+  String get difficultyHint => 'e.g., Normal, Hard, Nightmare';
+
+  @override
+  String get notes => 'Notes';
+
+  @override
+  String get notesHint => 'Add your notes...';
+
+  @override
+  String get notSet => 'Not set';
 }

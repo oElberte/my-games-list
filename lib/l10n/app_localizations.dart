@@ -799,6 +799,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check out {gameName} on MyGamesList!\n{url}'**
   String shareGameMessage(String gameName, String url);
+
+  /// No description provided for @removeFromLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from Library'**
+  String get removeFromLibrary;
+
+  /// No description provided for @removeFromLibraryConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove \"{gameName}\" from your library?'**
+  String removeFromLibraryConfirm(String gameName);
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get remove;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @libraryEntryUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Library entry updated successfully.'**
+  String get libraryEntryUpdated;
+
+  /// No description provided for @gameAddedToLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Game added to library successfully.'**
+  String get gameAddedToLibrary;
+
+  /// No description provided for @editEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Entry'**
+  String get editEntry;
+
+  /// No description provided for @addToLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Library'**
+  String get addToLibrary;
+
+  /// No description provided for @statusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get statusLabel;
+
+  /// No description provided for @platformLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform'**
+  String get platformLabel;
+
+  /// No description provided for @selectPlatformHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select platform (optional)'**
+  String get selectPlatformHint;
+
+  /// No description provided for @noneOption.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get noneOption;
+
+  /// No description provided for @score.
+  ///
+  /// In en, this message translates to:
+  /// **'Score'**
+  String get score;
+
+  /// No description provided for @favorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite'**
+  String get favorite;
+
+  /// No description provided for @playtime.
+  ///
+  /// In en, this message translates to:
+  /// **'Playtime'**
+  String get playtime;
+
+  /// No description provided for @hours.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours'**
+  String get hours;
+
+  /// No description provided for @minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes'**
+  String get minutes;
+
+  /// No description provided for @dates.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates'**
+  String get dates;
+
+  /// No description provided for @startDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get startDate;
+
+  /// No description provided for @endDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get endDate;
+
+  /// No description provided for @difficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty'**
+  String get difficulty;
+
+  /// No description provided for @difficultyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Normal, Hard, Nightmare'**
+  String get difficultyHint;
+
+  /// No description provided for @notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get notes;
+
+  /// No description provided for @notesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your notes...'**
+  String get notesHint;
+
+  /// No description provided for @notSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get notSet;
 }
 
 class _AppLocalizationsDelegate

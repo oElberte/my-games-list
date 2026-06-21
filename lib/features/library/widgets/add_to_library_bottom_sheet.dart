@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/messages_extensions.dart';
 import 'package:my_games_list/features/games/game_detail_model.dart';
 import 'package:my_games_list/features/library/bloc/library_bloc.dart';
@@ -169,14 +170,12 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Remove from Library'),
-        content: Text(
-          'Are you sure you want to remove "${widget.gameName}" from your library?',
-        ),
+        title: Text(context.l10n.removeFromLibrary),
+        content: Text(context.l10n.removeFromLibraryConfirm(widget.gameName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -187,7 +186,7 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
               Navigator.of(context).pop(true); // Close bottom sheet
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Remove'),
+            child: Text(context.l10n.remove),
           ),
         ],
       ),
@@ -226,8 +225,8 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
         if (state.gameAddedOrUpdated) {
           context.showSuccessMessage(
             isEditing
-                ? 'Library entry updated successfully.'
-                : 'Game added to library successfully.',
+                ? context.l10n.libraryEntryUpdated
+                : context.l10n.gameAddedToLibrary,
           );
           Navigator.of(context).pop(true);
         }
@@ -286,10 +285,12 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                           children: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('Cancel'),
+                              child: Text(context.l10n.cancel),
                             ),
                             Text(
-                              isEditing ? 'Edit Entry' : 'Add to Library',
+                              isEditing
+                                  ? context.l10n.editEntry
+                                  : context.l10n.addToLibrary,
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -297,7 +298,7 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                             TextButton(
                               onPressed: _save,
                               child: Text(
-                                'Save',
+                                context.l10n.save,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: theme.colorScheme.primary,
@@ -337,14 +338,14 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                         // Status selection
                         _buildSectionCard(
                           theme: theme,
-                          title: 'Status',
+                          title: context.l10n.statusLabel,
                           child: Wrap(
                             spacing: 8,
                             runSpacing: 8,
                             children: GameStatus.values.map((status) {
                               final isSelected = _selectedStatus == status;
                               return ChoiceChip(
-                                label: Text(status.displayName),
+                                label: Text(status.localizedName(context)),
                                 selected: isSelected,
                                 onSelected: (selected) {
                                   if (selected) {
@@ -372,20 +373,20 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                         if (widget.platforms.isNotEmpty)
                           _buildSectionCard(
                             theme: theme,
-                            title: 'Platform',
+                            title: context.l10n.platformLabel,
                             child: DropdownButtonFormField<Platform>(
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(
+                              decoration: InputDecoration(
+                                border: const OutlineInputBorder(),
+                                contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 12,
                                   vertical: 8,
                                 ),
-                                hintText: 'Select platform (optional)',
+                                hintText: context.l10n.selectPlatformHint,
                               ),
                               items: [
-                                const DropdownMenuItem<Platform>(
+                                DropdownMenuItem<Platform>(
                                   value: null,
-                                  child: Text('None'),
+                                  child: Text(context.l10n.noneOption),
                                 ),
                                 ...widget.platforms.map((platform) {
                                   return DropdownMenuItem(
@@ -405,7 +406,7 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                         // Score and Favorite row
                         _buildSectionCard(
                           theme: theme,
-                          title: 'Rating',
+                          title: context.l10n.rating,
                           child: Column(
                             children: [
                               Row(
@@ -420,7 +421,7 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              'Score',
+                                              context.l10n.score,
                                               style: theme.textTheme.bodyMedium,
                                             ),
                                             Text(
@@ -485,7 +486,7 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        'Favorite',
+                                        context.l10n.favorite,
                                         style: theme.textTheme.labelSmall,
                                       ),
                                     ],
@@ -501,7 +502,7 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                         // Playtime
                         _buildSectionCard(
                           theme: theme,
-                          title: 'Playtime',
+                          title: context.l10n.playtime,
                           child: Row(
                             children: [
                               Expanded(
@@ -511,10 +512,10 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                   ],
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: 'Hours',
-                                    contentPadding: EdgeInsets.symmetric(
+                                  decoration: InputDecoration(
+                                    border: const OutlineInputBorder(),
+                                    labelText: context.l10n.hours,
+                                    contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 12,
                                       vertical: 8,
                                     ),
@@ -535,10 +536,10 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                                     FilteringTextInputFormatter.digitsOnly,
                                     LengthLimitingTextInputFormatter(2),
                                   ],
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: 'Minutes',
-                                    contentPadding: EdgeInsets.symmetric(
+                                  decoration: InputDecoration(
+                                    border: const OutlineInputBorder(),
+                                    labelText: context.l10n.minutes,
+                                    contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 12,
                                       vertical: 8,
                                     ),
@@ -559,12 +560,12 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                         // Dates
                         _buildSectionCard(
                           theme: theme,
-                          title: 'Dates',
+                          title: context.l10n.dates,
                           child: Row(
                             children: [
                               Expanded(
                                 child: _DatePickerButton(
-                                  label: 'Start Date',
+                                  label: context.l10n.startDate,
                                   date: _startDate,
                                   onTap: () => _pickDate(true),
                                   onClear: () =>
@@ -574,7 +575,7 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: _DatePickerButton(
-                                  label: 'End Date',
+                                  label: context.l10n.endDate,
                                   date: _endDate,
                                   onTap: () => _pickDate(false),
                                   onClear: () =>
@@ -590,13 +591,13 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                         // Difficulty
                         _buildSectionCard(
                           theme: theme,
-                          title: 'Difficulty',
+                          title: context.l10n.difficulty,
                           child: TextField(
                             controller: _difficultyController,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'e.g., Normal, Hard, Nightmare',
-                              contentPadding: EdgeInsets.symmetric(
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              hintText: context.l10n.difficultyHint,
+                              contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 8,
                               ),
@@ -610,14 +611,14 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                         // Notes
                         _buildSectionCard(
                           theme: theme,
-                          title: 'Notes',
+                          title: context.l10n.notes,
                           child: TextField(
                             controller: _notesController,
                             maxLines: 3,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Add your notes...',
-                              contentPadding: EdgeInsets.all(12),
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              hintText: context.l10n.notesHint,
+                              contentPadding: const EdgeInsets.all(12),
                             ),
                             onChanged: (value) => _notes = value,
                           ),
@@ -631,7 +632,7 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                             child: OutlinedButton.icon(
                               onPressed: _delete,
                               icon: const Icon(Icons.delete_outline),
-                              label: const Text('Remove from Library'),
+                              label: Text(context.l10n.removeFromLibrary),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: Colors.red,
                                 side: const BorderSide(color: Colors.red),
@@ -733,7 +734,9 @@ class _DatePickerButton extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    hasDate ? DateFormat.yMMMd().format(date!) : 'Not set',
+                    hasDate
+                        ? DateFormat.yMMMd().format(date!)
+                        : context.l10n.notSet,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: hasDate
                           ? null

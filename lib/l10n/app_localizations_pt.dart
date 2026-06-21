@@ -376,4 +376,85 @@ class AppLocalizationsPt extends AppLocalizations {
   String shareGameMessage(String gameName, String url) {
     return 'Confira $gameName no MyGamesList!\n$url';
   }
+
+  @override
+  String get removeFromLibrary => 'Remover da Biblioteca';
+
+  @override
+  String removeFromLibraryConfirm(String gameName) {
+    return 'Tem certeza de que deseja remover \"$gameName\" da sua biblioteca?';
+  }
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get remove => 'Remover';
+
+  @override
+  String get save => 'Salvar';
+
+  @override
+  String get libraryEntryUpdated =>
+      'Entrada da biblioteca atualizada com sucesso.';
+
+  @override
+  String get gameAddedToLibrary => 'Jogo adicionado à biblioteca com sucesso.';
+
+  @override
+  String get editEntry => 'Editar Entrada';
+
+  @override
+  String get addToLibrary => 'Adicionar à Biblioteca';
+
+  @override
+  String get statusLabel => 'Status';
+
+  @override
+  String get platformLabel => 'Plataforma';
+
+  @override
+  String get selectPlatformHint => 'Selecione a plataforma (opcional)';
+
+  @override
+  String get noneOption => 'Nenhum';
+
+  @override
+  String get score => 'Nota';
+
+  @override
+  String get favorite => 'Favorito';
+
+  @override
+  String get playtime => 'Tempo de Jogo';
+
+  @override
+  String get hours => 'Horas';
+
+  @override
+  String get minutes => 'Minutos';
+
+  @override
+  String get dates => 'Datas';
+
+  @override
+  String get startDate => 'Data de Início';
+
+  @override
+  String get endDate => 'Data de Término';
+
+  @override
+  String get difficulty => 'Dificuldade';
+
+  @override
+  String get difficultyHint => 'ex.: Normal, Difícil, Pesadelo';
+
+  @override
+  String get notes => 'Notas';
+
+  @override
+  String get notesHint => 'Adicione suas notas...';
+
+  @override
+  String get notSet => 'Não definido';
 }

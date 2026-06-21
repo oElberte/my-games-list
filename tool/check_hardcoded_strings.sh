@@ -8,10 +8,8 @@
 # This list must shrink to zero (tracked by issue #2).
 set -euo pipefail
 
-PENDING=(
-  'add_to_library_bottom_sheet.dart' # TODO(#2): localize the add/edit form
-  'library_entry_model.dart'         # GameStatus.displayName fallback used by the form above
-)
+# Every launch-critical screen is localized — keep this empty.
+PENDING=()
 
 is_pending() {
   local base
