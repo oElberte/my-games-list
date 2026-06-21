@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get_it/get_it.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/core/data/services/storage/token_storage.dart';
@@ -26,16 +28,22 @@ class SessionResetService {
   /// Clears the auth token everywhere and recreates per-user singletons so the
   /// next user starts from a clean slate. Safe to call on any logout path.
   Future<void> teardownSession() async {
-    await _tokenStorage.delete();
+    try {
+      await _tokenStorage.delete();
+    } catch (_) {
+      // Secure storage can be unavailable (locked keystore, web, tests);
+      // continue tearing down the rest of the session regardless.
+    }
     _httpClient.clearAuthToken();
 
     // LibraryBloc is a lazy singleton holding the user's library. Reset the
-    // registration so the next access recreates a fresh instance, and close the
-    // old one to release its stream/subscriptions.
+    // registration so the next access recreates a fresh instance. Close the old
+    // one off the logout path (unawaited) so a slow in-flight library request
+    // can't delay clearing auth state.
     if (_locator.isRegistered<LibraryBloc>()) {
       final library = _locator<LibraryBloc>();
       _locator.resetLazySingleton<LibraryBloc>();
-      await library.close();
+      unawaited(library.close());
     }
   }
 }

@@ -55,8 +55,13 @@ void main() {
 
         await buildService().teardownSession();
 
+        // The registration is reset, so the next access is a fresh instance.
         final after = locator<LibraryBloc>();
         expect(identical(before, after), isFalse);
+
+        // The old instance is closed off the logout path (unawaited); awaiting
+        // close() again (idempotent) confirms it is torn down.
+        await before.close();
         expect(before.isClosed, isTrue);
       },
     );

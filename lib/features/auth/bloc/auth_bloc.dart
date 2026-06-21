@@ -52,7 +52,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
-    await _sessionReset.teardownSession();
+    try {
+      await _sessionReset.teardownSession();
+    } catch (_) {
+      // Logout must always proceed even if session teardown fails.
+    }
     await _clearAuthState();
     emit(const AuthUnauthenticated());
   }
