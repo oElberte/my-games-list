@@ -6,7 +6,9 @@ import 'package:my_games_list/core/utils/l10n_extensions.dart';
 enum DiscoveryType {
   trending('trending', 'Trending Now'),
   indie('indie', 'Indie Games'),
-  upcoming('upcoming', 'Upcoming Games');
+  upcoming('upcoming', 'Upcoming Games'),
+  newReleases('new_releases', 'New Releases'),
+  comingSoon('coming_soon', 'Coming Soon');
 
   const DiscoveryType(this.queryParam, this.displayName);
 
@@ -25,6 +27,10 @@ enum DiscoveryType {
         return context.l10n.discoveryIndie;
       case DiscoveryType.upcoming:
         return context.l10n.discoveryUpcoming;
+      case DiscoveryType.newReleases:
+        return context.l10n.discoveryNewReleases;
+      case DiscoveryType.comingSoon:
+        return context.l10n.discoveryComingSoon;
     }
   }
 

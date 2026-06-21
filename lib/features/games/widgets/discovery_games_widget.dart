@@ -28,6 +28,10 @@ class DiscoveryGamesWidget extends StatelessWidget {
         return Icons.lightbulb_outline;
       case DiscoveryType.upcoming:
         return Icons.schedule;
+      case DiscoveryType.newReleases:
+        return Icons.fiber_new_outlined;
+      case DiscoveryType.comingSoon:
+        return Icons.upcoming_outlined;
     }
   }
 
@@ -39,6 +43,10 @@ class DiscoveryGamesWidget extends StatelessWidget {
         return Colors.purple;
       case DiscoveryType.upcoming:
         return Colors.blue;
+      case DiscoveryType.newReleases:
+        return Colors.green;
+      case DiscoveryType.comingSoon:
+        return Colors.teal;
     }
   }
 
@@ -123,6 +131,10 @@ class _LazyDiscoveryGamesWidgetState extends State<LazyDiscoveryGamesWidget> {
         return Icons.lightbulb_outline;
       case DiscoveryType.upcoming:
         return Icons.schedule;
+      case DiscoveryType.newReleases:
+        return Icons.fiber_new_outlined;
+      case DiscoveryType.comingSoon:
+        return Icons.upcoming_outlined;
     }
   }
 
@@ -134,6 +146,10 @@ class _LazyDiscoveryGamesWidgetState extends State<LazyDiscoveryGamesWidget> {
         return Colors.purple;
       case DiscoveryType.upcoming:
         return Colors.blue;
+      case DiscoveryType.newReleases:
+        return Colors.green;
+      case DiscoveryType.comingSoon:
+        return Colors.teal;
     }
   }
 

@@ -34,6 +34,12 @@ class HomeScreen extends StatelessWidget {
             // Indie Gems section (lazy loaded)
             LazyDiscoveryGamesWidget(discoveryType: DiscoveryType.indie),
             SizedBox(height: 16),
+            // New releases (lazy loaded)
+            LazyDiscoveryGamesWidget(discoveryType: DiscoveryType.newReleases),
+            SizedBox(height: 16),
+            // Coming soon (lazy loaded)
+            LazyDiscoveryGamesWidget(discoveryType: DiscoveryType.comingSoon),
+            SizedBox(height: 16),
           ],
         ),
       ),

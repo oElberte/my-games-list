@@ -226,6 +226,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discoveryUpcoming => 'Upcoming Games';
 
   @override
+  String get discoveryNewReleases => 'New Releases';
+
+  @override
+  String get discoveryComingSoon => 'Coming Soon';
+
+  @override
   String get signInWithGoogle => 'Continue with Google';
 
   @override

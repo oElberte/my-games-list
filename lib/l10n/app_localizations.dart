@@ -518,6 +518,18 @@ abstract class AppLocalizations {
   /// **'Upcoming Games'**
   String get discoveryUpcoming;
 
+  /// No description provided for @discoveryNewReleases.
+  ///
+  /// In en, this message translates to:
+  /// **'New Releases'**
+  String get discoveryNewReleases;
+
+  /// No description provided for @discoveryComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon'**
+  String get discoveryComingSoon;
+
   /// No description provided for @signInWithGoogle.
   ///
   /// In en, this message translates to:

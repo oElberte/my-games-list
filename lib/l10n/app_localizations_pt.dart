@@ -228,6 +228,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get discoveryUpcoming => 'Em Breve';
 
   @override
+  String get discoveryNewReleases => 'Novos Lançamentos';
+
+  @override
+  String get discoveryComingSoon => 'Chegando em Breve';
+
+  @override
   String get signInWithGoogle => 'Continuar com Google';
 
   @override
