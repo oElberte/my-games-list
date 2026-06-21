@@ -232,6 +232,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get discoveryComingSoon => 'Coming Soon';
 
   @override
+  String get recommendationsTitle => 'Recommended for You';
+
+  @override
   String get signInWithGoogle => 'Continue with Google';
 
   @override

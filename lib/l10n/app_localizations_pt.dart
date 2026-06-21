@@ -234,6 +234,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get discoveryComingSoon => 'Chegando em Breve';
 
   @override
+  String get recommendationsTitle => 'Recomendados para Você';
+
+  @override
   String get signInWithGoogle => 'Continuar com Google';
 
   @override
