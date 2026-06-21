@@ -20,6 +20,8 @@ import 'package:my_games_list/features/games/bloc/anticipated_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_event.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_event.dart';
+import 'package:my_games_list/features/games/bloc/featured_banners_bloc.dart';
+import 'package:my_games_list/features/games/bloc/featured_banners_event.dart';
 import 'package:my_games_list/features/games/bloc/game_details_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_details_event.dart';
 import 'package:my_games_list/features/games/bloc/game_search_bloc.dart';
@@ -187,6 +189,11 @@ class AppRouter {
                                   DiscoveryType.trending,
                                 ),
                               ),
+                        ),
+                        BlocProvider(
+                          create: (_) => FeaturedBannersBloc(
+                            gamesRepository: sl<GamesRepository>(),
+                          )..add(const FeaturedBannersLoadRequested()),
                         ),
                       ],
                       child: const HomeScreen(),
