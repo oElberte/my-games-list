@@ -239,4 +239,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orContinueWith => 'or continue with';
+
+  @override
+  String get browseTitle => 'Browse';
+
+  @override
+  String get browseGenresError => 'Couldn\'t load genres. Please try again.';
+
+  @override
+  String get browseGenresEmpty => 'No genres available right now.';
+
+  @override
+  String get browseGenreGamesError =>
+      'Couldn\'t load games for this genre. Please try again.';
+
+  @override
+  String get browseGenreEmpty => 'No games found in this genre yet.';
+
+  @override
+  String get browseRetry => 'Try again';
 }

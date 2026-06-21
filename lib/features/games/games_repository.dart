@@ -102,6 +102,47 @@ class GamesRepository {
     return DiscoveryGamesResponse.fromJson(response.dataOrThrow);
   }
 
+  /// Fetches the list of game genres for the browse hub.
+  Future<List<Genre>> getGenres() async {
+    final response = await _httpClient.get<Map<String, dynamic>>(
+      '/games/genres',
+    );
+
+    if (response.isError) {
+      throw Exception(response.error?.userMessage ?? 'Failed to fetch genres');
+    }
+
+    final genres = response.dataOrThrow['genres'] as List<dynamic>;
+    return genres
+        .map((e) => Genre.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Fetches top-rated games for a specific [genreId].
+  Future<DiscoveryGamesResponse> getGamesByGenre(
+    int genreId, {
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    final response = await _httpClient.get<Map<String, dynamic>>(
+      '/games/discovery',
+      queryParameters: {
+        'type': 'by_genre',
+        'genre_id': genreId.toString(),
+        'limit': limit.toString(),
+        'offset': offset.toString(),
+      },
+    );
+
+    if (response.isError) {
+      throw Exception(
+        response.error?.userMessage ?? 'Failed to fetch games for this genre',
+      );
+    }
+
+    return DiscoveryGamesResponse.fromJson(response.dataOrThrow);
+  }
+
   /// Searches for games matching the query with pagination
   Future<SearchGamesResponse> searchGames(
     String query, {

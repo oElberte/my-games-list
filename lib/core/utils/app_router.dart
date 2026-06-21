@@ -16,6 +16,12 @@ import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_bloc.dart';
 import 'package:my_games_list/features/auth/sign_in/sign_in_screen.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_bloc.dart';
 import 'package:my_games_list/features/auth/sign_up/sign_up_screen.dart';
+import 'package:my_games_list/features/browse/bloc/browse_genre_games_bloc.dart';
+import 'package:my_games_list/features/browse/bloc/browse_genre_games_event.dart';
+import 'package:my_games_list/features/browse/bloc/browse_genres_bloc.dart';
+import 'package:my_games_list/features/browse/bloc/browse_genres_event.dart';
+import 'package:my_games_list/features/browse/browse_genre_games_screen.dart';
+import 'package:my_games_list/features/browse/browse_screen.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_event.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_bloc.dart';
@@ -61,6 +67,7 @@ class AppRouter {
   static const String signInPath = '/signin';
   static const String signUpPath = '/signup';
   static const String homePath = '/home';
+  static const String browsePath = '/browse';
   static const String gamesPath = '/games';
   static const String profilePath = '/profile';
   static const String settingsPath = '/settings';
@@ -68,12 +75,14 @@ class AppRouter {
   static const String gameDetailsPath = '/games/:id';
   static const String videoPlayerPath = '/video/:videoId';
   static const String discoveryPath = '/discovery/:type';
+  static const String genreGamesPath = '/browse/genres/:genreId';
 
   /// Route names for named navigation
   static const String splashName = 'splash';
   static const String signInName = 'signin';
   static const String signUpName = 'signup';
   static const String homeName = 'home';
+  static const String browseName = 'browse';
   static const String gamesName = 'games';
   static const String profileName = 'profile';
   static const String settingsName = 'settings';
@@ -81,6 +90,7 @@ class AppRouter {
   static const String gameDetailsName = 'gameDetails';
   static const String videoPlayerName = 'videoPlayer';
   static const String discoveryName = 'discovery';
+  static const String genreGamesName = 'genreGames';
 
   /// Creates the GoRouter configuration for the app.
   /// Auth-specific dependencies are registered lazily when routes are accessed.
@@ -206,6 +216,26 @@ class AppRouter {
                         ),
                       ],
                       child: const HomeScreen(),
+                    );
+                  },
+                ),
+              ],
+            ),
+
+            // Browse Branch (public discovery hub)
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: browsePath,
+                  name: browseName,
+                  builder: (context, state) {
+                    _ensureGamesRepositoryRegistered();
+
+                    return BlocProvider(
+                      create: (_) => BrowseGenresBloc(
+                        gamesRepository: sl<GamesRepository>(),
+                      )..add(const BrowseGenresLoadRequested()),
+                      child: const BrowseScreen(),
                     );
                   },
                 ),
@@ -348,6 +378,37 @@ class AppRouter {
                   DiscoveryGamesBloc(gamesRepository: sl<GamesRepository>())
                     ..add(DiscoveryGamesLoadRequested(discoveryType)),
               child: DiscoveryGamesScreen(discoveryType: discoveryType),
+            );
+          },
+        ),
+
+        // Genre Games Route (outside bottom navigation)
+        GoRoute(
+          path: genreGamesPath,
+          name: genreGamesName,
+          builder: (context, state) {
+            final genreId = int.tryParse(state.pathParameters['genreId'] ?? '');
+            final genreName = state.uri.queryParameters['name'] ?? '';
+
+            // Guard against a malformed/bookmarked URL (e.g. /browse/genres/abc):
+            // an exception in a builder is not caught by errorBuilder.
+            if (genreId == null) {
+              return Scaffold(
+                appBar: AppBar(),
+                body: Center(child: Text(context.l10n.browseGenreGamesError)),
+              );
+            }
+
+            _ensureGamesRepositoryRegistered();
+
+            return BlocProvider(
+              create: (_) =>
+                  BrowseGenreGamesBloc(gamesRepository: sl<GamesRepository>())
+                    ..add(BrowseGenreGamesLoadRequested(genreId)),
+              child: BrowseGenreGamesScreen(
+                genreId: genreId,
+                genreName: genreName,
+              ),
             );
           },
         ),

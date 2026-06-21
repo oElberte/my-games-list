@@ -73,5 +73,11 @@
     "discoveryUpcoming": "Em Breve",
     "discoveryNewReleases": "Novos Lançamentos",
     "discoveryComingSoon": "Chegando em Breve",
-    "recommendationsTitle": "Recomendados para Você"
+    "recommendationsTitle": "Recomendados para Você",
+    "browseTitle": "Explorar",
+    "browseGenresError": "Não foi possível carregar os gêneros. Tente novamente.",
+    "browseGenresEmpty": "Nenhum gênero disponível no momento.",
+    "browseGenreGamesError": "Não foi possível carregar os jogos deste gênero. Tente novamente.",
+    "browseGenreEmpty": "Nenhum jogo encontrado neste gênero ainda.",
+    "browseRetry": "Tentar novamente"
 }

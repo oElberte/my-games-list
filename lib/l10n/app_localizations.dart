@@ -547,6 +547,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'or continue with'**
   String get orContinueWith;
+
+  /// No description provided for @browseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse'**
+  String get browseTitle;
+
+  /// No description provided for @browseGenresError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load genres. Please try again.'**
+  String get browseGenresError;
+
+  /// No description provided for @browseGenresEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No genres available right now.'**
+  String get browseGenresEmpty;
+
+  /// No description provided for @browseGenreGamesError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load games for this genre. Please try again.'**
+  String get browseGenreGamesError;
+
+  /// No description provided for @browseGenreEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No games found in this genre yet.'**
+  String get browseGenreEmpty;
+
+  /// No description provided for @browseRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get browseRetry;
 }
 
 class _AppLocalizationsDelegate

@@ -241,4 +241,24 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get orContinueWith => 'ou continuar com';
+
+  @override
+  String get browseTitle => 'Explorar';
+
+  @override
+  String get browseGenresError =>
+      'Não foi possível carregar os gêneros. Tente novamente.';
+
+  @override
+  String get browseGenresEmpty => 'Nenhum gênero disponível no momento.';
+
+  @override
+  String get browseGenreGamesError =>
+      'Não foi possível carregar os jogos deste gênero. Tente novamente.';
+
+  @override
+  String get browseGenreEmpty => 'Nenhum jogo encontrado neste gênero ainda.';
+
+  @override
+  String get browseRetry => 'Tentar novamente';
 }
