@@ -67,6 +67,10 @@ void main() {
       tester,
     ) async {
       // Act
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(createBottomNavBar());
       await tester.pumpAndSettle();
 
@@ -80,6 +84,10 @@ void main() {
 
     testWidgets('should display correct icons', (tester) async {
       // Act
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(createBottomNavBar());
       await tester.pumpAndSettle();
 
@@ -114,6 +122,10 @@ void main() {
 
     testWidgets('should start on Home tab', (tester) async {
       // Act
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(createBottomNavBar());
       await tester.pumpAndSettle();
 
@@ -124,6 +136,10 @@ void main() {
 
     testWidgets('should navigate to Games tab when tapped', (tester) async {
       // Arrange
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(createBottomNavBar());
       await tester.pumpAndSettle();
 
@@ -138,6 +154,10 @@ void main() {
 
     testWidgets('should navigate to Profile tab when tapped', (tester) async {
       // Arrange
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(createBottomNavBar());
       await tester.pumpAndSettle();
 
@@ -152,6 +172,10 @@ void main() {
 
     testWidgets('should maintain state when switching tabs', (tester) async {
       // Arrange
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(createBottomNavBar());
       await tester.pumpAndSettle();
 
@@ -174,6 +198,10 @@ void main() {
 
     testWidgets('should highlight selected tab', (tester) async {
       // Arrange
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(createBottomNavBar());
       await tester.pumpAndSettle();
 
@@ -190,6 +218,10 @@ void main() {
 
     testWidgets('should animate between tabs', (tester) async {
       // Arrange
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(createBottomNavBar());
       await tester.pumpAndSettle();
 
@@ -214,6 +246,10 @@ void main() {
 
     testWidgets('should show labels always', (tester) async {
       // Act
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(createBottomNavBar());
       await tester.pumpAndSettle();
 
@@ -225,6 +261,19 @@ void main() {
         navigationBar.labelBehavior,
         equals(NavigationDestinationLabelBehavior.alwaysShow),
       );
+    });
+
+    testWidgets('should use a NavigationRail on wide screens', (tester) async {
+      tester.view.physicalSize = const Size(1000, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(createBottomNavBar());
+      await tester.pumpAndSettle();
+
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
     });
   });
 }
