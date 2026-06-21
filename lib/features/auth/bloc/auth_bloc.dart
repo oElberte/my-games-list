@@ -2,17 +2,20 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:my_games_list/core/data/services/storage/local_storage_service.dart';
+import 'package:my_games_list/core/services/session_reset_service.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
 import 'package:my_games_list/features/auth/user_model.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc(this._storageService) : super(const AuthInitial()) {
+  AuthBloc(this._storageService, this._sessionReset)
+    : super(const AuthInitial()) {
     on<AuthStateLoaded>(_onAuthStateLoaded);
     on<AuthUserAuthenticated>(_onAuthUserAuthenticated);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
   }
   final LocalStorageService _storageService;
+  final SessionResetService _sessionReset;
   static const String _isLoggedInKey = 'is_logged_in';
   static const String _currentUserKey = 'current_user';
 
@@ -49,6 +52,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
+    try {
+      await _sessionReset.teardownSession();
+    } catch (_) {
+      // Logout must always proceed even if session teardown fails.
+    }
     await _clearAuthState();
     emit(const AuthUnauthenticated());
   }

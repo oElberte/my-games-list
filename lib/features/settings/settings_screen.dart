@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
-import 'package:my_games_list/core/utils/service_locator.dart';
-import 'package:my_games_list/features/auth/auth_repository.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
@@ -88,16 +86,10 @@ class SettingsScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () async {
-                  // Clear the auth token from AuthRepository if registered
-                  if (sl.isRegistered<AuthRepository>()) {
-                    await sl<AuthRepository>().clearToken();
-                  }
-
-                  // Trigger logout event in AuthBloc
-                  if (context.mounted) {
-                    context.read<AuthBloc>().add(const AuthLogoutRequested());
-                  }
+                onPressed: () {
+                  // Logout teardown (token + per-user in-memory state) is
+                  // handled centrally by AuthBloc via SessionResetService.
+                  context.read<AuthBloc>().add(const AuthLogoutRequested());
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
