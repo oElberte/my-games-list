@@ -1,11 +1,11 @@
 {
-    "name": "my_games_list",
-    "short_name": "my_games_list",
+    "name": "My Games List",
+    "short_name": "My Games List",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#12141C",
+    "theme_color": "#12141C",
+    "description": "Track your game collection, discover new releases, and build your personal games list.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

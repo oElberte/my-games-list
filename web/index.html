@@ -18,21 +18,73 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Track your game collection, discover new releases and what's coming soon, and build your personal games list.">
+  <meta name="theme-color" content="#12141C">
+
+  <!-- Open Graph / social sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="My Games List">
+  <meta property="og:title" content="My Games List">
+  <meta property="og:description" content="Track your game collection, discover new releases, and build your personal games list.">
+  <meta property="og:image" content="icons/Icon-512.png">
+
+  <!-- Twitter card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="My Games List">
+  <meta name="twitter:description" content="Track your game collection, discover new releases, and build your personal games list.">
+  <meta name="twitter:image" content="icons/Icon-512.png">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="my_games_list">
+  <meta name="apple-mobile-web-app-title" content="My Games List">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>my_games_list</title>
+  <title>My Games List</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    #loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: #12141C;
+      color: #FFFFFF;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    #loading .spinner {
+      width: 42px;
+      height: 42px;
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #6C8CFF;
+      border-radius: 50%;
+      animation: mgl-spin 1s linear infinite;
+    }
+    @keyframes mgl-spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
+  <div id="loading">
+    <div class="spinner"></div>
+    <div>My Games List</div>
+  </div>
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+    // Remove the loading splash once Flutter renders its first frame.
+    window.addEventListener('flutter-first-frame', function () {
+      var loading = document.getElementById('loading');
+      if (loading) loading.remove();
+    });
+  </script>
 </body>
 </html>
