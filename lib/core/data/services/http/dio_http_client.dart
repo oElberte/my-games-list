@@ -36,8 +36,10 @@ class DioHttpClient implements IHttpClient {
       InterceptorsWrapper(
         onError: (error, handler) {
           if (_shouldTriggerLogout(error)) {
-            _unauthorizedHandled = true;
-            _onUnauthorized?.call();
+            // Only latch once a logout is actually scheduled, so a 401 that
+            // arrives before auth state is ready doesn't suppress later ones.
+            final handled = _onUnauthorized?.call() ?? false;
+            if (handled) _unauthorizedHandled = true;
           }
           handler.next(error);
         },
@@ -45,7 +47,7 @@ class DioHttpClient implements IHttpClient {
     );
   }
   late final Dio _dio;
-  void Function()? _onUnauthorized;
+  bool Function()? _onUnauthorized;
   bool _unauthorizedHandled = false;
 
   static const List<String> _authPaths = [
@@ -128,19 +130,23 @@ class DioHttpClient implements IHttpClient {
   }
 
   @override
-  void setOnUnauthorized(void Function()? callback) {
+  void setOnUnauthorized(bool Function()? callback) {
     _onUnauthorized = callback;
   }
 
-  /// True when a 401 indicates an expired/invalid session — an authenticated
-  /// (Authorization header present), non-auth request — so we trigger logout
-  /// exactly once.
+  /// True when a 401 may indicate the current session expired: a non-auth
+  /// request whose token matches the client's current token. The token match
+  /// ignores stale 401s from a previous login; an authenticated-but-tokenless
+  /// session (both null) still passes, and the callback decides via auth state.
   bool _shouldTriggerLogout(DioException error) {
     if (_unauthorizedHandled) return false;
     if (error.response?.statusCode != 401) return false;
-    final authHeader = error.requestOptions.headers['Authorization'] as String?;
-    if (authHeader == null || authHeader.isEmpty) return false;
-    return !_authPaths.any(error.requestOptions.path.contains);
+    if (_authPaths.any(error.requestOptions.path.contains)) return false;
+
+    final requestAuth =
+        error.requestOptions.headers['Authorization'] as String?;
+    final currentAuth = _dio.options.headers['Authorization'] as String?;
+    return requestAuth == currentAuth;
   }
 
   /// Handles Dio errors and extracts ApiError from response.

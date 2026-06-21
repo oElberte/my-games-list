@@ -105,7 +105,9 @@ void _registerGlobalBlocs() {
     final authBloc = sl<AuthBloc>();
     if (authBloc.state is AuthAuthenticated) {
       authBloc.add(const AuthLogoutRequested());
+      return true;
     }
+    return false;
   });
 }
 

@@ -37,42 +37,60 @@ void main() {
       return DioHttpClient(dio: dio);
     }
 
-    test('an authenticated 401 triggers onUnauthorized exactly once', () async {
+    test('a 401 on the current session triggers onUnauthorized once when '
+        'handled', () async {
       var calls = 0;
       final client = buildClient(401)
-        ..setOnUnauthorized(() => calls++)
+        ..setOnUnauthorized(() {
+          calls++;
+          return true; // logout scheduled → latch
+        })
         ..setAuthToken('token');
 
       await client.get<dynamic>('/games/recommendations');
-      await client.get<dynamic>('/games/recommendations'); // debounced
+      await client.get<dynamic>('/games/recommendations'); // suppressed
 
       expect(calls, 1);
     });
 
-    test('a 401 without an auth header does not trigger logout', () async {
-      var calls = 0;
-      final client = buildClient(401)..setOnUnauthorized(() => calls++);
-      // No setAuthToken → e.g. the startup FCM call before login.
-      await client.get<dynamic>('/users/me/fcm-token');
-
-      expect(calls, 0);
-    });
-
-    test('a 401 on an auth endpoint does not trigger logout', () async {
+    test('does not latch when the callback reports it did not act', () async {
       var calls = 0;
       final client = buildClient(401)
-        ..setOnUnauthorized(() => calls++)
+        ..setOnUnauthorized(() {
+          calls++;
+          return false; // e.g. auth state not ready → not handled
+        })
         ..setAuthToken('token');
+
+      await client.get<dynamic>('/games/recommendations');
+      await client.get<dynamic>('/games/recommendations'); // re-fires
+
+      expect(calls, 2);
+    });
+
+    test('does not trigger on an auth-endpoint 401', () async {
+      var calls = 0;
+      final client = buildClient(401)
+        ..setOnUnauthorized(() {
+          calls++;
+          return true;
+        })
+        ..setAuthToken('token');
+
       await client.post<dynamic>('/auth/signin', data: <String, dynamic>{});
 
       expect(calls, 0);
     });
 
-    test('a non-401 error does not trigger logout', () async {
+    test('does not trigger on a non-401 error', () async {
       var calls = 0;
       final client = buildClient(500)
-        ..setOnUnauthorized(() => calls++)
+        ..setOnUnauthorized(() {
+          calls++;
+          return true;
+        })
         ..setAuthToken('token');
+
       await client.get<dynamic>('/games/recommendations');
 
       expect(calls, 0);
