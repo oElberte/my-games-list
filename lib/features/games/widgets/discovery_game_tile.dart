@@ -11,11 +11,16 @@ class DiscoveryGameTile extends StatelessWidget {
   const DiscoveryGameTile({
     required this.game,
     this.isCompact = false,
+    this.heroTagPrefix = '',
     super.key,
   });
 
   final DiscoveryGame game;
   final bool isCompact;
+
+  /// Namespaces the cover Hero tag so the same game shown in multiple rows
+  /// (e.g. recommendations + trending) doesn't collide.
+  final String heroTagPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +56,7 @@ class DiscoveryGameTile extends StatelessWidget {
               // Cover image
               if (coverUrl != null)
                 VisibilityHero(
-                  tag: 'game-cover-${game.id}',
+                  tag: '${heroTagPrefix}game-cover-${game.id}',
                   child: CachedNetworkImage(
                     imageUrl: coverUrl,
                     fit: BoxFit.cover,
@@ -202,7 +207,7 @@ class DiscoveryGameListTile extends StatelessWidget {
                   height: 80,
                   child: coverUrl != null
                       ? VisibilityHero(
-                          tag: 'game-cover-${game.id}',
+                          tag: '${heroTagPrefix}game-cover-${game.id}',
                           child: CachedNetworkImage(
                             imageUrl: coverUrl,
                             fit: BoxFit.cover,
