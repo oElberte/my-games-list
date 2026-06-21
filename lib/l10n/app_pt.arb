@@ -141,5 +141,7 @@
     "difficultyHint": "ex.: Normal, Difícil, Pesadelo",
     "notes": "Notas",
     "notesHint": "Adicione suas notas...",
-    "notSet": "Não definido"
+    "notSet": "Não definido",
+    "languageTitle": "Idioma",
+    "languageSystem": "Padrão do sistema"
 }

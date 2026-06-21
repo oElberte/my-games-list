@@ -189,5 +189,7 @@
     "difficultyHint": "e.g., Normal, Hard, Nightmare",
     "notes": "Notes",
     "notesHint": "Add your notes...",
-    "notSet": "Not set"
+    "notSet": "Not set",
+    "languageTitle": "Language",
+    "languageSystem": "System default"
 }

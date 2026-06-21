@@ -8,9 +8,11 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SettingsInitialized>(_onSettingsInitialized);
     on<SettingsThemeToggled>(_onSettingsThemeToggled);
     on<SettingsDarkModeSet>(_onSettingsDarkModeSet);
+    on<SettingsLocaleSet>(_onSettingsLocaleSet);
   }
   final LocalStorageService _storageService;
   static const String _isDarkModeKey = 'is_dark_mode';
+  static const String _localeCodeKey = 'locale_code';
 
   Future<void> _onSettingsInitialized(
     SettingsInitialized event,
@@ -18,9 +20,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ) async {
     try {
       final darkMode = await _storageService.getBool(_isDarkModeKey) ?? false;
-      emit(state.copyWith(isDarkMode: darkMode));
+      final localeCode = await _storageService.getString(_localeCodeKey);
+      emit(state.copyWith(isDarkMode: darkMode, localeCode: localeCode));
     } catch (e) {
-      emit(state.copyWith(isDarkMode: false));
+      emit(state.copyWith(isDarkMode: false, localeCode: null));
     }
   }
 
@@ -29,7 +32,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     Emitter<SettingsState> emit,
   ) async {
     final newValue = !state.isDarkMode;
-    await _saveSettings(newValue);
+    await _saveDarkMode(newValue);
     emit(state.copyWith(isDarkMode: newValue));
   }
 
@@ -37,11 +40,23 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     SettingsDarkModeSet event,
     Emitter<SettingsState> emit,
   ) async {
-    await _saveSettings(event.value);
+    await _saveDarkMode(event.value);
     emit(state.copyWith(isDarkMode: event.value));
   }
 
-  Future<void> _saveSettings(bool isDarkMode) async {
+  Future<void> _onSettingsLocaleSet(
+    SettingsLocaleSet event,
+    Emitter<SettingsState> emit,
+  ) async {
+    if (event.localeCode == null) {
+      await _storageService.remove(_localeCodeKey);
+    } else {
+      await _storageService.setString(_localeCodeKey, event.localeCode!);
+    }
+    emit(state.copyWith(localeCode: event.localeCode));
+  }
+
+  Future<void> _saveDarkMode(bool isDarkMode) async {
     await _storageService.setBool(_isDarkModeKey, isDarkMode);
   }
 }

@@ -145,5 +145,39 @@ void main() {
         expect(mockStorageService.setBoolCallHistory.length, equals(3));
       },
     );
+
+    blocTest<SettingsBloc, SettingsState>(
+      'loads the stored locale on init',
+      build: () {
+        mockStorageService.setStringReturn('pt');
+        return SettingsBloc(mockStorageService);
+      },
+      act: (bloc) => bloc.add(const SettingsInitialized()),
+      expect: () => [const SettingsState(isDarkMode: false, localeCode: 'pt')],
+    );
+
+    blocTest<SettingsBloc, SettingsState>(
+      'setting a locale persists it and emits the new code',
+      build: () => SettingsBloc(mockStorageService),
+      act: (bloc) => bloc.add(const SettingsLocaleSet('pt')),
+      expect: () => [const SettingsState(localeCode: 'pt')],
+      verify: (_) {
+        expect(mockStorageService.setStringCallHistory.last, {
+          'key': 'locale_code',
+          'value': 'pt',
+        });
+      },
+    );
+
+    blocTest<SettingsBloc, SettingsState>(
+      'clearing the locale removes the key and follows the system',
+      build: () => SettingsBloc(mockStorageService),
+      seed: () => const SettingsState(localeCode: 'pt'),
+      act: (bloc) => bloc.add(const SettingsLocaleSet(null)),
+      expect: () => [const SettingsState()],
+      verify: (_) {
+        expect(mockStorageService.removeCallHistory, contains('locale_code'));
+      },
+    );
   });
 }

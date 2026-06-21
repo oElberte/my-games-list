@@ -131,6 +131,18 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: AppLocalizations.supportedLocales,
+            // null = follow the device locale; a code = the user's choice.
+            locale: state.localeCode == null ? null : Locale(state.localeCode!),
+            localeResolutionCallback: (deviceLocale, supportedLocales) {
+              // Use the chosen/device language when supported; otherwise
+              // default to pt for the Brazilian launch.
+              for (final supported in supportedLocales) {
+                if (supported.languageCode == deviceLocale?.languageCode) {
+                  return supported;
+                }
+              }
+              return const Locale('pt');
+            },
             routerConfig: router,
             theme: ThemeData(
               useMaterial3: true,
