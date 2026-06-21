@@ -22,6 +22,8 @@ import 'package:my_games_list/features/games/bloc/discovery_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_event.dart';
 import 'package:my_games_list/features/games/bloc/featured_banners_bloc.dart';
 import 'package:my_games_list/features/games/bloc/featured_banners_event.dart';
+import 'package:my_games_list/features/games/bloc/recommendations_bloc.dart';
+import 'package:my_games_list/features/games/bloc/recommendations_event.dart';
 import 'package:my_games_list/features/games/bloc/game_details_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_details_event.dart';
 import 'package:my_games_list/features/games/bloc/game_search_bloc.dart';
@@ -195,6 +197,11 @@ class AppRouter {
                             gamesRepository: sl<GamesRepository>(),
                           )..add(const FeaturedBannersLoadRequested()),
                         ),
+                        BlocProvider(
+                          create: (_) => RecommendationsBloc(
+                            gamesRepository: sl<GamesRepository>(),
+                          )..add(const RecommendationsLoadRequested()),
+                        ),
                       ],
                       child: const HomeScreen(),
                     );
@@ -274,6 +281,11 @@ class AppRouter {
           builder: (context, state) {
             final gameIdStr = state.pathParameters['id']!;
             final gameId = int.parse(gameIdStr);
+            // Hero tag prefix passed from the source tile (e.g. recommendations
+            // row) so the cover transition matches the source card.
+            final heroTagPrefix = state.extra is String
+                ? state.extra! as String
+                : '';
 
             // Register games repository lazily (only once, stays in memory)
             _ensureGamesRepositoryRegistered();
@@ -297,7 +309,10 @@ class AppRouter {
                     ),
                 ),
               ],
-              child: GameDetailsScreen(gameId: gameId),
+              child: GameDetailsScreen(
+                gameId: gameId,
+                heroTagPrefix: heroTagPrefix,
+              ),
             );
           },
         ),

@@ -530,6 +530,12 @@ abstract class AppLocalizations {
   /// **'Coming Soon'**
   String get discoveryComingSoon;
 
+  /// No description provided for @recommendationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended for You'**
+  String get recommendationsTitle;
+
   /// No description provided for @signInWithGoogle.
   ///
   /// In en, this message translates to:

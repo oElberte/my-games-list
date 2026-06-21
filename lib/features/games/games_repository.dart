@@ -47,6 +47,21 @@ class GamesRepository {
     return bannersResponse.banners;
   }
 
+  /// Fetches personalized recommendations for the authenticated user.
+  Future<List<DiscoveryGame>> getRecommendations() async {
+    final response = await _httpClient.get<Map<String, dynamic>>(
+      '/games/recommendations',
+    );
+
+    if (response.isError) {
+      throw Exception(
+        response.error?.userMessage ?? 'Failed to fetch recommendations',
+      );
+    }
+
+    return DiscoveryGamesResponse.fromJson(response.dataOrThrow).games;
+  }
+
   /// Fetches discovery games based on the discovery type with pagination
   Future<DiscoveryGamesResponse> getDiscoveryGames(
     DiscoveryType type, {
