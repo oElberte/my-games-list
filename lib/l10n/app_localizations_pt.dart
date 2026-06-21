@@ -457,4 +457,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get notSet => 'Não definido';
+
+  @override
+  String get languageTitle => 'Idioma';
+
+  @override
+  String get languageSystem => 'Padrão do sistema';
 }

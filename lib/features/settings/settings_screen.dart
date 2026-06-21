@@ -9,6 +9,12 @@ import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
 import 'package:my_games_list/features/settings/bloc/settings_event.dart';
 import 'package:my_games_list/features/settings/bloc/settings_state.dart';
 
+// Language autonyms — shown in their own language, intentionally not localized.
+const List<({String code, String name})> _languageOptions = [
+  (code: 'en', name: 'English'),
+  (code: 'pt', name: 'Português'),
+];
+
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -76,6 +82,41 @@ class SettingsScreen extends StatelessWidget {
                   value: state.isDarkMode,
                   onChanged: (value) => context.read<SettingsBloc>().add(
                     SettingsDarkModeSet(value),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 24),
+
+            // Language Settings Section
+            Text(
+              context.l10n.languageTitle,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            BlocBuilder<SettingsBloc, SettingsState>(
+              builder: (context, state) {
+                return Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.language),
+                    title: Text(context.l10n.languageTitle),
+                    trailing: DropdownButton<String?>(
+                      value: state.localeCode,
+                      onChanged: (value) => context.read<SettingsBloc>().add(
+                        SettingsLocaleSet(value),
+                      ),
+                      items: [
+                        DropdownMenuItem<String?>(
+                          value: null,
+                          child: Text(context.l10n.languageSystem),
+                        ),
+                        for (final option in _languageOptions)
+                          DropdownMenuItem<String?>(
+                            value: option.code,
+                            child: Text(option.name),
+                          ),
+                      ],
+                    ),
                   ),
                 );
               },

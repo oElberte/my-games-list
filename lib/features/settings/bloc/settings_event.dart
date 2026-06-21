@@ -22,3 +22,13 @@ class SettingsDarkModeSet extends SettingsEvent {
   @override
   List<Object?> get props => [value];
 }
+
+class SettingsLocaleSet extends SettingsEvent {
+  const SettingsLocaleSet(this.localeCode);
+
+  /// 'en', 'pt', or null to follow the device locale.
+  final String? localeCode;
+
+  @override
+  List<Object?> get props => [localeCode];
+}
