@@ -156,5 +156,38 @@
           "type": "String"
         }
       }
-    }
+    },
+    "removeFromLibrary": "Remove from Library",
+    "removeFromLibraryConfirm": "Are you sure you want to remove \"{gameName}\" from your library?",
+    "@removeFromLibraryConfirm": {
+      "placeholders": {
+        "gameName": {
+          "type": "String"
+        }
+      }
+    },
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "save": "Save",
+    "libraryEntryUpdated": "Library entry updated successfully.",
+    "gameAddedToLibrary": "Game added to library successfully.",
+    "editEntry": "Edit Entry",
+    "addToLibrary": "Add to Library",
+    "statusLabel": "Status",
+    "platformLabel": "Platform",
+    "selectPlatformHint": "Select platform (optional)",
+    "noneOption": "None",
+    "score": "Score",
+    "favorite": "Favorite",
+    "playtime": "Playtime",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "dates": "Dates",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "difficulty": "Difficulty",
+    "difficultyHint": "e.g., Normal, Hard, Nightmare",
+    "notes": "Notes",
+    "notesHint": "Add your notes...",
+    "notSet": "Not set"
 }
