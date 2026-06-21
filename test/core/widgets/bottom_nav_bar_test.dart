@@ -34,10 +34,21 @@ void main() {
               StatefulShellBranch(
                 routes: [
                   GoRoute(
+                    path: '/browse',
+                    builder: (context, state) => const _TestScreen(
+                      title: 'Browse',
+                      key: Key('browse_screen'),
+                    ),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
                     path: '/games',
                     builder: (context, state) => const _TestScreen(
-                      title: 'Games',
-                      key: Key('games_screen'),
+                      title: 'Library',
+                      key: Key('library_screen'),
                     ),
                   ),
                 ],
@@ -63,7 +74,7 @@ void main() {
       return MaterialApp.router(routerConfig: router);
     }
 
-    testWidgets('should display all three navigation destinations', (
+    testWidgets('should display all four navigation destinations', (
       tester,
     ) async {
       // Act
@@ -78,7 +89,8 @@ void main() {
       expect(find.byType(NavigationBar), findsOneWidget);
       // Check that labels exist (they appear in multiple places in Material 3)
       expect(find.text('Home'), findsAtLeastNWidgets(1));
-      expect(find.text('Games'), findsAtLeastNWidgets(1));
+      expect(find.text('Browse'), findsAtLeastNWidgets(1));
+      expect(find.text('Library'), findsAtLeastNWidgets(1));
       expect(find.text('Profile'), findsAtLeastNWidgets(1));
     });
 
@@ -91,12 +103,21 @@ void main() {
       await tester.pumpWidget(createBottomNavBar());
       await tester.pumpAndSettle();
 
-      // Assert - Check for both outlined and filled icons
+      // Assert - Check for the destination icons (outlined or filled)
       expect(
         find.byWidgetPredicate(
           (widget) =>
               widget is Icon &&
               (widget.icon == Icons.home_outlined || widget.icon == Icons.home),
+        ),
+        findsWidgets,
+      );
+      expect(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is Icon &&
+              (widget.icon == Icons.explore_outlined ||
+                  widget.icon == Icons.explore),
         ),
         findsWidgets,
       );
@@ -134,7 +155,7 @@ void main() {
       expect(find.text('Home Content'), findsOneWidget);
     });
 
-    testWidgets('should navigate to Games tab when tapped', (tester) async {
+    testWidgets('should navigate to Browse tab when tapped', (tester) async {
       // Arrange
       tester.view.physicalSize = const Size(400, 800);
       tester.view.devicePixelRatio = 1.0;
@@ -144,12 +165,30 @@ void main() {
       await tester.pumpAndSettle();
 
       // Act
-      await tester.tap(find.text('Games'));
+      await tester.tap(find.text('Browse'));
       await tester.pumpAndSettle();
 
       // Assert
-      expect(find.byKey(const Key('games_screen')), findsOneWidget);
-      expect(find.text('Games Content'), findsOneWidget);
+      expect(find.byKey(const Key('browse_screen')), findsOneWidget);
+      expect(find.text('Browse Content'), findsOneWidget);
+    });
+
+    testWidgets('should navigate to Library tab when tapped', (tester) async {
+      // Arrange
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(createBottomNavBar());
+      await tester.pumpAndSettle();
+
+      // Act
+      await tester.tap(find.text('Library'));
+      await tester.pumpAndSettle();
+
+      // Assert
+      expect(find.byKey(const Key('library_screen')), findsOneWidget);
+      expect(find.text('Library Content'), findsOneWidget);
     });
 
     testWidgets('should navigate to Profile tab when tapped', (tester) async {
@@ -182,10 +221,10 @@ void main() {
       // Start on Home
       expect(find.byKey(const Key('home_screen')), findsOneWidget);
 
-      // Act - Switch to Games
-      await tester.tap(find.text('Games'));
+      // Act - Switch to Library
+      await tester.tap(find.text('Library'));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('games_screen')), findsOneWidget);
+      expect(find.byKey(const Key('library_screen')), findsOneWidget);
 
       // Act - Switch back to Home
       await tester.tap(find.text('Home'));
@@ -205,7 +244,7 @@ void main() {
       await tester.pumpWidget(createBottomNavBar());
       await tester.pumpAndSettle();
 
-      // Act - Navigate to Profile
+      // Act - Navigate to Profile (index 3)
       await tester.tap(find.text('Profile'));
       await tester.pumpAndSettle();
 
@@ -213,7 +252,7 @@ void main() {
       final navigationBar = tester.widget<NavigationBar>(
         find.byType(NavigationBar),
       );
-      expect(navigationBar.selectedIndex, equals(2));
+      expect(navigationBar.selectedIndex, equals(3));
     });
 
     testWidgets('should animate between tabs', (tester) async {
@@ -226,7 +265,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Act - Switch tabs
-      await tester.tap(find.text('Games'));
+      await tester.tap(find.text('Library'));
 
       // Pump once to start animation (don't settle yet)
       await tester.pump();

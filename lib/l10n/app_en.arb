@@ -97,5 +97,11 @@
     "discoveryComingSoon": "Coming Soon",
     "recommendationsTitle": "Recommended for You",
     "signInWithGoogle": "Continue with Google",
-    "orContinueWith": "or continue with"
+    "orContinueWith": "or continue with",
+    "browseTitle": "Browse",
+    "browseGenresError": "Couldn't load genres. Please try again.",
+    "browseGenresEmpty": "No genres available right now.",
+    "browseGenreGamesError": "Couldn't load games for this genre. Please try again.",
+    "browseGenreEmpty": "No games found in this genre yet.",
+    "browseRetry": "Try again"
 }

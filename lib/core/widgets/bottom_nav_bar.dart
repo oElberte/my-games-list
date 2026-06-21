@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 /// Adaptive primary navigation for the app shell.
 ///
 /// Features:
-/// - Three destinations: Home, Games, Profile
+/// - Four destinations: Home, Browse, Library, Profile
 /// - Compact (< 600px): Material 3 bottom [NavigationBar]
 /// - Medium/expanded (>= 600px, e.g. web/desktop/tablet): side [NavigationRail]
 /// - Integrates with GoRouter's StatefulShellRoute for state preservation
@@ -25,9 +25,14 @@ class BottomNavBar extends StatelessWidget {
       label: 'Home',
     ),
     _NavDestination(
+      icon: Icons.explore_outlined,
+      selectedIcon: Icons.explore,
+      label: 'Browse',
+    ),
+    _NavDestination(
       icon: Icons.sports_esports_outlined,
       selectedIcon: Icons.sports_esports,
-      label: 'Games',
+      label: 'Library',
     ),
     _NavDestination(
       icon: Icons.person_outline,
