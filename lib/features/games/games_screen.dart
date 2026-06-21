@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/widgets/visibility_hero.dart';
 import 'package:my_games_list/features/library/bloc/library_bloc.dart';
 import 'package:my_games_list/features/library/bloc/library_event.dart';
@@ -23,12 +24,12 @@ class GamesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Library'),
+        title: Text(context.l10n.libraryTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () => context.pushNamed(AppRouter.searchName),
-            tooltip: 'Add Game',
+            tooltip: context.l10n.addGame,
           ),
         ],
       ),
@@ -40,7 +41,7 @@ class GamesScreen extends StatelessWidget {
 
           if (state.status == LibraryStatus.failure && !state.hasEntries) {
             return _ErrorView(
-              message: state.errorMessage ?? 'Failed to load library',
+              message: state.errorMessage ?? context.l10n.failedToLoadLibrary,
               onRetry: () {
                 if (state.userId != null) {
                   context.read<LibraryBloc>().add(
@@ -87,7 +88,7 @@ class GamesScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.pushNamed(AppRouter.searchName),
         icon: const Icon(Icons.add),
-        label: const Text('Add Game'),
+        label: Text(context.l10n.addGame),
       ),
     );
   }
@@ -119,7 +120,7 @@ class _FilterChips extends StatelessWidget {
                     size: 18,
                   ),
                   const SizedBox(width: 4),
-                  Text('Favorites (${state.favoritesCount})'),
+                  Text(context.l10n.favoritesWithCount(state.favoritesCount)),
                 ],
               ),
               onSelected: (selected) {
@@ -137,7 +138,7 @@ class _FilterChips extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 8),
                 child: FilterChip(
                   selected: isSelected,
-                  label: Text('${status.displayName} ($count)'),
+                  label: Text('${status.localizedName(context)} ($count)'),
                   onSelected: (selected) {
                     context.read<LibraryBloc>().add(
                       LibraryStatusFilterChanged(
@@ -231,7 +232,7 @@ class _LibraryEntryCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        entry.status.displayName,
+                        entry.status.localizedName(context),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: Colors.white,
                         ),
@@ -324,15 +325,13 @@ class _EmptyLibraryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String message;
+    final String message;
     if (showFavoritesOnly) {
-      message = 'No favorite games yet.\nTap the heart icon to add favorites!';
+      message = context.l10n.emptyFavorites;
     } else if (statusFilter != null) {
-      message =
-          'No ${statusFilter!.displayName.toLowerCase()} games.\nAdd games with this status to see them here.';
+      message = context.l10n.emptyStatusGames;
     } else {
-      message =
-          'Your library is empty.\nStart adding games to track your collection!';
+      message = context.l10n.emptyLibrary;
     }
 
     return Center(
@@ -358,7 +357,7 @@ class _EmptyLibraryView extends StatelessWidget {
             FilledButton.icon(
               onPressed: () => context.pushNamed(AppRouter.searchName),
               icon: const Icon(Icons.add),
-              label: const Text('Add Your First Game'),
+              label: Text(context.l10n.addFirstGame),
             ),
           ],
         ),
@@ -396,7 +395,7 @@ class _ErrorView extends StatelessWidget {
             FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: Text(context.l10n.browseRetry),
             ),
           ],
         ),

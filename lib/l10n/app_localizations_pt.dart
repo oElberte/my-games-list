@@ -261,4 +261,119 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get browseRetry => 'Tentar novamente';
+
+  @override
+  String get navHome => 'Início';
+
+  @override
+  String get navBrowse => 'Explorar';
+
+  @override
+  String get navLibrary => 'Biblioteca';
+
+  @override
+  String get navProfile => 'Perfil';
+
+  @override
+  String get libraryTitle => 'Minha Biblioteca';
+
+  @override
+  String get addGame => 'Adicionar Jogo';
+
+  @override
+  String get addFirstGame => 'Adicione Seu Primeiro Jogo';
+
+  @override
+  String get failedToLoadLibrary => 'Falha ao carregar a biblioteca';
+
+  @override
+  String favoritesWithCount(int count) {
+    return 'Favoritos ($count)';
+  }
+
+  @override
+  String get emptyFavorites =>
+      'Nenhum jogo favorito ainda.\nToque no ícone de coração para adicionar favoritos!';
+
+  @override
+  String get emptyStatusGames =>
+      'Nenhum jogo com este status ainda.\nAdicione jogos com este status para vê-los aqui.';
+
+  @override
+  String get emptyLibrary =>
+      'Sua biblioteca está vazia.\nComece a adicionar jogos para acompanhar sua coleção!';
+
+  @override
+  String get profileTitle => 'Perfil';
+
+  @override
+  String get noUserInfo => 'Nenhuma informação de usuário disponível';
+
+  @override
+  String get switchToList => 'Mudar para lista';
+
+  @override
+  String get switchToGrid => 'Mudar para grade';
+
+  @override
+  String get failedToLoadGames => 'Falha ao carregar os jogos';
+
+  @override
+  String get reachedEnd => 'Você chegou ao fim';
+
+  @override
+  String get somethingWentWrong => 'Algo deu errado';
+
+  @override
+  String get noGamesFound => 'Nenhum jogo encontrado';
+
+  @override
+  String get noGamesInCategory => 'Ainda não há jogos nesta categoria.';
+
+  @override
+  String get seeAll => 'Ver Todos';
+
+  @override
+  String get linkCopied => 'Link copiado!';
+
+  @override
+  String get addToFavorites => 'Adicionar aos favoritos';
+
+  @override
+  String get removeFromFavorites => 'Remover dos favoritos';
+
+  @override
+  String get share => 'Compartilhar';
+
+  @override
+  String get addToLibraryShort => 'Adicionar';
+
+  @override
+  String get links => 'Links';
+
+  @override
+  String get statusPlanned => 'Planejado';
+
+  @override
+  String get statusPlaying => 'Jogando';
+
+  @override
+  String get statusFinished => 'Finalizado';
+
+  @override
+  String get statusDropped => 'Abandonado';
+
+  @override
+  String get statusOnHold => 'Pausado';
+
+  @override
+  String get mostAnticipated => 'Mais Aguardados';
+
+  @override
+  String get noUpcomingGames => 'Nenhum jogo futuro encontrado';
+
+  @override
+  String shareGameMessage(String gameName, String url) {
+    return 'Confira $gameName no MyGamesList!\n$url';
+  }
 }

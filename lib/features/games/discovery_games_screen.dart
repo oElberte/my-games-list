@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_event.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_state.dart';
@@ -59,7 +60,9 @@ class _DiscoveryGamesScreenState extends State<DiscoveryGamesScreen> {
                 icon: Icon(
                   state.isGridView ? Icons.view_list : Icons.grid_view,
                 ),
-                tooltip: state.isGridView ? 'Switch to list' : 'Switch to grid',
+                tooltip: state.isGridView
+                    ? context.l10n.switchToList
+                    : context.l10n.switchToGrid,
                 onPressed: () => context.read<DiscoveryGamesBloc>().add(
                   const DiscoveryGamesViewModeToggled(),
                 ),
@@ -79,7 +82,7 @@ class _DiscoveryGamesScreenState extends State<DiscoveryGamesScreen> {
 
     if (state.status == DiscoveryGamesStatus.failure && !state.hasGames) {
       return _ErrorView(
-        message: state.errorMessage ?? 'Failed to load games',
+        message: state.errorMessage ?? context.l10n.failedToLoadGames,
         onRetry: () => context.read<DiscoveryGamesBloc>().add(
           DiscoveryGamesLoadRequested(widget.discoveryType),
         ),
@@ -140,7 +143,7 @@ class _DiscoveryGamesScreenState extends State<DiscoveryGamesScreen> {
               padding: const EdgeInsets.all(16),
               child: Center(
                 child: Text(
-                  'You\'ve reached the end',
+                  context.l10n.reachedEnd,
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
@@ -191,7 +194,7 @@ class _ErrorView extends StatelessWidget {
             const Icon(Icons.error_outline, size: 64, color: Colors.red),
             const SizedBox(height: 16),
             Text(
-              'Something went wrong',
+              context.l10n.somethingWentWrong,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
@@ -206,7 +209,7 @@ class _ErrorView extends StatelessWidget {
             FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Try Again'),
+              label: Text(context.l10n.browseRetry),
             ),
           ],
         ),
@@ -229,12 +232,12 @@ class _EmptyView extends StatelessWidget {
             Icon(Icons.games_outlined, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'No games found',
+              context.l10n.noGamesFound,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             Text(
-              'There are no games in this category yet.',
+              context.l10n.noGamesInCategory,
               textAlign: TextAlign.center,
               style: Theme.of(
                 context,

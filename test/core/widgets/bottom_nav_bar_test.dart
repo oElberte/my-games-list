@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/widgets/bottom_nav_bar.dart';
+import 'package:my_games_list/l10n/app_localizations.dart';
 
 void main() {
   group('BottomNavBar', () {
@@ -71,7 +72,11 @@ void main() {
     });
 
     Widget createBottomNavBar() {
-      return MaterialApp.router(routerConfig: router);
+      return MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+      );
     }
 
     testWidgets('should display all four navigation destinations', (

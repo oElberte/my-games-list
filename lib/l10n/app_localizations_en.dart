@@ -258,4 +258,119 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browseRetry => 'Try again';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navBrowse => 'Browse';
+
+  @override
+  String get navLibrary => 'Library';
+
+  @override
+  String get navProfile => 'Profile';
+
+  @override
+  String get libraryTitle => 'My Library';
+
+  @override
+  String get addGame => 'Add Game';
+
+  @override
+  String get addFirstGame => 'Add Your First Game';
+
+  @override
+  String get failedToLoadLibrary => 'Failed to load library';
+
+  @override
+  String favoritesWithCount(int count) {
+    return 'Favorites ($count)';
+  }
+
+  @override
+  String get emptyFavorites =>
+      'No favorite games yet.\nTap the heart icon to add favorites!';
+
+  @override
+  String get emptyStatusGames =>
+      'No games with this status yet.\nAdd games with this status to see them here.';
+
+  @override
+  String get emptyLibrary =>
+      'Your library is empty.\nStart adding games to track your collection!';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get noUserInfo => 'No user information available';
+
+  @override
+  String get switchToList => 'Switch to list';
+
+  @override
+  String get switchToGrid => 'Switch to grid';
+
+  @override
+  String get failedToLoadGames => 'Failed to load games';
+
+  @override
+  String get reachedEnd => 'You\'ve reached the end';
+
+  @override
+  String get somethingWentWrong => 'Something went wrong';
+
+  @override
+  String get noGamesFound => 'No games found';
+
+  @override
+  String get noGamesInCategory => 'There are no games in this category yet.';
+
+  @override
+  String get seeAll => 'See All';
+
+  @override
+  String get linkCopied => 'Link copied to clipboard!';
+
+  @override
+  String get addToFavorites => 'Add to favorites';
+
+  @override
+  String get removeFromFavorites => 'Remove from favorites';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get addToLibraryShort => 'Add';
+
+  @override
+  String get links => 'Links';
+
+  @override
+  String get statusPlanned => 'Planned';
+
+  @override
+  String get statusPlaying => 'Playing';
+
+  @override
+  String get statusFinished => 'Finished';
+
+  @override
+  String get statusDropped => 'Dropped';
+
+  @override
+  String get statusOnHold => 'On Hold';
+
+  @override
+  String get mostAnticipated => 'Most Anticipated';
+
+  @override
+  String get noUpcomingGames => 'No upcoming games found';
+
+  @override
+  String shareGameMessage(String gameName, String url) {
+    return 'Check out $gameName on MyGamesList!\n$url';
+  }
 }

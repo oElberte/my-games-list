@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 
 /// Adaptive primary navigation for the app shell.
 ///
@@ -16,29 +17,16 @@ class BottomNavBar extends StatelessWidget {
   /// Width at/above which the side rail replaces the bottom bar.
   static const double _railBreakpoint = 600;
 
-  // Single source of destinations so the bar and rail stay in sync.
-  // Labels are localized separately (see i18n issue #2).
+  // Single source of destination icons so the bar and rail stay in sync.
+  // Labels are resolved from localizations at build time (see [build]).
   static const List<_NavDestination> _destinations = [
-    _NavDestination(
-      icon: Icons.home_outlined,
-      selectedIcon: Icons.home,
-      label: 'Home',
-    ),
-    _NavDestination(
-      icon: Icons.explore_outlined,
-      selectedIcon: Icons.explore,
-      label: 'Browse',
-    ),
+    _NavDestination(icon: Icons.home_outlined, selectedIcon: Icons.home),
+    _NavDestination(icon: Icons.explore_outlined, selectedIcon: Icons.explore),
     _NavDestination(
       icon: Icons.sports_esports_outlined,
       selectedIcon: Icons.sports_esports,
-      label: 'Library',
     ),
-    _NavDestination(
-      icon: Icons.person_outline,
-      selectedIcon: Icons.person,
-      label: 'Profile',
-    ),
+    _NavDestination(icon: Icons.person_outline, selectedIcon: Icons.person),
   ];
 
   void _onDestinationSelected(int index) {
@@ -50,6 +38,13 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final labels = [
+      l10n.navHome,
+      l10n.navBrowse,
+      l10n.navLibrary,
+      l10n.navProfile,
+    ];
     final isWide = MediaQuery.sizeOf(context).width >= _railBreakpoint;
 
     if (isWide) {
@@ -61,11 +56,11 @@ class BottomNavBar extends StatelessWidget {
               onDestinationSelected: _onDestinationSelected,
               labelType: NavigationRailLabelType.all,
               destinations: [
-                for (final d in _destinations)
+                for (var i = 0; i < _destinations.length; i++)
                   NavigationRailDestination(
-                    icon: Icon(d.icon),
-                    selectedIcon: Icon(d.selectedIcon),
-                    label: Text(d.label),
+                    icon: Icon(_destinations[i].icon),
+                    selectedIcon: Icon(_destinations[i].selectedIcon),
+                    label: Text(labels[i]),
                   ),
               ],
             ),
@@ -84,11 +79,11 @@ class BottomNavBar extends StatelessWidget {
         animationDuration: const Duration(milliseconds: 400),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: [
-          for (final d in _destinations)
+          for (var i = 0; i < _destinations.length; i++)
             NavigationDestination(
-              icon: Icon(d.icon),
-              selectedIcon: Icon(d.selectedIcon),
-              label: d.label,
+              icon: Icon(_destinations[i].icon),
+              selectedIcon: Icon(_destinations[i].selectedIcon),
+              label: labels[i],
             ),
         ],
       ),
@@ -97,13 +92,8 @@ class BottomNavBar extends StatelessWidget {
 }
 
 class _NavDestination {
-  const _NavDestination({
-    required this.icon,
-    required this.selectedIcon,
-    required this.label,
-  });
+  const _NavDestination({required this.icon, required this.selectedIcon});
 
   final IconData icon;
   final IconData selectedIcon;
-  final String label;
 }
