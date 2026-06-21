@@ -33,11 +33,11 @@ while IFS= read -r f; do
     echo "❌ $f: hardcoded user-facing string (use context.l10n.*)"
     fail=1
   fi
-done < <(find lib/features -name '*.dart')
+done < <(find lib/features lib/core -name '*.dart')
 
 if [ "$fail" = 1 ]; then
   echo "Found hardcoded user-facing strings — route them through context.l10n.*"
   exit 1
 fi
 
-echo "✅ No hardcoded user-facing string literals in lib/features."
+echo "✅ No hardcoded user-facing string literals in lib/features or lib/core."

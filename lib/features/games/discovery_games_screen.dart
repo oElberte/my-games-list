@@ -82,7 +82,7 @@ class _DiscoveryGamesScreenState extends State<DiscoveryGamesScreen> {
 
     if (state.status == DiscoveryGamesStatus.failure && !state.hasGames) {
       return _ErrorView(
-        message: state.errorMessage ?? context.l10n.failedToLoadGames,
+        message: context.l10n.failedToLoadGames,
         onRetry: () => context.read<DiscoveryGamesBloc>().add(
           DiscoveryGamesLoadRequested(widget.discoveryType),
         ),

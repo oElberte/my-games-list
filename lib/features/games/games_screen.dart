@@ -41,7 +41,7 @@ class GamesScreen extends StatelessWidget {
 
           if (state.status == LibraryStatus.failure && !state.hasEntries) {
             return _ErrorView(
-              message: state.errorMessage ?? context.l10n.failedToLoadLibrary,
+              message: context.l10n.failedToLoadLibrary,
               onRetry: () {
                 if (state.userId != null) {
                   context.read<LibraryBloc>().add(

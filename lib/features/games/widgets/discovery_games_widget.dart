@@ -77,7 +77,7 @@ class DiscoveryGamesWidget extends StatelessWidget {
             title: discoveryType.localizedName(context),
             icon: icon ?? _defaultIcon,
             iconColor: _iconColor,
-            message: typeState.errorMessage ?? context.l10n.failedToLoadGames,
+            message: context.l10n.failedToLoadGames,
             onRetry: () => context.read<DiscoveryGamesBloc>().add(
               DiscoveryGamesLoadRequested(discoveryType),
             ),
@@ -204,7 +204,7 @@ class _LazyDiscoveryGamesWidgetState extends State<LazyDiscoveryGamesWidget> {
               title: widget.discoveryType.localizedName(context),
               icon: widget.icon ?? _defaultIcon,
               iconColor: _iconColor,
-              message: typeState.errorMessage ?? context.l10n.failedToLoadGames,
+              message: context.l10n.failedToLoadGames,
               onRetry: () => context.read<DiscoveryGamesBloc>().add(
                 DiscoveryGamesLoadRequested(widget.discoveryType),
               ),
