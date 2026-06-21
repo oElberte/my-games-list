@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
+import 'package:my_games_list/core/utils/image_utils.dart';
 import 'package:my_games_list/features/games/bloc/featured_banners_bloc.dart';
 import 'package:my_games_list/features/games/bloc/featured_banners_state.dart';
 import 'package:my_games_list/features/games/featured_banner_model.dart';
@@ -97,7 +98,7 @@ class _BannerCard extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               CachedNetworkImage(
-                imageUrl: banner.imageUrl,
+                imageUrl: getHighResUrl(banner.imageUrl, ImageSize.hd720),
                 fit: BoxFit.cover,
                 placeholder: (context, url) =>
                     Container(color: Colors.grey[800]),
