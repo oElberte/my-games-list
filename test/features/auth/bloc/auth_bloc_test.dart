@@ -10,13 +10,15 @@ import '../../../mocks/mock_services.dart';
 void main() {
   group('AuthBloc', () {
     late MockLocalStorageService mockStorageService;
+    late FakeSessionResetService fakeSessionReset;
 
     setUp(() {
       mockStorageService = MockLocalStorageService();
+      fakeSessionReset = FakeSessionResetService();
     });
 
     test('initial state is AuthInitial', () {
-      final authBloc = AuthBloc(mockStorageService);
+      final authBloc = AuthBloc(mockStorageService, fakeSessionReset);
       expect(authBloc.state, isA<AuthInitial>());
       authBloc.close();
     });
@@ -26,7 +28,7 @@ void main() {
       build: () {
         mockStorageService.setBoolReturn(false);
         mockStorageService.setStringReturn(null);
-        return AuthBloc(mockStorageService);
+        return AuthBloc(mockStorageService, fakeSessionReset);
       },
       act: (bloc) => bloc.add(const AuthStateLoaded()),
       expect: () => [const AuthUnauthenticated()],
@@ -39,7 +41,7 @@ void main() {
         mockStorageService.setStringReturn(
           '{"id":"123","email":"saved@example.com","name":"Saved User"}',
         );
-        return AuthBloc(mockStorageService);
+        return AuthBloc(mockStorageService, fakeSessionReset);
       },
       act: (bloc) => bloc.add(const AuthStateLoaded()),
       expect: () => [
@@ -55,7 +57,7 @@ void main() {
       build: () {
         mockStorageService.setBoolReturn(true);
         mockStorageService.setStringReturn('invalid json');
-        return AuthBloc(mockStorageService);
+        return AuthBloc(mockStorageService, fakeSessionReset);
       },
       act: (bloc) => bloc.add(const AuthStateLoaded()),
       expect: () => [const AuthUnauthenticated()],
@@ -63,17 +65,18 @@ void main() {
 
     blocTest<AuthBloc, AuthState>(
       'emits [AuthUnauthenticated] when logout is requested',
-      build: () => AuthBloc(mockStorageService),
+      build: () => AuthBloc(mockStorageService, fakeSessionReset),
       act: (bloc) => bloc.add(const AuthLogoutRequested()),
       expect: () => [const AuthUnauthenticated()],
       verify: (_) {
         expect(mockStorageService.removeCallHistory.length, greaterThan(0));
+        expect(fakeSessionReset.teardownCalled, isTrue);
       },
     );
 
     blocTest<AuthBloc, AuthState>(
       'emits [AuthAuthenticated] when AuthUserAuthenticated is added (real API path)',
-      build: () => AuthBloc(mockStorageService),
+      build: () => AuthBloc(mockStorageService, fakeSessionReset),
       act: (bloc) => bloc.add(
         const AuthUserAuthenticated(
           User(
@@ -100,7 +103,7 @@ void main() {
 
     blocTest<AuthBloc, AuthState>(
       'AuthUserAuthenticated persists user and can be restored via AuthStateLoaded',
-      build: () => AuthBloc(mockStorageService),
+      build: () => AuthBloc(mockStorageService, fakeSessionReset),
       act: (bloc) async {
         bloc.add(
           const AuthUserAuthenticated(

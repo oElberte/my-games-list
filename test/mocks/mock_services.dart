@@ -1,4 +1,5 @@
 import 'package:my_games_list/core/data/services/storage/local_storage_service.dart';
+import 'package:my_games_list/core/services/session_reset_service.dart';
 
 class MockLocalStorageService implements LocalStorageService {
   final Map<String, dynamic> _storage = {};
@@ -136,5 +137,15 @@ class MockLocalStorageService implements LocalStorageService {
     _intReturn = null;
     _doubleReturn = null;
     _stringListReturn = null;
+  }
+}
+
+/// Fake [SessionResetService] for tests — records whether teardown was invoked.
+class FakeSessionResetService implements SessionResetService {
+  bool teardownCalled = false;
+
+  @override
+  Future<void> teardownSession() async {
+    teardownCalled = true;
   }
 }

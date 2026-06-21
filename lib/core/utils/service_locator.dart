@@ -7,6 +7,7 @@ import 'package:my_games_list/core/data/services/storage/shared_preferences_serv
 import 'package:my_games_list/core/data/services/storage/token_storage.dart';
 import 'package:my_games_list/core/services/analytics_service.dart';
 import 'package:my_games_list/core/services/notification_service.dart';
+import 'package:my_games_list/core/services/session_reset_service.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/home/bloc/home_bloc.dart';
 import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
@@ -55,6 +56,14 @@ Future<void> _registerCoreServices() async {
   sl.registerLazySingleton<NotificationService>(
     () => NotificationService(httpClient: sl<IHttpClient>()),
   );
+
+  // Session teardown (logout) — clears token + resets per-user singletons
+  sl.registerLazySingleton<SessionResetService>(
+    () => SessionResetService(
+      tokenStorage: sl<TokenStorage>(),
+      httpClient: sl<IHttpClient>(),
+    ),
+  );
 }
 
 /// Restores the authentication token from storage to HTTP client if it exists.
@@ -76,7 +85,9 @@ Future<void> _restoreAuthToken() async {
 /// Auth-specific BLoCs (SignIn/SignUp) are registered modularly in the router.
 void _registerGlobalBlocs() {
   // Register AuthBloc as lazy singleton - manages global authentication state
-  sl.registerLazySingleton<AuthBloc>(() => AuthBloc(sl<LocalStorageService>()));
+  sl.registerLazySingleton<AuthBloc>(
+    () => AuthBloc(sl<LocalStorageService>(), sl<SessionResetService>()),
+  );
 
   // Register SettingsBloc as lazy singleton
   sl.registerLazySingleton<SettingsBloc>(

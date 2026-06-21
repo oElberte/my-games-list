@@ -41,7 +41,7 @@ void main() {
         () => MockLocalStorageService(),
       );
       sl.registerLazySingleton<AuthBloc>(
-        () => AuthBloc(sl<LocalStorageService>()),
+        () => AuthBloc(sl<LocalStorageService>(), FakeSessionResetService()),
       );
     });
 
