@@ -22,15 +22,18 @@ class CollectionsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CollectionsBloc, CollectionsState>(
       builder: (context, state) {
-        if (!state.hasCollections) {
+        // Drop empty collections before capping so they don't consume a slot.
+        final visible = state.collections
+            .where((c) => c.games.isNotEmpty)
+            .take(_maxCollectionsOnHome)
+            .toList();
+        if (visible.isEmpty) {
           return const SizedBox.shrink();
         }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            for (final collection in state.collections.take(
-              _maxCollectionsOnHome,
-            ))
+            for (final collection in visible)
               _CollectionSection(collection: collection),
           ],
         );
@@ -46,10 +49,6 @@ class _CollectionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (collection.games.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
     final theme = Theme.of(context);
     final count = collection.games.length > _maxTiles
         ? _maxTiles
