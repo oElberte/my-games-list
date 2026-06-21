@@ -1,5 +1,6 @@
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/features/games/anticipated_game_model.dart';
+import 'package:my_games_list/features/games/collection_model.dart';
 import 'package:my_games_list/features/games/discovery_game_model.dart';
 import 'package:my_games_list/features/games/featured_banner_model.dart';
 import 'package:my_games_list/features/games/game_detail_model.dart';
@@ -60,6 +61,21 @@ class GamesRepository {
     }
 
     return DiscoveryGamesResponse.fromJson(response.dataOrThrow).games;
+  }
+
+  /// Fetches the curated game collections for the home screen.
+  Future<List<GameCollection>> getCollections() async {
+    final response = await _httpClient.get<Map<String, dynamic>>(
+      '/home/collections',
+    );
+
+    if (response.isError) {
+      throw Exception(
+        response.error?.userMessage ?? 'Failed to fetch collections',
+      );
+    }
+
+    return CollectionsResponse.fromJson(response.dataOrThrow).collections;
   }
 
   /// Fetches discovery games based on the discovery type with pagination

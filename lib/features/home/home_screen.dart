@@ -6,6 +6,7 @@ import 'package:my_games_list/features/games/discovery_game_model.dart';
 import 'package:my_games_list/features/games/widgets/anticipated_games_carousel.dart';
 import 'package:my_games_list/features/games/widgets/discovery_games_widget.dart';
 import 'package:my_games_list/features/games/widgets/featured_banners_carousel.dart';
+import 'package:my_games_list/features/games/widgets/collections_widget.dart';
 import 'package:my_games_list/features/games/widgets/recommendations_widget.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -38,6 +39,8 @@ class HomeScreen extends StatelessWidget {
             // Trending games section
             DiscoveryGamesWidget(discoveryType: DiscoveryType.trending),
             SizedBox(height: 16),
+            // Curated collections
+            CollectionsWidget(),
             // Indie Gems section (lazy loaded)
             LazyDiscoveryGamesWidget(discoveryType: DiscoveryType.indie),
             SizedBox(height: 16),
