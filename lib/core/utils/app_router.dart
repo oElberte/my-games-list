@@ -36,8 +36,6 @@ import 'package:my_games_list/features/games/game_search_screen.dart';
 import 'package:my_games_list/features/games/games_repository.dart';
 import 'package:my_games_list/features/games/games_screen.dart';
 import 'package:my_games_list/features/games/widgets/video_player_screen.dart';
-import 'package:my_games_list/features/home/bloc/home_bloc.dart';
-import 'package:my_games_list/features/home/bloc/home_event.dart';
 import 'package:my_games_list/features/home/home_screen.dart';
 import 'package:my_games_list/features/library/bloc/library_bloc.dart';
 import 'package:my_games_list/features/library/bloc/library_event.dart';
@@ -172,13 +170,10 @@ class AppRouter {
                     // Register games repository lazily (only once, stays in memory)
                     _ensureGamesRepositoryRegistered();
 
-                    // Provide HomeBloc, AnticipatedGamesBloc, and DiscoveryGamesBloc (auto-disposed by BlocProvider)
+                    // Provide the home dashboard blocs (auto-disposed by
+                    // BlocProvider).
                     return MultiBlocProvider(
                       providers: [
-                        BlocProvider(
-                          create: (_) =>
-                              sl<HomeBloc>()..add(const HomeInitialized()),
-                        ),
                         BlocProvider(
                           create: (_) => AnticipatedGamesBloc(
                             gamesRepository: sl<GamesRepository>(),
