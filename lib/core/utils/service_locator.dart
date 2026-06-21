@@ -9,6 +9,8 @@ import 'package:my_games_list/core/services/analytics_service.dart';
 import 'package:my_games_list/core/services/notification_service.dart';
 import 'package:my_games_list/core/services/session_reset_service.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
+import 'package:my_games_list/features/auth/bloc/auth_event.dart';
+import 'package:my_games_list/features/auth/bloc/auth_state.dart';
 import 'package:my_games_list/features/home/bloc/home_bloc.dart';
 import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -96,6 +98,15 @@ void _registerGlobalBlocs() {
 
   // Register HomeBloc as factory - new instance per screen
   sl.registerFactory<HomeBloc>(() => HomeBloc(sl<LocalStorageService>()));
+
+  // Auto-logout on 401: an expired/invalid session triggers a single logout
+  // through AuthBloc, which runs the full session teardown.
+  sl<IHttpClient>().setOnUnauthorized(() {
+    final authBloc = sl<AuthBloc>();
+    if (authBloc.state is AuthAuthenticated) {
+      authBloc.add(const AuthLogoutRequested());
+    }
+  });
 }
 
 /// Resets all registrations - useful for testing

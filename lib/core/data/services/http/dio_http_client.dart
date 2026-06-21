@@ -8,18 +8,20 @@ import 'package:my_games_list/core/utils/env.dart';
 /// Dio implementation of [IHttpClient].
 /// Handles HTTP requests using the Dio package with proper error handling.
 class DioHttpClient implements IHttpClient {
-  DioHttpClient() {
+  DioHttpClient({Dio? dio}) {
     const baseUrl = Env.apiBaseUrl;
 
-    _dio = Dio(
-      BaseOptions(
-        baseUrl: baseUrl,
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
-        contentType: 'application/json',
-        headers: {'Accept': 'application/json'},
-      ),
-    );
+    _dio =
+        dio ??
+        Dio(
+          BaseOptions(
+            baseUrl: baseUrl,
+            connectTimeout: const Duration(seconds: 30),
+            receiveTimeout: const Duration(seconds: 30),
+            contentType: 'application/json',
+            headers: {'Accept': 'application/json'},
+          ),
+        );
     // Only log request/response bodies in debug builds — they can contain
     // auth tokens and personal data that must never be logged in release.
     if (kDebugMode) {
@@ -27,8 +29,30 @@ class DioHttpClient implements IHttpClient {
         LogInterceptor(requestBody: true, responseBody: true),
       );
     }
+
+    // Auto-logout when an authenticated request fails with 401 (expired/invalid
+    // session). Auth endpoints and unauthenticated requests are excluded.
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (error, handler) {
+          if (_shouldTriggerLogout(error)) {
+            _unauthorizedHandled = true;
+            _onUnauthorized?.call();
+          }
+          handler.next(error);
+        },
+      ),
+    );
   }
   late final Dio _dio;
+  void Function()? _onUnauthorized;
+  bool _unauthorizedHandled = false;
+
+  static const List<String> _authPaths = [
+    '/auth/signin',
+    '/auth/signup',
+    '/auth/social',
+  ];
 
   /// Runs a Dio request and maps the result/errors into an [ApiResponse].
   Future<ApiResponse<T>> _request<T>(
@@ -94,11 +118,29 @@ class DioHttpClient implements IHttpClient {
   @override
   void setAuthToken(String token) {
     _dio.options.headers['Authorization'] = 'Bearer $token';
+    // A new session re-arms the one-shot auto-logout guard.
+    _unauthorizedHandled = false;
   }
 
   @override
   void clearAuthToken() {
     _dio.options.headers.remove('Authorization');
+  }
+
+  @override
+  void setOnUnauthorized(void Function()? callback) {
+    _onUnauthorized = callback;
+  }
+
+  /// True when a 401 indicates an expired/invalid session — an authenticated
+  /// (Authorization header present), non-auth request — so we trigger logout
+  /// exactly once.
+  bool _shouldTriggerLogout(DioException error) {
+    if (_unauthorizedHandled) return false;
+    if (error.response?.statusCode != 401) return false;
+    final authHeader = error.requestOptions.headers['Authorization'] as String?;
+    if (authHeader == null || authHeader.isEmpty) return false;
+    return !_authPaths.any(error.requestOptions.path.contains);
   }
 
   /// Handles Dio errors and extracts ApiError from response.

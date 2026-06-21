@@ -60,4 +60,8 @@ abstract class IHttpClient {
 
   /// Clears the authorization header.
   void clearAuthToken();
+
+  /// Registers a callback invoked when an authenticated request fails with a
+  /// 401 (an expired/invalid session). Pass null to clear it.
+  void setOnUnauthorized(void Function()? callback);
 }
