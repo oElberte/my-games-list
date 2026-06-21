@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_event.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_state.dart';
@@ -76,7 +77,7 @@ class DiscoveryGamesWidget extends StatelessWidget {
             title: discoveryType.localizedName(context),
             icon: icon ?? _defaultIcon,
             iconColor: _iconColor,
-            message: typeState.errorMessage ?? 'Failed to load games',
+            message: context.l10n.failedToLoadGames,
             onRetry: () => context.read<DiscoveryGamesBloc>().add(
               DiscoveryGamesLoadRequested(discoveryType),
             ),
@@ -203,7 +204,7 @@ class _LazyDiscoveryGamesWidgetState extends State<LazyDiscoveryGamesWidget> {
               title: widget.discoveryType.localizedName(context),
               icon: widget.icon ?? _defaultIcon,
               iconColor: _iconColor,
-              message: typeState.errorMessage ?? 'Failed to load games',
+              message: context.l10n.failedToLoadGames,
               onRetry: () => context.read<DiscoveryGamesBloc>().add(
                 DiscoveryGamesLoadRequested(widget.discoveryType),
               ),
@@ -269,7 +270,7 @@ class _WidgetContent extends StatelessWidget {
                   AppRouter.discoveryName,
                   pathParameters: {'type': discoveryType.queryParam},
                 ),
-                icon: const Text('See All'),
+                icon: Text(context.l10n.seeAll),
                 label: const Icon(Icons.arrow_forward_ios, size: 14),
                 style: TextButton.styleFrom(
                   foregroundColor: theme.colorScheme.primary,
@@ -415,7 +416,10 @@ class _WidgetError extends StatelessWidget {
                   Expanded(
                     child: Text(message, style: theme.textTheme.bodyMedium),
                   ),
-                  TextButton(onPressed: onRetry, child: const Text('Retry')),
+                  TextButton(
+                    onPressed: onRetry,
+                    child: Text(context.l10n.browseRetry),
+                  ),
                 ],
               ),
             ),

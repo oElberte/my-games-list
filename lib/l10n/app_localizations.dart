@@ -583,6 +583,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try again'**
   String get browseRetry;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navBrowse.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse'**
+  String get navBrowse;
+
+  /// No description provided for @navLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get navLibrary;
+
+  /// No description provided for @navProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get navProfile;
+
+  /// No description provided for @libraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Library'**
+  String get libraryTitle;
+
+  /// No description provided for @addGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Game'**
+  String get addGame;
+
+  /// No description provided for @addFirstGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Your First Game'**
+  String get addFirstGame;
+
+  /// No description provided for @failedToLoadLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load library'**
+  String get failedToLoadLibrary;
+
+  /// No description provided for @favoritesWithCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites ({count})'**
+  String favoritesWithCount(int count);
+
+  /// No description provided for @emptyFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorite games yet.\nTap the heart icon to add favorites!'**
+  String get emptyFavorites;
+
+  /// No description provided for @emptyStatusGames.
+  ///
+  /// In en, this message translates to:
+  /// **'No games with this status yet.\nAdd games with this status to see them here.'**
+  String get emptyStatusGames;
+
+  /// No description provided for @emptyLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your library is empty.\nStart adding games to track your collection!'**
+  String get emptyLibrary;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @noUserInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'No user information available'**
+  String get noUserInfo;
+
+  /// No description provided for @switchToList.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to list'**
+  String get switchToList;
+
+  /// No description provided for @switchToGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to grid'**
+  String get switchToGrid;
+
+  /// No description provided for @failedToLoadGames.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load games'**
+  String get failedToLoadGames;
+
+  /// No description provided for @reachedEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached the end'**
+  String get reachedEnd;
+
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWentWrong;
+
+  /// No description provided for @noGamesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No games found'**
+  String get noGamesFound;
+
+  /// No description provided for @noGamesInCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no games in this category yet.'**
+  String get noGamesInCategory;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get seeAll;
+
+  /// No description provided for @linkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied to clipboard!'**
+  String get linkCopied;
+
+  /// No description provided for @addToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get addToFavorites;
+
+  /// No description provided for @removeFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get removeFromFavorites;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @addToLibraryShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addToLibraryShort;
+
+  /// No description provided for @links.
+  ///
+  /// In en, this message translates to:
+  /// **'Links'**
+  String get links;
+
+  /// No description provided for @statusPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned'**
+  String get statusPlanned;
+
+  /// No description provided for @statusPlaying.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing'**
+  String get statusPlaying;
+
+  /// No description provided for @statusFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished'**
+  String get statusFinished;
+
+  /// No description provided for @statusDropped.
+  ///
+  /// In en, this message translates to:
+  /// **'Dropped'**
+  String get statusDropped;
+
+  /// No description provided for @statusOnHold.
+  ///
+  /// In en, this message translates to:
+  /// **'On Hold'**
+  String get statusOnHold;
+
+  /// No description provided for @mostAnticipated.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Anticipated'**
+  String get mostAnticipated;
+
+  /// No description provided for @noUpcomingGames.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming games found'**
+  String get noUpcomingGames;
+
+  /// No description provided for @shareGameMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Check out {gameName} on MyGamesList!\n{url}'**
+  String shareGameMessage(String gameName, String url);
 }
 
 class _AppLocalizationsDelegate

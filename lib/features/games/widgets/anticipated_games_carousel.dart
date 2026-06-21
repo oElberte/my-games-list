@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/image_utils.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/widgets/visibility_hero.dart';
 import 'package:my_games_list/features/games/anticipated_game_model.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_bloc.dart';
@@ -24,7 +25,7 @@ class AnticipatedGamesCarousel extends StatelessWidget {
 
         if (state.status == AnticipatedGamesStatus.failure && !state.hasGames) {
           return _CarouselError(
-            message: state.errorMessage ?? 'Failed to load games',
+            message: state.errorMessage ?? context.l10n.failedToLoadGames,
             onRetry: () => context.read<AnticipatedGamesBloc>().add(
               const AnticipatedGamesLoadRequested(),
             ),
@@ -58,7 +59,7 @@ class _CarouselContent extends StatelessWidget {
               const Icon(Icons.local_fire_department, color: Colors.orange),
               const SizedBox(width: 8),
               Text(
-                'Most Anticipated',
+                context.l10n.mostAnticipated,
                 style: Theme.of(
                   context,
                 ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -322,14 +323,14 @@ class _CarouselError extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Failed to load games',
+              context.l10n.failedToLoadGames,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             TextButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: Text(context.l10n.browseRetry),
             ),
           ],
         ),
@@ -356,7 +357,7 @@ class _CarouselEmpty extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'No upcoming games found',
+              context.l10n.noUpcomingGames,
               style: Theme.of(context).textTheme.titleMedium,
             ),
           ],

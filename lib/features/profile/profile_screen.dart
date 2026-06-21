@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
 
@@ -18,13 +19,13 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(context.l10n.profileTitle),
         actions: [
           IconButton(
             key: const Key('profile_settings_button'),
             icon: const Icon(Icons.settings),
             onPressed: () => context.push(AppRouter.settingsPath),
-            tooltip: 'Settings',
+            tooltip: context.l10n.settingsTitle,
           ),
         ],
       ),
@@ -63,7 +64,7 @@ class ProfileScreen extends StatelessWidget {
                             // Username
                             _InfoRow(
                               icon: Icons.account_circle,
-                              label: 'Username',
+                              label: context.l10n.usernameLabel,
                               value: user.name,
                             ),
                             const SizedBox(height: 16),
@@ -71,7 +72,7 @@ class ProfileScreen extends StatelessWidget {
                             // Email
                             _InfoRow(
                               icon: Icons.email,
-                              label: 'Email',
+                              label: context.l10n.emailLabel,
                               value: user.email,
                             ),
                           ],
@@ -85,7 +86,7 @@ class ProfileScreen extends StatelessWidget {
           }
 
           // Fallback for non-authenticated state (shouldn't normally happen)
-          return const Center(child: Text('No user information available'));
+          return Center(child: Text(context.l10n.noUserInfo));
         },
       ),
     );

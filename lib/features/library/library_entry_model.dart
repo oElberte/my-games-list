@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 
 /// Enum representing the status of a game in the user's library
 enum GameStatus {
@@ -55,6 +57,22 @@ enum GameStatus {
         return 'Dropped';
       case GameStatus.onHold:
         return 'On Hold';
+    }
+  }
+
+  /// Returns the localized display name for the current locale.
+  String localizedName(BuildContext context) {
+    switch (this) {
+      case GameStatus.planned:
+        return context.l10n.statusPlanned;
+      case GameStatus.playing:
+        return context.l10n.statusPlaying;
+      case GameStatus.finished:
+        return context.l10n.statusFinished;
+      case GameStatus.dropped:
+        return context.l10n.statusDropped;
+      case GameStatus.onHold:
+        return context.l10n.statusOnHold;
     }
   }
 }

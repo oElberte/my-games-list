@@ -103,5 +103,58 @@
     "browseGenresEmpty": "No genres available right now.",
     "browseGenreGamesError": "Couldn't load games for this genre. Please try again.",
     "browseGenreEmpty": "No games found in this genre yet.",
-    "browseRetry": "Try again"
+    "browseRetry": "Try again",
+    "navHome": "Home",
+    "navBrowse": "Browse",
+    "navLibrary": "Library",
+    "navProfile": "Profile",
+    "libraryTitle": "My Library",
+    "addGame": "Add Game",
+    "addFirstGame": "Add Your First Game",
+    "failedToLoadLibrary": "Failed to load library",
+    "favoritesWithCount": "Favorites ({count})",
+    "@favoritesWithCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
+    "emptyFavorites": "No favorite games yet.\nTap the heart icon to add favorites!",
+    "emptyStatusGames": "No games with this status yet.\nAdd games with this status to see them here.",
+    "emptyLibrary": "Your library is empty.\nStart adding games to track your collection!",
+    "profileTitle": "Profile",
+    "noUserInfo": "No user information available",
+    "switchToList": "Switch to list",
+    "switchToGrid": "Switch to grid",
+    "failedToLoadGames": "Failed to load games",
+    "reachedEnd": "You've reached the end",
+    "somethingWentWrong": "Something went wrong",
+    "noGamesFound": "No games found",
+    "noGamesInCategory": "There are no games in this category yet.",
+    "seeAll": "See All",
+    "linkCopied": "Link copied to clipboard!",
+    "addToFavorites": "Add to favorites",
+    "removeFromFavorites": "Remove from favorites",
+    "share": "Share",
+    "addToLibraryShort": "Add",
+    "links": "Links",
+    "statusPlanned": "Planned",
+    "statusPlaying": "Playing",
+    "statusFinished": "Finished",
+    "statusDropped": "Dropped",
+    "statusOnHold": "On Hold",
+    "mostAnticipated": "Most Anticipated",
+    "noUpcomingGames": "No upcoming games found",
+    "shareGameMessage": "Check out {gameName} on MyGamesList!\n{url}",
+    "@shareGameMessage": {
+      "placeholders": {
+        "gameName": {
+          "type": "String"
+        },
+        "url": {
+          "type": "String"
+        }
+      }
+    }
 }

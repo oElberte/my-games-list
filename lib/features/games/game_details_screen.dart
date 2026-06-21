@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:my_games_list/core/utils/env.dart';
 import 'package:my_games_list/core/utils/image_utils.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/messages_extensions.dart';
 import 'package:my_games_list/core/widgets/visibility_hero.dart';
 import 'package:my_games_list/core/utils/website_category.dart';
@@ -138,8 +139,7 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
 
   Future<void> _shareGame() async {
     final shareUrl = '${Env.webBaseUrl}/games/${widget.gameId}';
-    final shareText =
-        'Check out ${widget.game.name} on MyGamesList!\n$shareUrl';
+    final shareText = context.l10n.shareGameMessage(widget.game.name, shareUrl);
     final box = context.findRenderObject() as RenderBox?;
 
     try {
@@ -153,7 +153,7 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
       if (mounted) {
         await Clipboard.setData(ClipboardData(text: shareUrl));
         if (mounted) {
-          context.showMessage('Link copied to clipboard!');
+          context.showMessage(context.l10n.linkCopied);
         }
       }
     }
@@ -222,14 +222,14 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
                         color: isFavorite ? Colors.red : Colors.white,
                       ),
                       tooltip: isFavorite
-                          ? 'Remove from favorites'
-                          : 'Add to favorites',
+                          ? context.l10n.removeFromFavorites
+                          : context.l10n.addToFavorites,
                     ),
                   // Share button
                   IconButton(
                     onPressed: _shareGame,
                     icon: const Icon(Icons.share, color: Colors.white),
-                    tooltip: 'Share',
+                    tooltip: context.l10n.share,
                   ),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
@@ -388,7 +388,9 @@ class _LibraryFab extends StatelessWidget {
       elevation: 4,
       icon: Icon(isInLibrary ? Icons.edit : Icons.add),
       label: Text(
-        isInLibrary ? status!.displayName : 'Add',
+        isInLibrary
+            ? status!.localizedName(context)
+            : context.l10n.addToLibraryShort,
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
     );
@@ -857,7 +859,10 @@ class _WebsitesSection extends StatelessWidget {
 
         // Other links
         if (otherSites.isNotEmpty) ...[
-          Text('Links', style: Theme.of(context).textTheme.titleSmall),
+          Text(
+            context.l10n.links,
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,

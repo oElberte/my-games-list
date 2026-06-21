@@ -34,6 +34,8 @@ jobs:
         run: dart format --output=none --set-exit-if-changed lib test
       - name: Analyze
         run: flutter analyze
+      - name: Check for hardcoded strings
+        run: bash tool/check_hardcoded_strings.sh
       - name: Test
         run: flutter test
 
