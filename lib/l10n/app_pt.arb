@@ -70,5 +70,7 @@
     "errorLoadingData": "Erro ao carregar dados",
     "discoveryTrending": "Em Alta",
     "discoveryIndie": "Indie",
-    "discoveryUpcoming": "Em Breve"
+    "discoveryUpcoming": "Em Breve",
+    "discoveryNewReleases": "Novos Lançamentos",
+    "discoveryComingSoon": "Chegando em Breve"
 }

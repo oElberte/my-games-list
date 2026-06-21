@@ -53,7 +53,7 @@ class _DiscoveryGamesScreenState extends State<DiscoveryGamesScreen> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.discoveryType.displayName),
+            title: Text(widget.discoveryType.localizedName(context)),
             actions: [
               IconButton(
                 icon: Icon(

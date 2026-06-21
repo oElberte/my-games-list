@@ -93,6 +93,8 @@
     "discoveryTrending": "Trending Now",
     "discoveryIndie": "Indie Gems",
     "discoveryUpcoming": "Upcoming Games",
+    "discoveryNewReleases": "New Releases",
+    "discoveryComingSoon": "Coming Soon",
     "signInWithGoogle": "Continue with Google",
     "orContinueWith": "or continue with"
 }
