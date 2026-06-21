@@ -281,6 +281,11 @@ class AppRouter {
           builder: (context, state) {
             final gameIdStr = state.pathParameters['id']!;
             final gameId = int.parse(gameIdStr);
+            // Hero tag prefix passed from the source tile (e.g. recommendations
+            // row) so the cover transition matches the source card.
+            final heroTagPrefix = state.extra is String
+                ? state.extra! as String
+                : '';
 
             // Register games repository lazily (only once, stays in memory)
             _ensureGamesRepositoryRegistered();
@@ -304,7 +309,10 @@ class AppRouter {
                     ),
                 ),
               ],
-              child: GameDetailsScreen(gameId: gameId),
+              child: GameDetailsScreen(
+                gameId: gameId,
+                heroTagPrefix: heroTagPrefix,
+              ),
             );
           },
         ),

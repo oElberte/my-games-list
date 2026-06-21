@@ -25,9 +25,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// Screen displaying detailed game information.
 class GameDetailsScreen extends StatelessWidget {
-  const GameDetailsScreen({super.key, required this.gameId});
+  const GameDetailsScreen({
+    super.key,
+    required this.gameId,
+    this.heroTagPrefix = '',
+  });
 
   final int gameId;
+  final String heroTagPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +50,11 @@ class GameDetailsScreen extends StatelessWidget {
           return const _LoadingScreen();
         }
 
-        return _GameDetailsContent(game: state.game!, gameId: gameId);
+        return _GameDetailsContent(
+          game: state.game!,
+          gameId: gameId,
+          heroTagPrefix: heroTagPrefix,
+        );
       },
     );
   }
@@ -100,10 +109,15 @@ class _ErrorScreen extends StatelessWidget {
 }
 
 class _GameDetailsContent extends StatefulWidget {
-  const _GameDetailsContent({required this.game, required this.gameId});
+  const _GameDetailsContent({
+    required this.game,
+    required this.gameId,
+    this.heroTagPrefix = '',
+  });
 
   final GameDetail game;
   final int gameId;
+  final String heroTagPrefix;
 
   @override
   State<_GameDetailsContent> createState() => _GameDetailsContentState();
@@ -272,7 +286,11 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Info Row: Cover, Developer, Rating
-                      _InfoRow(game: game, gameId: widget.gameId),
+                      _InfoRow(
+                        game: game,
+                        gameId: widget.gameId,
+                        heroTagPrefix: widget.heroTagPrefix,
+                      ),
 
                       const SizedBox(height: 24),
 
@@ -378,10 +396,15 @@ class _LibraryFab extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.game, required this.gameId});
+  const _InfoRow({
+    required this.game,
+    required this.gameId,
+    this.heroTagPrefix = '',
+  });
 
   final GameDetail game;
   final int gameId;
+  final String heroTagPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -393,7 +416,7 @@ class _InfoRow extends StatelessWidget {
         // Cover Image with Hero animation
         if (game.hasCover)
           Hero(
-            tag: 'game-cover-$gameId',
+            tag: '${heroTagPrefix}game-cover-$gameId',
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: CachedNetworkImage(

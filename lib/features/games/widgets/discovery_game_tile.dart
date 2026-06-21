@@ -34,6 +34,7 @@ class DiscoveryGameTile extends StatelessWidget {
       onTap: () => context.pushNamed(
         AppRouter.gameDetailsName,
         pathParameters: {'id': game.id.toString()},
+        extra: heroTagPrefix.isEmpty ? null : heroTagPrefix,
       ),
       child: Container(
         width: isCompact ? 130 : null,
