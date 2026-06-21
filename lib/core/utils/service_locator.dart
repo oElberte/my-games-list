@@ -5,13 +5,11 @@ import 'package:my_games_list/core/data/services/storage/local_storage_service.d
 import 'package:my_games_list/core/data/services/storage/secure_token_storage.dart';
 import 'package:my_games_list/core/data/services/storage/shared_preferences_service.dart';
 import 'package:my_games_list/core/data/services/storage/token_storage.dart';
-import 'package:my_games_list/core/services/analytics_service.dart';
 import 'package:my_games_list/core/services/notification_service.dart';
 import 'package:my_games_list/core/services/session_reset_service.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
-import 'package:my_games_list/features/home/bloc/home_bloc.dart';
 import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,9 +48,6 @@ Future<void> _registerCoreServices() async {
 
   // Register HTTP client as singleton (used globally for all API calls)
   sl.registerLazySingleton<IHttpClient>(() => DioHttpClient());
-
-  // Register Analytics service as lazy singleton
-  sl.registerLazySingleton<AnalyticsService>(() => AnalyticsService());
 
   // Register NotificationService as lazy singleton
   sl.registerLazySingleton<NotificationService>(
@@ -95,9 +90,6 @@ void _registerGlobalBlocs() {
   sl.registerLazySingleton<SettingsBloc>(
     () => SettingsBloc(sl<LocalStorageService>()),
   );
-
-  // Register HomeBloc as factory - new instance per screen
-  sl.registerFactory<HomeBloc>(() => HomeBloc(sl<LocalStorageService>()));
 
   // Auto-logout on 401: an expired/invalid session triggers a single logout
   // through AuthBloc, which runs the full session teardown.

@@ -1,21 +1,20 @@
-# Home Feature Documentation
+# Home Feature
 
 ## Overview
-Manages the home screen and main dashboard functionality.
+The home tab — a read-only discovery dashboard. It composes the games feature's
+widgets into a scrollable feed: featured banners, anticipated games, discovery
+rows (trending/new releases/coming soon), curated collections, and personalized
+recommendations.
 
 ## Architecture
-**Feature-First Structure**:
-- `home_screen.dart`: Main dashboard UI.
-- `item_model.dart`: Data model for items.
-- `bloc/`: Contains `HomeBloc`, `HomeEvent`, `HomeState`.
+- `home_screen.dart`: the dashboard UI. A `StatelessWidget` that only lays out
+  the section widgets.
 
-### Dependencies
-- `HomeBloc` (Factory): Manages home screen state.
+`HomeScreen` has **no bloc of its own**. Every section is driven by a bloc from
+the games feature (`AnticipatedGamesBloc`, `DiscoveryGamesBloc`,
+`FeaturedBannersBloc`, `RecommendationsBloc`, `CollectionsBloc`), all provided
+in `app_router.dart` via `MultiBlocProvider` on the home route. Do not add
+providers or DI inside `HomeScreen`.
 
-## Key Components
-- **HomeBloc**: Handles business logic for fetching items and toggling favorites.
-- **HomeScreen**: Displays list of items with favorite toggle.
-
-## Testing Strategy
-- Unit test `HomeBloc`.
-- Widget test `HomeScreen`.
+## Testing
+- Widget test `HomeScreen` (section widgets render given their blocs).

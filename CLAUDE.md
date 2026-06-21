@@ -250,9 +250,6 @@ GoRoute(
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => sl<HomeBloc>()..add(const HomeInitialized()),
-        ),
-        BlocProvider(
           create: (_) => AnticipatedGamesBloc(
             gamesRepository: sl<GamesRepository>(),
           )..add(const AnticipatedGamesLoadRequested()),

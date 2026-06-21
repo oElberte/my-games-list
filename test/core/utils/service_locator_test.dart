@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:my_games_list/core/data/services/storage/local_storage_service.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
-import 'package:my_games_list/features/home/bloc/home_bloc.dart';
 import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,7 +28,6 @@ void main() {
       expect(sl.isRegistered<SharedPreferences>(), isTrue);
       expect(sl.isRegistered<LocalStorageService>(), isTrue);
       expect(sl.isRegistered<AuthBloc>(), isTrue);
-      expect(sl.isRegistered<HomeBloc>(), isTrue);
       expect(sl.isRegistered<SettingsBloc>(), isTrue);
     });
 
@@ -53,20 +51,16 @@ void main() {
 
       // Act
       final authBloc = sl<AuthBloc>();
-      final homeBloc = sl<HomeBloc>();
       final settingsBloc = sl<SettingsBloc>();
 
       // Assert
       expect(authBloc, isNotNull);
       expect(authBloc, isA<AuthBloc>());
-      expect(homeBloc, isNotNull);
-      expect(homeBloc, isA<HomeBloc>());
       expect(settingsBloc, isNotNull);
       expect(settingsBloc, isA<SettingsBloc>());
 
       // Clean up
       authBloc.close();
-      homeBloc.close();
       settingsBloc.close();
     });
 
@@ -90,7 +84,6 @@ void main() {
       expect(sl.isRegistered<SharedPreferences>(), isFalse);
       expect(sl.isRegistered<LocalStorageService>(), isFalse);
       expect(sl.isRegistered<AuthBloc>(), isFalse);
-      expect(sl.isRegistered<HomeBloc>(), isFalse);
       expect(sl.isRegistered<SettingsBloc>(), isFalse);
     });
 
