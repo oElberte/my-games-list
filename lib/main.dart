@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/services/notification_service.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
@@ -36,6 +37,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Clean path-based URLs on web (/home instead of /#/home) for deep links + SEO.
+  if (kIsWeb) usePathUrlStrategy();
 
   // Firebase and the service locator are independent; initialize concurrently.
   await Future.wait([
