@@ -21,6 +21,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get errorMessage => 'Ops! Algo deu errado.';
 
   @override
+  String get offlineBannerMessage => 'Você está offline';
+
+  @override
   String get goHome => 'Ir para o Início';
 
   @override

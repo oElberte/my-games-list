@@ -6,6 +6,10 @@
     },
     "errorTitle": "Error",
     "errorMessage": "Oops! Something went wrong.",
+    "offlineBannerMessage": "You're offline",
+    "@offlineBannerMessage": {
+      "description": "Shown in a banner when the device has no network connection"
+    },
     "goHome": "Go to Home",
     "signInTitle": "Sign In",
     "signInSubtitle": "Sign in to continue",
