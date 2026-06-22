@@ -100,6 +100,22 @@ void main() {
       ).called(1);
     });
 
+    test('revokeAll re-denies and persists every category', () async {
+      await service.grant(ConsentCategory.crash);
+      await service.grant(ConsentCategory.push);
+      await service.grant(ConsentCategory.analytics);
+      clearInteractions(gateway);
+      clearInteractions(storage);
+
+      await service.revokeAll();
+
+      for (final category in ConsentCategory.values) {
+        expect(service.isGranted(category), isFalse);
+        verify(() => storage.setBool(category.storageKey, false)).called(1);
+        verify(() => gateway.applyConsent(category, granted: false)).called(1);
+      }
+    });
+
     test(
       'setting the same value is a no-op (no storage/gateway calls)',
       () async {

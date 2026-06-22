@@ -46,13 +46,14 @@ void main() async {
   // Clean path-based URLs on web (/home instead of /#/home) for deep links + SEO.
   if (kIsWeb) usePathUrlStrategy();
 
-  // Firebase and the service locator are independent; initialize concurrently.
-  // setupServiceLocator() loads persisted consent and leaves every collector
-  // disabled until the user grants it.
-  await Future.wait([
-    Firebase.initializeApp(options: _firebaseOptions),
-    setupServiceLocator(),
-  ]);
+  // Firebase MUST finish initializing before the service locator runs:
+  // setupServiceLocator() loads persisted consent, which applies each
+  // collector's state through the gateway and touches
+  // FirebaseCrashlytics.instance. Touching it before the default Firebase app
+  // exists aborts launch, so these cannot run concurrently. Consent application
+  // leaves every collector disabled until the user grants it.
+  await Firebase.initializeApp(options: _firebaseOptions);
+  await setupServiceLocator();
 
   // Error hooks are always installed but route through ConsentService, so they
   // no-op until crash-reporting consent is granted (LGPD). The check is read at

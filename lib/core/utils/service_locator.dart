@@ -83,12 +83,14 @@ Future<void> _registerCoreServices() async {
     ),
   );
 
-  // Session teardown (logout) — clears token + resets per-user singletons
+  // Session teardown (logout) — clears token, re-denies every consent category
+  // so the next account starts denied, and resets per-user singletons.
   sl.registerLazySingleton<SessionResetService>(
     () => SessionResetService(
       tokenStorage: sl<TokenStorage>(),
       httpClient: sl<IHttpClient>(),
       notificationService: sl<NotificationService>(),
+      consentService: sl<ConsentService>(),
     ),
   );
 }

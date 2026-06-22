@@ -56,6 +56,17 @@ class ConsentService {
   /// collector (e.g. disables Crashlytics, deletes the FCM token).
   Future<void> revoke(ConsentCategory category) => _set(category, false);
 
+  /// Revokes consent for every category, persisting denied and tearing down
+  /// each collector. Called on logout/session teardown so a shared device does
+  /// not leak the previous account's consent to the next account (which would
+  /// otherwise inherit it and start collecting). The next account starts
+  /// denied and must grant again.
+  Future<void> revokeAll() async {
+    for (final category in ConsentCategory.values) {
+      await _set(category, false);
+    }
+  }
+
   Future<void> _set(ConsentCategory category, bool granted) async {
     if (_granted[category] == granted) return;
     _granted[category] = granted;

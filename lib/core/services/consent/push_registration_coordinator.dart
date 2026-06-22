@@ -28,6 +28,7 @@ class PushRegistrationCoordinator {
   StreamSubscription<ConsentCategory>? _consentSub;
   StreamSubscription<AuthState>? _authSub;
   bool _registered = false;
+  bool _registering = false;
 
   /// Starts watching consent + auth and reconciles the current state once.
   void start() {
@@ -44,12 +45,23 @@ class PushRegistrationCoordinator {
         _auth.state is AuthAuthenticated;
 
     if (shouldRegister && !_registered) {
-      _registered = true;
-      // Fire-and-forget: failures are handled inside the service (e.g. when
-      // Firebase is unavailable in tests).
-      _notifications.initialize().catchError((_) {});
-    } else if (!shouldRegister && _registered) {
+      // Mark registered only after setup actually succeeds; if initialize()
+      // throws, reset the flag so a later reconcile retries instead of skipping
+      // registration forever. Guard against a concurrent in-flight attempt.
+      if (_registering) return;
+      _registering = true;
+      // Future.sync so a synchronous throw from initialize() is captured as a
+      // rejected future instead of escaping and leaving _registering stuck.
+      Future.sync(_notifications.initialize)
+          .then((_) => _registered = true)
+          .catchError((_) => _registered = false)
+          .whenComplete(() => _registering = false);
+    } else if (!shouldRegister && (_registered || _registering)) {
+      // Tear down even mid-registration: disable() bumps the service's
+      // generation so the in-flight initialize() cancels before it can send the
+      // token or attach listeners after consent went off.
       _registered = false;
+      _registering = false;
       _notifications.disable().catchError((_) {});
     }
   }

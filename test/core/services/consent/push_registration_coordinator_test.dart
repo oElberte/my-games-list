@@ -109,6 +109,55 @@ void main() {
       verify(() => notifications.disable()).called(1);
     });
 
+    test(
+      'retries registration after initialize() fails (does not skip forever)',
+      () async {
+        when(() => auth.state).thenReturn(AuthAuthenticated(_user()));
+        // First attempt throws; the flag must reset so a later reconcile retries.
+        when(
+          () => notifications.initialize(),
+        ).thenThrow(Exception('firebase down'));
+
+        coordinator.start();
+        await consent.grant(ConsentCategory.push);
+        await Future<void>.delayed(Duration.zero);
+        verify(() => notifications.initialize()).called(1);
+
+        // Next attempt succeeds: a new reconcile (e.g. an auth state event)
+        // must retry instead of treating the failed attempt as registered.
+        when(() => notifications.initialize()).thenAnswer((_) async {});
+        authStates.add(AuthAuthenticated(_user()));
+        await Future<void>.delayed(Duration.zero);
+
+        verify(() => notifications.initialize()).called(1);
+      },
+    );
+
+    test(
+      'revoke mid-registration tears down (disable fires before registered)',
+      () async {
+        when(() => auth.state).thenReturn(AuthAuthenticated(_user()));
+        // initialize() never completes during this window, so _registered stays
+        // false while the attempt is in flight.
+        final pending = Completer<void>();
+        when(
+          () => notifications.initialize(),
+        ).thenAnswer((_) => pending.future);
+
+        coordinator.start();
+        await consent.grant(ConsentCategory.push);
+        await Future<void>.delayed(Duration.zero);
+        verify(() => notifications.initialize()).called(1);
+
+        // Revoke while the in-flight initialize() has not resolved.
+        await consent.revoke(ConsentCategory.push);
+        await Future<void>.delayed(Duration.zero);
+
+        verify(() => notifications.disable()).called(1);
+        pending.complete();
+      },
+    );
+
     test('disables push on logout', () async {
       when(() => auth.state).thenReturn(AuthAuthenticated(_user()));
       coordinator.start();

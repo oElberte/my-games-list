@@ -27,6 +27,10 @@ class NotificationService {
   StreamSubscription<RemoteMessage>? _onMessageSubscription;
   StreamSubscription<RemoteMessage>? _onMessageOpenedAppSubscription;
   bool _initialized = false;
+  // Bumped on every disable(); an in-flight initialize() compares against it so
+  // a revoke/logout mid-setup cancels before the token is sent or listeners are
+  // attached (otherwise it would PATCH the token and listen after consent off).
+  int _generation = 0;
 
   /// Stream of route strings to navigate to when a notification is tapped.
   Stream<String> get navigationStream => _navigationController.stream;
@@ -44,15 +48,30 @@ class NotificationService {
     if (_initialized) return;
     _initialized = true;
 
+    // Capture the generation this setup belongs to. disable() bumps it, so if a
+    // revoke/logout lands mid-setup we bail before sending the token or
+    // attaching listeners (which would leak collection after consent is off).
+    final generation = _generation;
+    bool isStale() => generation != _generation;
+
+    // Auto-init is off by default (native config) and after every disable().
+    // Turn it back on only now that push consent is granted, so the SDK does
+    // not recreate the token behind our back.
+    await _messaging.setAutoInitEnabled(true);
+
     // 1. Request permissions
     await _messaging.requestPermission(alert: true, badge: true, sound: true);
+    if (isStale()) return;
 
     // 2. Initialize flutter_local_notifications for foreground display
     await _initLocalNotifications();
+    if (isStale()) return;
 
     // 3. Get FCM token and send to backend
     final token = await _messaging.getToken();
+    if (isStale()) return;
     if (token != null) await _sendTokenToBackend(token);
+    if (isStale()) return;
 
     // 4. Listen for token refreshes
     _tokenRefreshSubscription = _messaging.onTokenRefresh.listen(
@@ -70,6 +89,7 @@ class NotificationService {
 
     // 7. Notification tap: app was terminated, opened from notification
     final initialMessage = await _messaging.getInitialMessage();
+    if (isStale()) return;
     if (initialMessage != null) _handleNotificationTap(initialMessage);
   }
 
@@ -137,9 +157,14 @@ class NotificationService {
   /// even if [initialize] never ran.
   Future<void> disable() async {
     if (kIsWeb) return;
+    // Invalidate any in-flight initialize() so it stops before sending the
+    // token or attaching listeners.
+    _generation++;
     await _cancelMessageSubscriptions();
     _initialized = false;
     try {
+      // Stop the SDK from re-minting a token after we delete it below.
+      await _messaging.setAutoInitEnabled(false);
       await _deleteTokenFromBackend();
       await _messaging.deleteToken();
     } catch (_) {
