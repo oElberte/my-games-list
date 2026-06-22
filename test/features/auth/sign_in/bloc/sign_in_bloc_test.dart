@@ -8,6 +8,7 @@ import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_event.dart';
 import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_state.dart';
 import 'package:my_games_list/features/auth/sign_in/sign_in_request.dart';
 import 'package:my_games_list/features/auth/user_model.dart';
+import 'package:my_games_list/features/legal/legal_constants.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 
@@ -124,7 +125,7 @@ void main() {
       verify: (_) {
         verify(
           () => mockAuthRepository.signInWithGoogle(
-            consentVersion: any(named: 'consentVersion'),
+            consentVersion: kConsentVersion,
           ),
         ).called(1);
       },
@@ -148,7 +149,7 @@ void main() {
       verify: (_) {
         verify(
           () => mockAuthRepository.signInWithGoogle(
-            consentVersion: any(named: 'consentVersion'),
+            consentVersion: kConsentVersion,
           ),
         ).called(1);
       },

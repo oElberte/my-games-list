@@ -54,13 +54,18 @@ class _LegalDocumentBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        _DraftBanner(),
-        const SizedBox(height: 16),
-        ..._renderBlocks(theme),
-      ],
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _DraftBanner(),
+            const SizedBox(height: 16),
+            ..._renderBlocks(theme),
+          ],
+        ),
+      ),
     );
   }
 
@@ -96,6 +101,24 @@ class _LegalDocumentBody extends StatelessWidget {
             ),
           ),
         );
+      } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 2),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('• ', style: theme.textTheme.bodyMedium),
+                Expanded(
+                  child: Text(
+                    trimmed.substring(2),
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       } else {
         widgets.add(Text(trimmed, style: theme.textTheme.bodyMedium));
       }
@@ -114,17 +137,17 @@ class _DraftBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colors.errorContainer,
+        color: colors.secondaryContainer,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded, color: colors.onErrorContainer),
+          Icon(Icons.warning_amber_rounded, color: colors.onSecondaryContainer),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               context.l10n.legalDraftBanner,
-              style: TextStyle(color: colors.onErrorContainer),
+              style: TextStyle(color: colors.onSecondaryContainer),
             ),
           ),
         ],

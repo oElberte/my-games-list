@@ -10,7 +10,7 @@ import 'package:my_games_list/core/utils/l10n_extensions.dart';
 /// Service" fragments are tappable and push the corresponding legal screens.
 /// The label text is composed from localized fragments so it reads naturally in
 /// each language without needing rich-text placeholders in the ARB.
-class LegalAcceptanceCheckbox extends StatelessWidget {
+class LegalAcceptanceCheckbox extends StatefulWidget {
   const LegalAcceptanceCheckbox({
     super.key,
     required this.value,
@@ -19,6 +19,31 @@ class LegalAcceptanceCheckbox extends StatelessWidget {
 
   final bool value;
   final ValueChanged<bool> onChanged;
+
+  @override
+  State<LegalAcceptanceCheckbox> createState() =>
+      _LegalAcceptanceCheckboxState();
+}
+
+class _LegalAcceptanceCheckboxState extends State<LegalAcceptanceCheckbox> {
+  late final TapGestureRecognizer _privacyRecognizer;
+  late final TapGestureRecognizer _termsRecognizer;
+
+  @override
+  void initState() {
+    super.initState();
+    _privacyRecognizer = TapGestureRecognizer()
+      ..onTap = () => context.pushNamed(AppRouter.privacyPolicyName);
+    _termsRecognizer = TapGestureRecognizer()
+      ..onTap = () => context.pushNamed(AppRouter.termsName);
+  }
+
+  @override
+  void dispose() {
+    _privacyRecognizer.dispose();
+    _termsRecognizer.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +57,10 @@ class LegalAcceptanceCheckbox extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Checkbox(value: value, onChanged: (next) => onChanged(next ?? false)),
+        Checkbox(
+          value: widget.value,
+          onChanged: (next) => widget.onChanged(next ?? false),
+        ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.only(top: 12),
@@ -44,16 +72,13 @@ class LegalAcceptanceCheckbox extends StatelessWidget {
                   TextSpan(
                     text: context.l10n.signUpAcceptPrivacyLink,
                     style: linkStyle,
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () =>
-                          context.pushNamed(AppRouter.privacyPolicyName),
+                    recognizer: _privacyRecognizer,
                   ),
                   TextSpan(text: context.l10n.signUpAcceptConjunction),
                   TextSpan(
                     text: context.l10n.signUpAcceptTermsLink,
                     style: linkStyle,
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () => context.pushNamed(AppRouter.termsName),
+                    recognizer: _termsRecognizer,
                   ),
                 ],
               ),

@@ -45,6 +45,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return BlocListener<SignInBloc, SignInState>(
       listener: (context, state) {
         if (state is SignInSuccess) {
@@ -237,7 +239,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     // of the Privacy Policy and Terms, both reachable below.
                     Text(
                       context.l10n.signInLegalNotice,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     Row(
