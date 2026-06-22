@@ -272,6 +272,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get browseRetry => 'Tentar novamente';
 
   @override
+  String get browseGenresSection => 'Gêneros';
+
+  @override
+  String get browseReleasesSection => 'Lançamentos';
+
+  @override
+  String get browseCollectionsSection => 'Coleções';
+
+  @override
   String get offlineTitle => 'Você está offline';
 
   @override

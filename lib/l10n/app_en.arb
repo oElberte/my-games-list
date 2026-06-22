@@ -113,6 +113,18 @@
     "browseGenreGamesError": "Couldn't load games for this genre. Please try again.",
     "browseGenreEmpty": "No games found in this genre yet.",
     "browseRetry": "Try again",
+    "browseGenresSection": "Genres",
+    "@browseGenresSection": {
+      "description": "Section header above the genre grid on the Browse hub"
+    },
+    "browseReleasesSection": "Releases",
+    "@browseReleasesSection": {
+      "description": "Section header above the new releases and coming soon rows on the Browse hub"
+    },
+    "browseCollectionsSection": "Collections",
+    "@browseCollectionsSection": {
+      "description": "Section header above the curated collections rows on the Browse hub"
+    },
     "offlineTitle": "You're offline",
     "@offlineTitle": {
       "description": "Heading shown in an error/empty view when the device has no network connection"

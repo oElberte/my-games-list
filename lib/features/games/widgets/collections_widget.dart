@@ -17,7 +17,12 @@ const int _maxCollectionsOnHome = 3;
 /// are editorial/optional content, so the whole block hides when there is
 /// nothing to show (loading/empty/error) rather than flashing an empty skeleton.
 class CollectionsWidget extends StatelessWidget {
-  const CollectionsWidget({super.key});
+  const CollectionsWidget({this.heroTagPrefix = '', super.key});
+
+  /// Prefixed onto each collection's per-collection Hero namespace so the same
+  /// game shown in another simultaneously-alive surface (e.g. the Home tab)
+  /// doesn't collide with the Browse tab's collection rows.
+  final String heroTagPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +49,10 @@ class CollectionsWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             for (final collection in visible)
-              _CollectionSection(collection: collection),
+              _CollectionSection(
+                collection: collection,
+                heroTagPrefix: heroTagPrefix,
+              ),
           ],
         );
       },
@@ -53,9 +61,10 @@ class CollectionsWidget extends StatelessWidget {
 }
 
 class _CollectionSection extends StatelessWidget {
-  const _CollectionSection({required this.collection});
+  const _CollectionSection({required this.collection, this.heroTagPrefix = ''});
 
   final GameCollection collection;
+  final String heroTagPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +136,7 @@ class _CollectionSection extends StatelessWidget {
                   child: DiscoveryGameTile(
                     game: game,
                     isCompact: true,
-                    heroTagPrefix: 'col-${collection.id}-',
+                    heroTagPrefix: '${heroTagPrefix}col-${collection.id}-',
                   ),
                 ),
               );

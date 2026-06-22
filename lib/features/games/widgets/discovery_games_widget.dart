@@ -16,11 +16,16 @@ class DiscoveryGamesWidget extends StatelessWidget {
   const DiscoveryGamesWidget({
     required this.discoveryType,
     this.icon,
+    this.heroTagPrefix = '',
     super.key,
   });
 
   final DiscoveryType discoveryType;
   final IconData? icon;
+
+  /// Namespaces the cover Hero tags of this row's tiles so the same game shown
+  /// in another simultaneously-alive row (e.g. the Home tab) doesn't collide.
+  final String heroTagPrefix;
 
   IconData get _defaultIcon {
     switch (discoveryType) {
@@ -95,6 +100,7 @@ class DiscoveryGamesWidget extends StatelessWidget {
           iconColor: _iconColor,
           games: typeState.games,
           discoveryType: discoveryType,
+          heroTagPrefix: heroTagPrefix,
         );
       },
     );
@@ -107,12 +113,17 @@ class LazyDiscoveryGamesWidget extends StatefulWidget {
   const LazyDiscoveryGamesWidget({
     required this.discoveryType,
     this.icon,
+    this.heroTagPrefix = '',
     this.visibilityThreshold = 0.1,
     super.key,
   });
 
   final DiscoveryType discoveryType;
   final IconData? icon;
+
+  /// Namespaces the cover Hero tags of this row's tiles so the same game shown
+  /// in another simultaneously-alive row (e.g. the Home tab) doesn't collide.
+  final String heroTagPrefix;
 
   /// The fraction of the widget that must be visible to trigger loading (0.0 to 1.0)
   final double visibilityThreshold;
@@ -222,6 +233,7 @@ class _LazyDiscoveryGamesWidgetState extends State<LazyDiscoveryGamesWidget> {
             iconColor: _iconColor,
             games: typeState.games,
             discoveryType: widget.discoveryType,
+            heroTagPrefix: widget.heroTagPrefix,
           );
         },
       ),
@@ -236,6 +248,7 @@ class _WidgetContent extends StatelessWidget {
     required this.iconColor,
     required this.games,
     required this.discoveryType,
+    this.heroTagPrefix = '',
   });
 
   final String title;
@@ -243,6 +256,7 @@ class _WidgetContent extends StatelessWidget {
   final Color iconColor;
   final List<DiscoveryGame> games;
   final DiscoveryType discoveryType;
+  final String heroTagPrefix;
 
   @override
   Widget build(BuildContext context) {
@@ -295,7 +309,11 @@ class _WidgetContent extends StatelessWidget {
                 ),
                 child: AspectRatio(
                   aspectRatio: 0.7,
-                  child: DiscoveryGameTile(game: game, isCompact: true),
+                  child: DiscoveryGameTile(
+                    game: game,
+                    isCompact: true,
+                    heroTagPrefix: heroTagPrefix,
+                  ),
                 ),
               );
             },
