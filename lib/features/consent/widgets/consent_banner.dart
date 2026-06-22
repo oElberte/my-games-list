@@ -15,6 +15,11 @@ import 'package:my_games_list/features/consent/widgets/consent_customize_sheet.d
 /// requirement. It is intentionally non-modal: the app stays usable while the
 /// banner is up, and no optional data is collected because every category
 /// defaults to denied until the user grants it.
+///
+/// The builder sits ABOVE the Router's Navigator, so the banner hosts its own
+/// local [Navigator]. That gives the "Customize" action a Navigator-backed
+/// context (the router's Navigator is not an ancestor here) and makes the
+/// pushed bottom sheet render above the banner card instead of behind it.
 class ConsentBanner extends StatelessWidget {
   const ConsentBanner({super.key, required this.child});
 
@@ -22,19 +27,39 @@ class ConsentBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Navigator(
+      onGenerateRoute: (settings) => PageRouteBuilder<void>(
+        settings: settings,
+        opaque: true,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+        pageBuilder: (_, _, _) => _ConsentOverlay(child: child),
+      ),
+    );
+  }
+}
+
+class _ConsentOverlay extends StatelessWidget {
+  const _ConsentOverlay({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<ConsentCubit, ConsentState>(
       buildWhen: (previous, current) =>
-          previous.hasAnswered != current.hasAnswered,
+          previous.hasAnswered != current.hasAnswered ||
+          previous.isSaving != current.isSaving,
       builder: (context, state) {
         return Stack(
           children: [
             child,
             if (!state.hasAnswered)
-              const Positioned(
+              Positioned(
                 left: 0,
                 right: 0,
                 bottom: 0,
-                child: _ConsentBannerCard(),
+                child: _ConsentBannerCard(isSaving: state.isSaving),
               ),
           ],
         );
@@ -44,7 +69,11 @@ class ConsentBanner extends StatelessWidget {
 }
 
 class _ConsentBannerCard extends StatelessWidget {
-  const _ConsentBannerCard();
+  const _ConsentBannerCard({required this.isSaving});
+
+  /// Disables every action while a choice is persisting so a fast second tap
+  /// can't start an opposite operation that races the first write.
+  final bool isSaving;
 
   /// Material 3 [NavigationBar] height. The compact banner floats this far
   /// above the bottom so it never covers the tappable bottom nav.
@@ -100,15 +129,17 @@ class _ConsentBannerCard extends StatelessWidget {
                     runSpacing: 4,
                     children: [
                       TextButton(
-                        onPressed: () => _openCustomize(context, cubit),
+                        onPressed: isSaving
+                            ? null
+                            : () => _openCustomize(context, cubit),
                         child: Text(context.l10n.consentCustomize),
                       ),
                       FilledButton.tonal(
-                        onPressed: cubit.rejectAll,
+                        onPressed: isSaving ? null : cubit.rejectAll,
                         child: Text(context.l10n.consentRejectAll),
                       ),
                       FilledButton.tonal(
-                        onPressed: cubit.acceptAll,
+                        onPressed: isSaving ? null : cubit.acceptAll,
                         child: Text(context.l10n.consentAcceptAll),
                       ),
                     ],
@@ -123,6 +154,9 @@ class _ConsentBannerCard extends StatelessWidget {
   }
 
   Future<void> _openCustomize(BuildContext context, ConsentCubit cubit) async {
+    // [context] is under ConsentBanner's local Navigator, so the sheet pushes
+    // onto that Navigator and renders above the banner card (the Router's
+    // Navigator is not an ancestor of the builder, so it can't be used here).
     final choices = await showModalBottomSheet<Map<ConsentCategory, bool>>(
       context: context,
       isScrollControlled: true,

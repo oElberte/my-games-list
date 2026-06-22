@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:my_games_list/core/data/services/storage/local_storage_service.dart';
@@ -100,6 +102,44 @@ void main() {
     expect(service.isGranted(ConsentCategory.crash), isFalse);
     expect(service.isGranted(ConsentCategory.push), isTrue);
     expect(service.hasAnswered, isTrue);
+  });
+
+  test('exposes isSaving for the duration of a choice', () async {
+    final gate = Completer<void>();
+    when(
+      () => gateway.applyConsent(any(), granted: any(named: 'granted')),
+    ).thenAnswer((_) => gate.future);
+
+    expect(cubit.state.isSaving, isFalse);
+
+    final pending = cubit.acceptAll();
+    await Future<void>.delayed(Duration.zero);
+    expect(cubit.state.isSaving, isTrue);
+
+    gate.complete();
+    await pending;
+    expect(cubit.state.isSaving, isFalse);
+  });
+
+  test('ignores a re-entrant choice while one is still saving', () async {
+    final gate = Completer<void>();
+    when(
+      () => gateway.applyConsent(any(), granted: any(named: 'granted')),
+    ).thenAnswer((_) => gate.future);
+
+    // Accept stalls on the gated write; a Reject fired during the save is a
+    // no-op, so the sequential category writes can't interleave.
+    final pending = cubit.acceptAll();
+    await Future<void>.delayed(Duration.zero);
+    await cubit.rejectAll();
+
+    gate.complete();
+    await pending;
+
+    for (final category in ConsentCategory.values) {
+      expect(service.isGranted(category), isTrue);
+    }
+    expect(cubit.state.isSaving, isFalse);
   });
 
   test('reflects a revoke triggered on the service (e.g. logout)', () async {
