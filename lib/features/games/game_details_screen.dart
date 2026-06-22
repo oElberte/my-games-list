@@ -252,6 +252,15 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
                             CachedNetworkImage(
                               imageUrl: headerImageUrl,
                               fit: BoxFit.cover,
+                              // Decode at the display width, not the 1080p
+                              // source, to bound memory for this full-bleed
+                              // header image.
+                              memCacheWidth:
+                                  (MediaQuery.sizeOf(context).width *
+                                          MediaQuery.devicePixelRatioOf(
+                                            context,
+                                          ))
+                                      .round(),
                               placeholder: (context, url) =>
                                   Container(color: Colors.grey[900]),
                               errorWidget: (context, url, error) =>
@@ -674,6 +683,9 @@ class _ScreenshotsSection extends StatelessWidget {
                   imageUrl: imageUrl,
                   height: 150,
                   fit: BoxFit.cover,
+                  // Decode at the thumbnail height, not the full source.
+                  memCacheHeight: (150 * MediaQuery.devicePixelRatioOf(context))
+                      .round(),
                   placeholder: (context, url) => Container(
                     width: 267,
                     height: 150,
