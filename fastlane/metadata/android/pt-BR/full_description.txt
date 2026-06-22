@@ -1,0 +1,30 @@
+O My Games List é o seu rastreador pessoal de biblioteca de jogos. Mantenha em um só lugar, de forma organizada, todos os jogos que você joga, planeja jogar ou ainda sonha em jogar, e descubra qual será o próximo.
+
+DESCUBRA JOGOS
+Navegue pelos títulos em alta, os lançamentos mais aguardados, as novidades e coleções selecionadas. Explore por gênero ou pesquise na base completa de jogos com tecnologia IGDB. Abra qualquer jogo para ver sua nota, gêneros, plataformas, capturas de tela, trailers, títulos semelhantes e links para sites oficiais.
+
+MONTE SUA BIBLIOTECA
+Adicione qualquer jogo à sua coleção pessoal e acompanhe do seu jeito:
+- Defina um status: Planejado, Jogando, Finalizado, Em Espera ou Abandonado
+- Avalie os jogos em uma escala de 0 a 100
+- Registre seu tempo de jogo em horas e minutos
+- Anote datas de início e término
+- Indique a plataforma em que jogou e um nível de dificuldade
+- Marque favoritos e adicione suas próprias anotações
+
+MANTENHA TUDO ORGANIZADO
+Filtre sua biblioteca por status ou favoritos para encontrar exatamente o que procura. Deslize para remover um jogo, com a opção de desfazer sempre a um toque de distância. Puxe para atualizar e manter tudo em dia.
+
+DO SEU JEITO
+- Temas claro e escuro
+- Disponível em Português (Brasil) e Inglês
+- Notificações push opcionais e totalmente sob seu controle
+
+PRIVACIDADE EM PRIMEIRO LUGAR
+Os seus dados são seus. Exporte sua coleção quando quiser ou exclua sua conta e seus dados diretamente pelo aplicativo.
+
+Comece a acompanhar seus jogos hoje e nunca mais perca o controle do seu backlog.
+
+---
+TEXTO PROVISÓRIO (DRAFT) - aguardando revisão e aprovação final antes da publicação.
+Não inclua recursos que não existem no app. Verifique no build atual antes de enviar.
