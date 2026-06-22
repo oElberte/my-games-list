@@ -194,9 +194,11 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
     final theme = Theme.of(context);
     final scaffoldColor = theme.scaffoldBackgroundColor;
 
-    // Get a screenshot for the header background
+    // On web Flutter ignores decode caps (the browser decodes), so request a
+    // smaller server size for the header instead of the full 1080p.
+    final headerSize = kIsWeb ? ImageSize.hd720 : ImageSize.hd1080;
     final headerImageUrl = game.screenshots.isNotEmpty
-        ? getHighResUrl(game.screenshots.first.url, ImageSize.hd1080)
+        ? getHighResUrl(game.screenshots.first.url, headerSize)
         : (game.cover != null
               ? getHighResUrl(game.cover!.url, ImageSize.coverBig)
               : null);
@@ -262,7 +264,12 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
                               memCacheWidth:
                                   (math.max(
                                             MediaQuery.sizeOf(context).width,
-                                            300 * 16 / 9,
+                                            (300 +
+                                                    MediaQuery.paddingOf(
+                                                      context,
+                                                    ).top) *
+                                                16 /
+                                                9,
                                           ) *
                                           MediaQuery.devicePixelRatioOf(
                                             context,
