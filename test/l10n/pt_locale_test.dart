@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:my_games_list/core/services/connectivity_cubit.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/widgets/app_error_boundary.dart';
 import 'package:my_games_list/core/widgets/offline_banner.dart';
 import 'package:my_games_list/features/browse/widgets/browse_status_views.dart';
@@ -55,15 +56,19 @@ void main() {
       expect(find.text('Try again'), findsNothing);
     });
 
-    testWidgets('BrowseEmptyView renders the pt message it is given', (
+    testWidgets('BrowseEmptyView renders the pt message from l10n', (
       tester,
     ) async {
+      // Resolve the message through context.l10n inside the pumped tree (as the
+      // real screen does) so a missing/fallback pt string fails this test.
       await pumpPt(
         tester,
-        const Scaffold(
-          body: BrowseEmptyView(
-            icon: Icons.inbox,
-            message: 'Nenhum gênero disponível no momento.',
+        Scaffold(
+          body: Builder(
+            builder: (context) => BrowseEmptyView(
+              icon: Icons.inbox,
+              message: context.l10n.browseGenresEmpty,
+            ),
           ),
         ),
       );
