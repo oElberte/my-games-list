@@ -272,12 +272,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get browseGenresSection => 'Genres';
 
   @override
-  String get browseReleasesSection => 'Releases';
-
-  @override
-  String get browseCollectionsSection => 'Collections';
-
-  @override
   String get offlineTitle => 'You\'re offline';
 
   @override

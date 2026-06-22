@@ -608,18 +608,6 @@ abstract class AppLocalizations {
   /// **'Genres'**
   String get browseGenresSection;
 
-  /// Section header above the new releases and coming soon rows on the Browse hub
-  ///
-  /// In en, this message translates to:
-  /// **'Releases'**
-  String get browseReleasesSection;
-
-  /// Section header above the curated collections rows on the Browse hub
-  ///
-  /// In en, this message translates to:
-  /// **'Collections'**
-  String get browseCollectionsSection;
-
   /// Heading shown in an error/empty view when the device has no network connection
   ///
   /// In en, this message translates to:

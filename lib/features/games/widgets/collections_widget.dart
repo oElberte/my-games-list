@@ -9,30 +9,45 @@ import 'package:my_games_list/features/games/widgets/skeletons/discovery_tile_sk
 const double _rowHeight = 200;
 const double _tileAspectRatio = 0.7;
 const int _maxTiles = 20;
-// Bound how many collection rows render on the home so editorial content
-// doesn't push the primary discovery rows off-screen.
-const int _maxCollectionsOnHome = 3;
+// Default per-surface cap on how many collection rows render, so editorial
+// content doesn't push the primary discovery rows off-screen. The Home surface
+// uses this default; Browse opts into more (see [CollectionsWidget.unbounded]).
+const int _defaultMaxCollections = 3;
 
 /// Curated collections rows on the home (GET /home/collections). Collections
 /// are editorial/optional content, so the whole block hides when there is
 /// nothing to show (loading/empty/error) rather than flashing an empty skeleton.
 class CollectionsWidget extends StatelessWidget {
-  const CollectionsWidget({this.heroTagPrefix = '', super.key});
+  const CollectionsWidget({
+    this.heroTagPrefix = '',
+    this.maxCollections = _defaultMaxCollections,
+    super.key,
+  });
+
+  /// Sentinel for [maxCollections] meaning "show every collection" — used by
+  /// Browse, whose whole purpose is to explore more than the Home surface caps.
+  static const int unbounded = -1;
 
   /// Prefixed onto each collection's per-collection Hero namespace so the same
   /// game shown in another simultaneously-alive surface (e.g. the Home tab)
   /// doesn't collide with the Browse tab's collection rows.
   final String heroTagPrefix;
 
+  /// Per-surface cap on how many collection rows to render. Home keeps the
+  /// default tight bound; Browse passes [unbounded] to show all of them.
+  final int maxCollections;
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CollectionsBloc, CollectionsState>(
       builder: (context, state) {
         // Drop empty collections before capping so they don't consume a slot.
-        final visible = state.collections
-            .where((c) => c.games.isNotEmpty)
-            .take(_maxCollectionsOnHome)
-            .toList();
+        final nonEmpty = state.collections.where((c) => c.games.isNotEmpty);
+        final visible =
+            (maxCollections == unbounded
+                    ? nonEmpty
+                    : nonEmpty.take(maxCollections))
+                .toList();
         if (visible.isEmpty) {
           // Match Trending/Recommendations: shimmer a row while the first load
           // is in flight, then hide entirely on empty/error so editorial

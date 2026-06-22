@@ -84,8 +84,6 @@
     "browseGenreEmpty": "Nenhum jogo encontrado neste gênero ainda.",
     "browseRetry": "Tentar novamente",
     "browseGenresSection": "Gêneros",
-    "browseReleasesSection": "Lançamentos",
-    "browseCollectionsSection": "Coleções",
     "offlineTitle": "Você está offline",
     "offlineErrorMessage": "Verifique sua conexão e tente novamente.",
     "gameCoverLabel": "Capa de {name}",

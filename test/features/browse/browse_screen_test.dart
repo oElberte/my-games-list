@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:my_games_list/core/services/connectivity_cubit.dart';
+import 'package:my_games_list/core/widgets/skeleton_box.dart';
 import 'package:my_games_list/core/widgets/visibility_hero.dart';
 import 'package:my_games_list/features/browse/bloc/browse_genres_bloc.dart';
 import 'package:my_games_list/features/browse/bloc/browse_genres_event.dart';
@@ -19,6 +20,8 @@ import 'package:my_games_list/features/games/bloc/discovery_games_state.dart';
 import 'package:my_games_list/features/games/collection_model.dart';
 import 'package:my_games_list/features/games/discovery_game_model.dart';
 import 'package:my_games_list/features/games/game_detail_model.dart';
+import 'package:my_games_list/features/games/widgets/collections_widget.dart';
+import 'package:my_games_list/features/games/widgets/skeletons/discovery_tile_skeleton.dart';
 import 'package:my_games_list/l10n/app_localizations.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -130,7 +133,9 @@ void main() {
     );
   }
 
-  testWidgets('renders the three section headers', (tester) async {
+  testWidgets('renders only the Genres group header; rows self-label', (
+    tester,
+  ) async {
     when(() => genresBloc.state).thenReturn(
       const BrowseGenresState(
         status: BrowseGenresStatus.success,
@@ -143,9 +148,12 @@ void main() {
     await tester.pumpWidget(buildSubject());
     await tester.pump();
 
+    // The Genres section keeps its group header (its body is a header-less
+    // grid). The Releases/Collections group headers are dropped — those rows
+    // self-label — so the standalone "Releases"/"Collections" labels are gone.
     expect(find.text('Genres'), findsOneWidget);
-    expect(find.text('Releases'), findsOneWidget);
-    expect(find.text('Collections'), findsOneWidget);
+    expect(find.text('Releases'), findsNothing);
+    expect(find.text('Collections'), findsNothing);
   });
 
   testWidgets('shows genre cards when genres load', (tester) async {
@@ -165,7 +173,7 @@ void main() {
     expect(find.text('RPG'), findsOneWidget);
   });
 
-  testWidgets('shows genres loading indicator while genres load', (
+  testWidgets('shows a genres skeleton (not a spinner) while genres load', (
     tester,
   ) async {
     when(
@@ -177,7 +185,10 @@ void main() {
     await tester.pumpWidget(buildSubject());
     await tester.pump();
 
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    // First-load uses shimmer skeleton boxes for the genre grid, matching the
+    // rest of the app — never a raw CircularProgressIndicator.
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.byType(SkeletonBox), findsWidgets);
   });
 
   testWidgets('shows genres error with retry on failure', (tester) async {
@@ -215,13 +226,15 @@ void main() {
 
     expect(find.text('New Releases'), findsOneWidget);
     expect(find.text('Coming Soon'), findsOneWidget);
-    // The same game appears in both release rows; covers are namespaced by the
-    // browse-releases- Hero prefix so they don't collide with the Home tab.
+    // The same game appears in both release rows; each row carries a distinct
+    // Hero prefix so they don't collide with each other (both stay alive) nor
+    // with the Home tab.
     final heroes = tester
         .widgetList<VisibilityHero>(find.byType(VisibilityHero))
         .map((h) => h.tag)
         .toList();
-    expect(heroes, contains('browse-releases-game-cover-100'));
+    expect(heroes, contains('browse-new-releases-game-cover-100'));
+    expect(heroes, contains('browse-coming-soon-game-cover-100'));
   });
 
   testWidgets('shows discovery error in the releases section', (tester) async {
@@ -270,5 +283,93 @@ void main() {
         .map((h) => h.tag)
         .toList();
     expect(heroes, contains('browse-col-coz-game-cover-200'));
+  });
+
+  testWidgets('shows a skeleton row while the releases load', (tester) async {
+    when(() => genresBloc.state).thenReturn(
+      const BrowseGenresState(
+        status: BrowseGenresStatus.success,
+        genres: genres,
+      ),
+    );
+    when(
+      () => discoveryBloc.state,
+    ).thenReturn(releasesState(status: DiscoveryGamesStatus.loading));
+    when(() => collectionsBloc.state).thenReturn(const CollectionsState());
+
+    await tester.pumpWidget(buildSubject());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // Each loading release row shimmers a skeleton row; the titles still show.
+    expect(find.text('New Releases'), findsOneWidget);
+    expect(find.text('Coming Soon'), findsOneWidget);
+    expect(find.byType(DiscoveryRowSkeleton), findsWidgets);
+  });
+
+  testWidgets('shimmers a skeleton row while collections load', (tester) async {
+    when(() => genresBloc.state).thenReturn(
+      const BrowseGenresState(
+        status: BrowseGenresStatus.success,
+        genres: genres,
+      ),
+    );
+    when(() => discoveryBloc.state).thenReturn(releasesState());
+    when(
+      () => collectionsBloc.state,
+    ).thenReturn(const CollectionsState(status: CollectionsStatus.loading));
+
+    await tester.pumpWidget(buildSubject());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // The collections block shimmers a single row while its first load is in
+    // flight (it has no group header to orphan when it later collapses).
+    expect(find.byType(DiscoveryRowSkeleton), findsWidgets);
+    expect(find.text('Collections'), findsNothing);
+  });
+
+  testWidgets('collapses the collections block on failure', (tester) async {
+    when(() => genresBloc.state).thenReturn(
+      const BrowseGenresState(
+        status: BrowseGenresStatus.success,
+        genres: genres,
+      ),
+    );
+    when(() => discoveryBloc.state).thenReturn(releasesState());
+    when(
+      () => collectionsBloc.state,
+    ).thenReturn(const CollectionsState(status: CollectionsStatus.failure));
+
+    await tester.pumpWidget(buildSubject());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // Editorial content hides on error rather than showing an empty placeholder;
+    // with the group header dropped there is no dangling label/gap.
+    expect(find.byType(CollectionsWidget), findsOneWidget);
+    expect(find.text('Collections'), findsNothing);
+    expect(find.byType(DiscoveryRowSkeleton), findsNothing);
+  });
+
+  testWidgets('collapses the collections block when empty', (tester) async {
+    when(() => genresBloc.state).thenReturn(
+      const BrowseGenresState(
+        status: BrowseGenresStatus.success,
+        genres: genres,
+      ),
+    );
+    when(() => discoveryBloc.state).thenReturn(releasesState());
+    when(
+      () => collectionsBloc.state,
+    ).thenReturn(const CollectionsState(status: CollectionsStatus.success));
+
+    await tester.pumpWidget(buildSubject());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(find.byType(CollectionsWidget), findsOneWidget);
+    expect(find.text('Collections'), findsNothing);
+    expect(find.byType(DiscoveryRowSkeleton), findsNothing);
   });
 }
