@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/messages_extensions.dart';
+import 'package:my_games_list/core/widgets/brand_logo.dart';
+import 'package:my_games_list/core/widgets/google_sign_in_button.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_bloc.dart';
@@ -77,20 +79,19 @@ class _SignInScreenState extends State<SignInScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // App Title/Logo
-                    const Icon(Icons.games, size: 80, color: Colors.blue),
-                    const SizedBox(height: 16),
+                    const Center(child: BrandLogo(size: 88)),
+                    const SizedBox(height: 20),
                     Text(
                       context.l10n.appTitle,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: theme.textTheme.headlineMedium,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       context.l10n.signInSubtitle,
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 48),
@@ -104,7 +105,6 @@ class _SignInScreenState extends State<SignInScreen> {
                         labelText: context.l10n.emailLabel,
                         hintText: context.l10n.emailHint,
                         prefixIcon: const Icon(Icons.email_outlined),
-                        border: const OutlineInputBorder(),
                       ),
                       validator: Validatorless.multiple([
                         Validatorless.required(context.l10n.emailRequired),
@@ -135,7 +135,6 @@ class _SignInScreenState extends State<SignInScreen> {
                             });
                           },
                         ),
-                        border: const OutlineInputBorder(),
                       ),
                       validator: Validatorless.multiple([
                         Validatorless.required(context.l10n.passwordRequired),
@@ -149,14 +148,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       builder: (context, state) {
                         final isLoading = state is SignInLoading;
 
-                        return ElevatedButton(
+                        return FilledButton(
                           onPressed: isLoading ? null : _handleSignIn,
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
                           child: isLoading
                               ? const SizedBox(
                                   height: 20,
@@ -165,13 +158,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : Text(
-                                  context.l10n.signInButton,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                              : Text(context.l10n.signInButton),
                         );
                       },
                     ),
@@ -201,9 +188,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Text(
                             context.l10n.orContinueWith,
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 13,
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ),
@@ -212,24 +198,17 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Google Sign-In Button
+                    // Google Sign-In Button (Google-branding-compliant)
                     BlocBuilder<SignInBloc, SignInState>(
                       builder: (context, state) {
                         final isLoading = state is SignInLoading;
-                        return OutlinedButton.icon(
+                        return GoogleSignInButton(
+                          label: context.l10n.signInWithGoogle,
                           onPressed: isLoading
                               ? null
                               : () => context.read<SignInBloc>().add(
                                   const GoogleSignInRequested(),
                                 ),
-                          icon: const Icon(Icons.g_mobiledata, size: 24),
-                          label: Text(context.l10n.signInWithGoogle),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
                         );
                       },
                     ),

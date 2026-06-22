@@ -7,6 +7,7 @@ import 'package:my_games_list/core/data/services/storage/local_storage_service.d
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
+import 'package:my_games_list/core/widgets/brand_logo.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
@@ -101,11 +102,7 @@ class _SplashScreenState extends State<SplashScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // App Icon
-        Icon(
-          Icons.games,
-          size: 120,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        const BrandLogo(size: 120),
         const SizedBox(height: 24),
 
         // App Name

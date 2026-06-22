@@ -14,6 +14,7 @@ import 'package:my_games_list/core/services/connectivity_cubit.dart';
 import 'package:my_games_list/core/services/consent/consent_service.dart';
 import 'package:my_games_list/core/services/consent/push_registration_coordinator.dart';
 import 'package:my_games_list/core/services/notification_service.dart';
+import 'package:my_games_list/core/theme/app_theme.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/env.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
@@ -141,16 +142,8 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
 
   // Built once (ColorScheme.fromSeed is not free) and reused, so a settings
   // change doesn't rebuild the theme palette on every render.
-  static final ThemeData _lightTheme = _buildTheme(Brightness.light);
-  static final ThemeData _darkTheme = _buildTheme(Brightness.dark);
-
-  static ThemeData _buildTheme(Brightness brightness) => ThemeData(
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.blue,
-      brightness: brightness,
-    ),
-  );
+  static final ThemeData _lightTheme = AppTheme.light();
+  static final ThemeData _darkTheme = AppTheme.dark();
 
   @override
   Widget build(BuildContext context) {

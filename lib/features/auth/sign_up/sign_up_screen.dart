@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/messages_extensions.dart';
+import 'package:my_games_list/core/widgets/brand_logo.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_bloc.dart';
@@ -89,20 +90,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // App Title/Logo
-                    const Icon(Icons.games, size: 80, color: Colors.blue),
-                    const SizedBox(height: 16),
+                    const Center(child: BrandLogo(size: 88)),
+                    const SizedBox(height: 20),
                     Text(
                       context.l10n.signUpBodyTitle,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       context.l10n.signUpSubtitle,
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 48),
@@ -115,7 +115,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         labelText: context.l10n.usernameLabel,
                         hintText: context.l10n.usernameHint,
                         prefixIcon: const Icon(Icons.person_outline),
-                        border: const OutlineInputBorder(),
                       ),
                       validator: Validatorless.multiple([
                         Validatorless.required(context.l10n.usernameRequired),
@@ -134,7 +133,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         labelText: context.l10n.emailLabel,
                         hintText: context.l10n.emailHint,
                         prefixIcon: const Icon(Icons.email_outlined),
-                        border: const OutlineInputBorder(),
                       ),
                       validator: Validatorless.multiple([
                         Validatorless.required(context.l10n.emailRequired),
@@ -164,7 +162,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             });
                           },
                         ),
-                        border: const OutlineInputBorder(),
                       ),
                       validator: Validatorless.multiple([
                         Validatorless.required(context.l10n.passwordRequired),
@@ -196,7 +193,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             });
                           },
                         ),
-                        border: const OutlineInputBorder(),
                       ),
                       validator: Validatorless.multiple([
                         Validatorless.required(
@@ -225,14 +221,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         final isLoading = state is SignUpLoading;
                         final canSubmit = _acceptedTerms && !isLoading;
 
-                        return ElevatedButton(
+                        return FilledButton(
                           onPressed: canSubmit ? _handleSignUp : null,
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
                           child: isLoading
                               ? const SizedBox(
                                   height: 20,
@@ -241,13 +231,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : Text(
-                                  context.l10n.signUpButton,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                              : Text(context.l10n.signUpButton),
                         );
                       },
                     ),
