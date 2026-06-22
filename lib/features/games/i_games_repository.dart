@@ -24,8 +24,8 @@ abstract class IGamesRepository {
   /// Fetches discovery games based on the discovery [type] with pagination.
   Future<DiscoveryGamesResponse> getDiscoveryGames(
     DiscoveryType type, {
-    int limit,
-    int offset,
+    int limit = 20,
+    int offset = 0,
   });
 
   /// Fetches the list of game genres for the browse hub.
@@ -34,15 +34,15 @@ abstract class IGamesRepository {
   /// Fetches top-rated games for a specific [genreId].
   Future<DiscoveryGamesResponse> getGamesByGenre(
     int genreId, {
-    int limit,
-    int offset,
+    int limit = 20,
+    int offset = 0,
   });
 
   /// Searches for games matching the [query] with pagination.
   Future<SearchGamesResponse> searchGames(
     String query, {
-    int limit,
-    int offset,
+    int limit = 20,
+    int offset = 0,
   });
 
   /// Fetches detailed information about a specific game by [id].
