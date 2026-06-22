@@ -22,22 +22,25 @@ class RetryInterceptor extends Interceptor {
     final request = err.requestOptions;
     final attempt = (request.extra[_attemptKey] as int?) ?? 0;
 
-    // Don't replay a request whose session changed during the backoff — a
-    // logout/login would otherwise resend it with the previous token.
-    final authUnchanged =
-        request.headers['Authorization'] ==
-        _dio.options.headers['Authorization'];
-
-    if (attempt < maxRetries && authUnchanged && _isRetryable(err)) {
+    if (attempt < maxRetries && _isRetryable(err)) {
       final nextAttempt = attempt + 1;
       await Future<void>.delayed(_backoff(nextAttempt));
-      request.extra[_attemptKey] = nextAttempt;
-      try {
-        handler.resolve(await _dio.fetch<dynamic>(request));
-        return;
-      } on DioException catch (e) {
-        handler.next(e);
-        return;
+
+      // Re-check after the backoff: a logout/login during the delay must not
+      // replay the request with the now-stale Authorization header.
+      final authUnchanged =
+          request.headers['Authorization'] ==
+          _dio.options.headers['Authorization'];
+
+      if (authUnchanged) {
+        request.extra[_attemptKey] = nextAttempt;
+        try {
+          handler.resolve(await _dio.fetch<dynamic>(request));
+          return;
+        } on DioException catch (e) {
+          handler.next(e);
+          return;
+        }
       }
     }
     handler.next(err);
