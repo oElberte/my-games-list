@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 import 'package:my_games_list/features/games/bloc/game_search_event.dart';
 import 'package:my_games_list/features/games/bloc/game_search_state.dart';
 import 'package:stream_transform/stream_transform.dart';
@@ -11,7 +11,7 @@ EventTransformer<GameSearchQueryChanged> debounce(Duration duration) {
 }
 
 class GameSearchBloc extends Bloc<GameSearchEvent, GameSearchState> {
-  GameSearchBloc({required GamesRepository gamesRepository})
+  GameSearchBloc({required IGamesRepository gamesRepository})
     : _gamesRepository = gamesRepository,
       super(const GameSearchState()) {
     on<GameSearchQueryChanged>(
@@ -22,7 +22,7 @@ class GameSearchBloc extends Bloc<GameSearchEvent, GameSearchState> {
     on<GameSearchClear>(_onClear);
   }
 
-  final GamesRepository _gamesRepository;
+  final IGamesRepository _gamesRepository;
 
   static const int _pageSize = 20;
   static const int _maxOffset = 10000;

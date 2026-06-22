@@ -5,9 +5,9 @@ import 'package:my_games_list/features/games/discovery_game_model.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_event.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_state.dart';
-import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 
-class MockGamesRepository extends Mock implements GamesRepository {}
+class MockGamesRepository extends Mock implements IGamesRepository {}
 
 /// Builds a [DiscoveryGamesState] for a single discovery type using the
 /// per-type API, mirroring how the bloc seeds and emits state.

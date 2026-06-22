@@ -1,16 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_games_list/features/browse/bloc/browse_genres_event.dart';
 import 'package:my_games_list/features/browse/bloc/browse_genres_state.dart';
-import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 
 class BrowseGenresBloc extends Bloc<BrowseGenresEvent, BrowseGenresState> {
-  BrowseGenresBloc({required GamesRepository gamesRepository})
+  BrowseGenresBloc({required IGamesRepository gamesRepository})
     : _gamesRepository = gamesRepository,
       super(const BrowseGenresState()) {
     on<BrowseGenresLoadRequested>(_onLoadRequested);
   }
 
-  final GamesRepository _gamesRepository;
+  final IGamesRepository _gamesRepository;
 
   Future<void> _onLoadRequested(
     BrowseGenresLoadRequested event,

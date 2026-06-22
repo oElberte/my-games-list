@@ -1,17 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_details_event.dart';
 import 'package:my_games_list/features/games/bloc/game_details_state.dart';
-import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 
 /// BLoC for managing game details state.
 class GameDetailsBloc extends Bloc<GameDetailsEvent, GameDetailsState> {
-  GameDetailsBloc({required GamesRepository gamesRepository})
+  GameDetailsBloc({required IGamesRepository gamesRepository})
     : _gamesRepository = gamesRepository,
       super(const GameDetailsState()) {
     on<GameDetailsLoadRequested>(_onLoadRequested);
   }
 
-  final GamesRepository _gamesRepository;
+  final IGamesRepository _gamesRepository;
 
   Future<void> _onLoadRequested(
     GameDetailsLoadRequested event,

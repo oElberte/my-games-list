@@ -4,15 +4,17 @@ import 'package:my_games_list/features/games/collection_model.dart';
 import 'package:my_games_list/features/games/discovery_game_model.dart';
 import 'package:my_games_list/features/games/featured_banner_model.dart';
 import 'package:my_games_list/features/games/game_detail_model.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 import 'package:my_games_list/features/games/search_game_model.dart';
 
 /// Repository for fetching game-related data from the API
-class GamesRepository {
+class GamesRepository implements IGamesRepository {
   GamesRepository({required IHttpClient httpClient}) : _httpClient = httpClient;
 
   final IHttpClient _httpClient;
 
   /// Fetches the most anticipated upcoming games
+  @override
   Future<List<AnticipatedGame>> getAnticipatedGames() async {
     final response = await _httpClient.get<Map<String, dynamic>>(
       '/games/anticipated',
@@ -31,6 +33,7 @@ class GamesRepository {
   }
 
   /// Fetches the editorial featured banners for the home screen
+  @override
   Future<List<FeaturedBanner>> getFeaturedBanners() async {
     final response = await _httpClient.get<Map<String, dynamic>>(
       '/home/featured',
@@ -49,6 +52,7 @@ class GamesRepository {
   }
 
   /// Fetches personalized recommendations for the authenticated user.
+  @override
   Future<List<DiscoveryGame>> getRecommendations() async {
     final response = await _httpClient.get<Map<String, dynamic>>(
       '/games/recommendations',
@@ -64,6 +68,7 @@ class GamesRepository {
   }
 
   /// Fetches the curated game collections for the home screen.
+  @override
   Future<List<GameCollection>> getCollections() async {
     final response = await _httpClient.get<Map<String, dynamic>>(
       '/home/collections',
@@ -79,6 +84,7 @@ class GamesRepository {
   }
 
   /// Fetches discovery games based on the discovery type with pagination
+  @override
   Future<DiscoveryGamesResponse> getDiscoveryGames(
     DiscoveryType type, {
     int limit = 20,
@@ -103,6 +109,7 @@ class GamesRepository {
   }
 
   /// Fetches the list of game genres for the browse hub.
+  @override
   Future<List<Genre>> getGenres() async {
     final response = await _httpClient.get<Map<String, dynamic>>(
       '/games/genres',
@@ -119,6 +126,7 @@ class GamesRepository {
   }
 
   /// Fetches top-rated games for a specific [genreId].
+  @override
   Future<DiscoveryGamesResponse> getGamesByGenre(
     int genreId, {
     int limit = 20,
@@ -144,6 +152,7 @@ class GamesRepository {
   }
 
   /// Searches for games matching the query with pagination
+  @override
   Future<SearchGamesResponse> searchGames(
     String query, {
     int limit = 20,
@@ -162,6 +171,7 @@ class GamesRepository {
   }
 
   /// Fetches detailed information about a specific game
+  @override
   Future<GameDetail> getGameDetails(int id) async {
     final response = await _httpClient.get<Map<String, dynamic>>('/games/$id');
 

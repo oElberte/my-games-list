@@ -42,6 +42,7 @@ import 'package:my_games_list/features/games/game_details_screen.dart';
 import 'package:my_games_list/features/games/game_search_screen.dart';
 import 'package:my_games_list/features/games/games_repository.dart';
 import 'package:my_games_list/features/games/games_screen.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 import 'package:my_games_list/features/games/widgets/video_player_screen.dart';
 import 'package:my_games_list/features/home/home_screen.dart';
 import 'package:my_games_list/features/library/bloc/library_bloc.dart';
@@ -208,13 +209,13 @@ class AppRouter {
                       providers: [
                         BlocProvider(
                           create: (_) => AnticipatedGamesBloc(
-                            gamesRepository: sl<GamesRepository>(),
+                            gamesRepository: sl<IGamesRepository>(),
                           )..add(const AnticipatedGamesLoadRequested()),
                         ),
                         BlocProvider(
                           create: (_) =>
                               DiscoveryGamesBloc(
-                                gamesRepository: sl<GamesRepository>(),
+                                gamesRepository: sl<IGamesRepository>(),
                               )..add(
                                 const DiscoveryGamesLoadRequested(
                                   DiscoveryType.trending,
@@ -223,17 +224,17 @@ class AppRouter {
                         ),
                         BlocProvider(
                           create: (_) => FeaturedBannersBloc(
-                            gamesRepository: sl<GamesRepository>(),
+                            gamesRepository: sl<IGamesRepository>(),
                           )..add(const FeaturedBannersLoadRequested()),
                         ),
                         BlocProvider(
                           create: (_) => RecommendationsBloc(
-                            gamesRepository: sl<GamesRepository>(),
+                            gamesRepository: sl<IGamesRepository>(),
                           )..add(const RecommendationsLoadRequested()),
                         ),
                         BlocProvider(
                           create: (_) => CollectionsBloc(
-                            gamesRepository: sl<GamesRepository>(),
+                            gamesRepository: sl<IGamesRepository>(),
                           )..add(const CollectionsLoadRequested()),
                         ),
                       ],
@@ -255,7 +256,7 @@ class AppRouter {
 
                     return BlocProvider(
                       create: (_) => BrowseGenresBloc(
-                        gamesRepository: sl<GamesRepository>(),
+                        gamesRepository: sl<IGamesRepository>(),
                       )..add(const BrowseGenresLoadRequested()),
                       child: const BrowseScreen(),
                     );
@@ -322,7 +323,7 @@ class AppRouter {
             // Provide GameSearchBloc to the screen (auto-disposed by BlocProvider)
             return BlocProvider(
               create: (_) =>
-                  GameSearchBloc(gamesRepository: sl<GamesRepository>()),
+                  GameSearchBloc(gamesRepository: sl<IGamesRepository>()),
               child: const GameSearchScreen(),
             );
           },
@@ -350,7 +351,7 @@ class AppRouter {
               providers: [
                 BlocProvider(
                   create: (_) =>
-                      GameDetailsBloc(gamesRepository: sl<GamesRepository>())
+                      GameDetailsBloc(gamesRepository: sl<IGamesRepository>())
                         ..add(GameDetailsLoadRequested(gameId)),
                 ),
                 BlocProvider.value(
@@ -397,7 +398,7 @@ class AppRouter {
             // Provide DiscoveryGamesBloc to the screen (auto-disposed by BlocProvider)
             return BlocProvider(
               create: (_) =>
-                  DiscoveryGamesBloc(gamesRepository: sl<GamesRepository>())
+                  DiscoveryGamesBloc(gamesRepository: sl<IGamesRepository>())
                     ..add(DiscoveryGamesLoadRequested(discoveryType)),
               child: DiscoveryGamesScreen(discoveryType: discoveryType),
             );
@@ -425,7 +426,7 @@ class AppRouter {
 
             return BlocProvider(
               create: (_) =>
-                  BrowseGenreGamesBloc(gamesRepository: sl<GamesRepository>())
+                  BrowseGenreGamesBloc(gamesRepository: sl<IGamesRepository>())
                     ..add(BrowseGenreGamesLoadRequested(genreId)),
               child: BrowseGenreGamesScreen(
                 genreId: genreId,
@@ -477,8 +478,8 @@ class AppRouter {
   /// This is called lazily when home route is accessed.
   /// The repository stays registered as a singleton for API calls.
   static void _ensureGamesRepositoryRegistered() {
-    if (!sl.isRegistered<GamesRepository>()) {
-      sl.registerLazySingleton<GamesRepository>(
+    if (!sl.isRegistered<IGamesRepository>()) {
+      sl.registerLazySingleton<IGamesRepository>(
         () => GamesRepository(httpClient: sl<IHttpClient>()),
       );
     }
