@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:my_games_list/core/widgets/skeleton_box.dart';
 
 /// Full-screen skeleton for the game details screen. Mirrors the real layout's
-/// 300px header image and the info row (100x140 cover + title/meta lines) so
-/// the header doesn't jump when the game loads.
+/// pinned 300px [SliverAppBar] header (so the back affordance stays visible and
+/// no app-bar chrome shifts in when the game loads) and the info row
+/// (100x140 cover + title/meta lines).
 class GameDetailsSkeleton extends StatelessWidget {
   const GameDetailsSkeleton({super.key});
 
@@ -13,7 +14,14 @@ class GameDetailsSkeleton extends StatelessWidget {
       body: CustomScrollView(
         physics: NeverScrollableScrollPhysics(),
         slivers: [
-          SliverToBoxAdapter(child: SkeletonBox(height: 300, borderRadius: 0)),
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            leading: BackButton(),
+            flexibleSpace: FlexibleSpaceBar(
+              background: SkeletonBox(borderRadius: 0),
+            ),
+          ),
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.all(16),
@@ -55,7 +63,12 @@ class _InfoRowSkeleton extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SkeletonBox(height: 22, borderRadius: 6),
+              // Constrain the title so it reads as a loading title rather than
+              // a full-width filled banner.
+              FractionallySizedBox(
+                widthFactor: 0.7,
+                child: SkeletonBox(height: 22, borderRadius: 6),
+              ),
               SizedBox(height: 12),
               SkeletonBox(width: 120, height: 14, borderRadius: 6),
               SizedBox(height: 12),

@@ -88,4 +88,16 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('GameDetailsSkeleton keeps a pinned app bar with a back button', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrap(const GameDetailsSkeleton()));
+
+    // The real screen pins a SliverAppBar with a back affordance, so the
+    // skeleton must too: the back button stays visible during a slow fetch and
+    // no app-bar chrome shifts in when content arrives.
+    expect(find.byType(SliverAppBar), findsOneWidget);
+    expect(find.byType(BackButton), findsOneWidget);
+  });
 }

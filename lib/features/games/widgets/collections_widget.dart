@@ -4,6 +4,7 @@ import 'package:my_games_list/features/games/bloc/collections_bloc.dart';
 import 'package:my_games_list/features/games/bloc/collections_state.dart';
 import 'package:my_games_list/features/games/collection_model.dart';
 import 'package:my_games_list/features/games/widgets/discovery_game_tile.dart';
+import 'package:my_games_list/features/games/widgets/skeletons/discovery_tile_skeleton.dart';
 
 const double _rowHeight = 200;
 const double _tileAspectRatio = 0.7;
@@ -28,6 +29,15 @@ class CollectionsWidget extends StatelessWidget {
             .take(_maxCollectionsOnHome)
             .toList();
         if (visible.isEmpty) {
+          // Match Trending/Recommendations: shimmer a row while the first load
+          // is in flight, then hide entirely on empty/error so editorial
+          // content never flashes a placeholder it can't fill.
+          if (state.isLoading) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: DiscoveryRowSkeleton(),
+            );
+          }
           return const SizedBox.shrink();
         }
         return Column(
