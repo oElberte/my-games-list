@@ -197,7 +197,7 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
 
     // On web Flutter ignores decode caps (the browser decodes), so request a
     // smaller server size for the header instead of the full 1080p.
-    final headerSize = kIsWeb ? ImageSize.hd720 : ImageSize.hd1080;
+    const headerSize = kIsWeb ? ImageSize.hd720 : ImageSize.hd1080;
     final headerImageUrl = game.screenshots.isNotEmpty
         ? getHighResUrl(game.screenshots.first.url, headerSize)
         : (game.cover != null
