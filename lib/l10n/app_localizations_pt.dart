@@ -516,4 +516,50 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get emptyLibraryHint =>
       'Comece a adicionar jogos para acompanhar sua coleção e nunca perder o progresso.';
+
+  @override
+  String get privacyDataTitle => 'Privacidade e dados';
+
+  @override
+  String get exportDataTitle => 'Exportar meus dados';
+
+  @override
+  String get exportDataSubtitle =>
+      'Baixe uma cópia dos dados da sua conta em formato JSON.';
+
+  @override
+  String get exportDataSuccess => 'A exportação dos seus dados está pronta.';
+
+  @override
+  String get exportDataError =>
+      'Não foi possível exportar seus dados. Tente novamente.';
+
+  @override
+  String get deleteAccountTitle => 'Excluir minha conta';
+
+  @override
+  String get deleteAccountSubtitle =>
+      'Exclua permanentemente sua conta e todos os seus dados.';
+
+  @override
+  String get deleteAccountDialogTitle => 'Excluir conta?';
+
+  @override
+  String get deleteAccountDialogBody =>
+      'Isto exclui permanentemente sua conta e todos os seus dados. Esta ação não pode ser desfeita.';
+
+  @override
+  String deleteAccountConfirmLabel(String word) {
+    return 'Digite $word para confirmar';
+  }
+
+  @override
+  String get deleteAccountConfirmWord => 'EXCLUIR';
+
+  @override
+  String get deleteAccountConfirmButton => 'Excluir conta';
+
+  @override
+  String get deleteAccountError =>
+      'Não foi possível excluir sua conta. Tente novamente.';
 }

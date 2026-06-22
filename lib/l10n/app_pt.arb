@@ -159,5 +159,18 @@
     "searchGamesInitialHint": "Busque pelo título para adicionar jogos à sua biblioteca.",
     "searchGamesNoResultsTitle": "Nenhuma correspondência ainda",
     "emptyLibraryTitle": "Sua biblioteca está vazia",
-    "emptyLibraryHint": "Comece a adicionar jogos para acompanhar sua coleção e nunca perder o progresso."
+    "emptyLibraryHint": "Comece a adicionar jogos para acompanhar sua coleção e nunca perder o progresso.",
+    "privacyDataTitle": "Privacidade e dados",
+    "exportDataTitle": "Exportar meus dados",
+    "exportDataSubtitle": "Baixe uma cópia dos dados da sua conta em formato JSON.",
+    "exportDataSuccess": "A exportação dos seus dados está pronta.",
+    "exportDataError": "Não foi possível exportar seus dados. Tente novamente.",
+    "deleteAccountTitle": "Excluir minha conta",
+    "deleteAccountSubtitle": "Exclua permanentemente sua conta e todos os seus dados.",
+    "deleteAccountDialogTitle": "Excluir conta?",
+    "deleteAccountDialogBody": "Isto exclui permanentemente sua conta e todos os seus dados. Esta ação não pode ser desfeita.",
+    "deleteAccountConfirmLabel": "Digite {word} para confirmar",
+    "deleteAccountConfirmWord": "EXCLUIR",
+    "deleteAccountConfirmButton": "Excluir conta",
+    "deleteAccountError": "Não foi possível excluir sua conta. Tente novamente."
 }

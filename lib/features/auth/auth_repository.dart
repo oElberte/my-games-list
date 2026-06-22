@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/features/auth/auth_response.dart';
@@ -95,5 +97,30 @@ class AuthRepository {
   Future<void> clearToken() async {
     await _tokenStorage.delete();
     _httpClient.clearAuthToken();
+  }
+
+  /// Permanently deletes the authenticated user's account via DELETE /users/me.
+  /// On success the backend returns 204 with no body; the caller is responsible
+  /// for tearing down the local session afterwards.
+  Future<void> deleteAccount() async {
+    final response = await _httpClient.delete<void>('/users/me');
+
+    if (response.isError) {
+      throw Exception(response.error?.userMessage ?? 'Account deletion failed');
+    }
+  }
+
+  /// Fetches the authenticated user's data export via GET /users/me/export and
+  /// returns it as pretty-printed JSON ready to be saved or shared.
+  Future<String> exportData() async {
+    final response = await _httpClient.get<Map<String, dynamic>>(
+      '/users/me/export',
+    );
+
+    if (response.isError) {
+      throw Exception(response.error?.userMessage ?? 'Data export failed');
+    }
+
+    return const JsonEncoder.withIndent('  ').convert(response.dataOrThrow);
   }
 }
