@@ -252,14 +252,12 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
                             CachedNetworkImage(
                               imageUrl: headerImageUrl,
                               fit: BoxFit.cover,
-                              // Decode at the display width, not the 1080p
-                              // source, to bound memory for this full-bleed
-                              // header image.
-                              memCacheWidth:
-                                  (MediaQuery.sizeOf(context).width *
-                                          MediaQuery.devicePixelRatioOf(
-                                            context,
-                                          ))
+                              // Decode at the header height (the fixed
+                              // dimension BoxFit.cover scales to fill), so the
+                              // 1080p source's memory is bounded without
+                              // upscaling the hero image.
+                              memCacheHeight:
+                                  (300 * MediaQuery.devicePixelRatioOf(context))
                                       .round(),
                               placeholder: (context, url) =>
                                   Container(color: Colors.grey[900]),
