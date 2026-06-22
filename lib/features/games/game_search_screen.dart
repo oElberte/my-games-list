@@ -142,7 +142,9 @@ class _SearchResults extends StatelessWidget {
     return ListView.builder(
       controller: scrollController,
       padding: const EdgeInsets.all(8.0),
-      itemCount: games.length + (hasMore || isLoadingMore ? 1 : 0),
+      itemCount:
+          games.length +
+          (hasMore || isLoadingMore || offsetLimitReached ? 1 : 0),
       itemBuilder: (context, index) {
         if (index == games.length) {
           if (offsetLimitReached) {
