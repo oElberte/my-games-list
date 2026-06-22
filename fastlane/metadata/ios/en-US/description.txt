@@ -1,0 +1,29 @@
+My Games List is your personal game library tracker. Keep every game you play, plan, or dream about in one organized place, and discover what to play next.
+
+DISCOVER GAMES
+Browse trending titles, the most anticipated upcoming releases, new releases, and curated collections. Explore by genre or search the full game database powered by IGDB. Open any game to see its rating, genres, platforms, screenshots, trailers, similar titles, and links to official sites.
+
+BUILD YOUR LIBRARY
+Add any game to your personal collection and track it your way:
+- Set a status: Planned, Playing, Finished, On Hold, or Dropped
+- Rate games on a 0 to 100 scale
+- Log your playtime in hours and minutes
+- Record start and end dates
+- Note the platform you played on and a difficulty level
+- Mark favorites and add your own notes
+
+STAY ORGANIZED
+Filter your library by status or favorites to find exactly what you are looking for. Swipe to remove a game, with undo always one tap away. Pull to refresh to keep everything up to date.
+
+MADE YOUR WAY
+- Light and dark themes
+- Available in English and Portuguese (Brazil)
+- Optional push notifications you fully control
+
+PRIVACY FIRST
+You own your data. Export your collection at any time, or delete your account and data directly from the app.
+
+Start tracking your games today and never lose track of your backlog again.
+
+---
+DRAFT COPY - pending final review and approval before publishing.
