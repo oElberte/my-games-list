@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:my_games_list/features/games/bloc/game_search_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_search_event.dart';
+import 'package:my_games_list/features/games/bloc/game_search_filters.dart';
 import 'package:my_games_list/features/games/bloc/game_search_state.dart';
 import 'package:my_games_list/features/games/game_search_screen.dart';
 import 'package:my_games_list/features/games/search_game_model.dart';
@@ -161,6 +162,48 @@ void main() {
       expect(find.byType(GameSearchCard), findsNWidgets(2));
       // 2 result cards + a trailing load-more indicator.
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('a short filtered list that cannot scroll auto-loads more so '
+        'filtering does not strand pagination', (tester) async {
+      // A tall viewport guarantees a few short cards cannot fill it, so the
+      // user can never scroll to the bottom — but hasMore is true. The screen
+      // must fetch the next page itself instead of stranding pagination.
+      tester.view.physicalSize = const Size(800, 4000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      when(() => bloc.state).thenReturn(
+        GameSearchState(
+          status: GameSearchStatus.success,
+          query: 'game',
+          games: _games(3),
+        ),
+      );
+
+      await tester.pumpWidget(buildSubject());
+      await tester.pump();
+
+      verify(() => bloc.add(const GameSearchLoadMore())).called(1);
+    });
+
+    testWidgets('a caption clarifies that filters apply to loaded results', (
+      tester,
+    ) async {
+      when(() => bloc.state).thenReturn(
+        GameSearchState(
+          status: GameSearchStatus.success,
+          query: 'game',
+          games: _games(3),
+          filters: const GameSearchFilters(sort: GameSearchSort.nameAsc),
+          hasMore: false,
+        ),
+      );
+
+      await tester.pumpWidget(buildSubject());
+
+      expect(find.text('Filters apply to loaded results'), findsOneWidget);
     });
 
     testWidgets('the offset-limit message shows at the list tail when the '

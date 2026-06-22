@@ -6,8 +6,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:my_games_list/features/games/bloc/game_search_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_search_event.dart';
+import 'package:my_games_list/features/games/bloc/game_search_filters.dart';
 import 'package:my_games_list/features/games/bloc/game_search_state.dart';
 import 'package:my_games_list/features/games/game_search_screen.dart';
+import 'package:my_games_list/features/games/search_game_model.dart';
 import 'package:my_games_list/l10n/app_localizations.dart';
 
 class _MockGameSearchBloc extends MockBloc<GameSearchEvent, GameSearchState>
@@ -66,5 +68,34 @@ void main() {
       expect(find.text('No results found for "zelda"'), findsOneWidget);
       expect(find.byIcon(Icons.search_off), findsOneWidget);
     });
+
+    testWidgets(
+      'filtered empty state offers an inline clear-filters recovery action',
+      (tester) async {
+        registerFallbackValue(const GameSearchFiltersCleared());
+        when(() => bloc.state).thenReturn(
+          const GameSearchState(
+            status: GameSearchStatus.success,
+            query: 'zelda',
+            games: [
+              SearchGame(id: 1, name: 'Zelda', genres: [], platforms: []),
+            ],
+            filters: GameSearchFilters(year: 1999),
+          ),
+        );
+
+        await tester.pumpWidget(buildSubject());
+
+        expect(find.text('No matches for these filters'), findsOneWidget);
+
+        final clearButton = find.text('Clear filters');
+        expect(clearButton, findsOneWidget);
+
+        await tester.tap(clearButton);
+        await tester.pump();
+
+        verify(() => bloc.add(const GameSearchFiltersCleared())).called(1);
+      },
+    );
   });
 }

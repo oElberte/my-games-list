@@ -187,6 +187,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchFiltersClearAll => 'Clear all';
 
   @override
+  String get searchFiltersReset => 'Reset';
+
+  @override
+  String get searchFiltersLoadedScopeCaption =>
+      'Filters apply to loaded results';
+
+  @override
   String get searchSortLabel => 'Sort by';
 
   @override
@@ -229,6 +236,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get searchNoResultsForFiltersHint =>
       'Try removing a filter to see more games.';
+
+  @override
+  String get searchClearFilters => 'Clear filters';
 
   @override
   String get gameDetailsTitle => 'Game Details';

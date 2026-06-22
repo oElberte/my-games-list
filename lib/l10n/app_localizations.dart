@@ -440,6 +440,18 @@ abstract class AppLocalizations {
   /// **'Clear all'**
   String get searchFiltersClearAll;
 
+  /// No description provided for @searchFiltersReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get searchFiltersReset;
+
+  /// No description provided for @searchFiltersLoadedScopeCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters apply to loaded results'**
+  String get searchFiltersLoadedScopeCaption;
+
   /// No description provided for @searchSortLabel.
   ///
   /// In en, this message translates to:
@@ -517,6 +529,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Try removing a filter to see more games.'**
   String get searchNoResultsForFiltersHint;
+
+  /// No description provided for @searchClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get searchClearFilters;
 
   /// No description provided for @gameDetailsTitle.
   ///

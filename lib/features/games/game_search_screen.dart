@@ -272,25 +272,41 @@ class _ActiveFiltersRow extends StatelessWidget {
 
     if (chips.isEmpty) return const SizedBox.shrink();
 
-    return SizedBox(
-      height: 48,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: chips.length + 1,
-        separatorBuilder: (context, index) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          if (index == chips.length) {
-            return Center(
-              child: TextButton(
-                onPressed: () => bloc.add(const GameSearchFiltersCleared()),
-                child: Text(context.l10n.searchFiltersClearAll),
-              ),
-            );
-          }
-          return Center(child: chips[index]);
-        },
-      ),
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 48,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: chips.length + 1,
+            separatorBuilder: (context, index) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              if (index == chips.length) {
+                return Center(
+                  child: TextButton(
+                    onPressed: () => bloc.add(const GameSearchFiltersCleared()),
+                    child: Text(context.l10n.searchFiltersClearAll),
+                  ),
+                );
+              }
+              return Center(child: chips[index]);
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: Text(
+            context.l10n.searchFiltersLoadedScopeCaption,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -307,7 +323,7 @@ class _ActiveFilterChip extends StatelessWidget {
   }
 }
 
-class _SearchResults extends StatelessWidget {
+class _SearchResults extends StatefulWidget {
   const _SearchResults({
     required this.games,
     required this.hasMore,
@@ -321,22 +337,63 @@ class _SearchResults extends StatelessWidget {
   final bool isLoadingMore;
   final bool offsetLimitReached;
   final ScrollController scrollController;
+
+  @override
+  State<_SearchResults> createState() => _SearchResultsState();
+}
+
+class _SearchResultsState extends State<_SearchResults> {
+  @override
+  void initState() {
+    super.initState();
+    _maybeAutoLoadMore();
+  }
+
+  @override
+  void didUpdateWidget(covariant _SearchResults oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _maybeAutoLoadMore();
+  }
+
+  /// Filtering can shrink the visible list below the viewport, so the
+  /// scroll-driven load-more never fires and paging stalls. When the list
+  /// can't scroll but more pages exist, auto-fetch the next page so filtering
+  /// never strands pagination.
+  void _maybeAutoLoadMore() {
+    if (!widget.hasMore || widget.isLoadingMore) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final controller = widget.scrollController;
+      if (!controller.hasClients) return;
+      final position = controller.position;
+      // The content does not overflow the viewport, so the user can never
+      // scroll to the bottom to trigger load-more — fetch the next page.
+      if (position.maxScrollExtent <= 0 &&
+          widget.hasMore &&
+          !widget.isLoadingMore) {
+        context.read<GameSearchBloc>().add(const GameSearchLoadMore());
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      controller: scrollController,
+      controller: widget.scrollController,
       padding: const EdgeInsets.all(8.0),
       itemCount:
-          games.length +
-          (hasMore || isLoadingMore || offsetLimitReached ? 1 : 0),
+          widget.games.length +
+          (widget.hasMore || widget.isLoadingMore || widget.offsetLimitReached
+              ? 1
+              : 0),
       itemBuilder: (context, index) {
-        if (index == games.length) {
-          if (offsetLimitReached) {
+        if (index == widget.games.length) {
+          if (widget.offsetLimitReached) {
             return _OffsetLimitReachedMessage();
           }
           return _LoadingMoreIndicator();
         }
-        return GameSearchCard(game: games[index]);
+        return GameSearchCard(game: widget.games[index]);
       },
     );
   }
@@ -410,6 +467,13 @@ class _FilteredEmptyState extends StatelessWidget {
       icon: Icons.filter_alt_off,
       title: context.l10n.searchNoResultsForFiltersTitle,
       hint: context.l10n.searchNoResultsForFiltersHint,
+      action: FilledButton.tonalIcon(
+        onPressed: () => context.read<GameSearchBloc>().add(
+          const GameSearchFiltersCleared(),
+        ),
+        icon: const Icon(Icons.filter_alt_off),
+        label: Text(context.l10n.searchClearFilters),
+      ),
     );
   }
 }
@@ -421,11 +485,13 @@ class _SearchMessageView extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.hint,
+    this.action,
   });
 
   final IconData icon;
   final String title;
   final String hint;
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -458,6 +524,7 @@ class _SearchMessageView extends StatelessWidget {
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
+            if (action != null) ...[const SizedBox(height: 20), action!],
           ],
         ),
       ),

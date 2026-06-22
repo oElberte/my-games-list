@@ -81,16 +81,17 @@ class GameSearchFilters extends Equatable {
     return filtered;
   }
 
-  /// Sorts by release year, always pushing games without a release date to the
-  /// end regardless of direction.
+  /// Sorts by full release date, always pushing games without a release date
+  /// to the end regardless of direction. Comparing the whole [DateTime] (not
+  /// just the year) keeps same-year results in correct chronological order.
   Comparator<SearchGame> _byYear({required bool descending}) {
     return (a, b) {
-      final ay = a.firstReleaseDate?.year;
-      final by = b.firstReleaseDate?.year;
-      if (ay == null && by == null) return 0;
-      if (ay == null) return 1;
-      if (by == null) return -1;
-      return descending ? by.compareTo(ay) : ay.compareTo(by);
+      final ad = a.firstReleaseDate;
+      final bd = b.firstReleaseDate;
+      if (ad == null && bd == null) return 0;
+      if (ad == null) return 1;
+      if (bd == null) return -1;
+      return descending ? bd.compareTo(ad) : ad.compareTo(bd);
     };
   }
 
