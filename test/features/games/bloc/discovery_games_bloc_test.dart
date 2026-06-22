@@ -9,6 +9,32 @@ import 'package:my_games_list/features/games/games_repository.dart';
 
 class MockGamesRepository extends Mock implements GamesRepository {}
 
+/// Builds a [DiscoveryGamesState] for a single discovery type using the
+/// per-type API, mirroring how the bloc seeds and emits state.
+DiscoveryGamesState stateForType(
+  DiscoveryType type, {
+  DiscoveryGamesStatus status = DiscoveryGamesStatus.initial,
+  List<DiscoveryGame> games = const [],
+  String? errorMessage,
+  bool hasMore = true,
+  int currentOffset = 0,
+  bool offsetLimitReached = false,
+}) {
+  return DiscoveryGamesState(
+    stateByType: {
+      type: DiscoveryTypeState(
+        status: status,
+        games: games,
+        errorMessage: errorMessage,
+        hasMore: hasMore,
+        currentOffset: currentOffset,
+        offsetLimitReached: offsetLimitReached,
+      ),
+    },
+    activeDiscoveryType: type,
+  );
+}
+
 void main() {
   late MockGamesRepository mockRepository;
 
@@ -72,16 +98,16 @@ void main() {
         act: (bloc) =>
             bloc.add(const DiscoveryGamesLoadRequested(DiscoveryType.trending)),
         expect: () => [
-          DiscoveryGamesState.withLegacyParams(
+          stateForType(
+            DiscoveryType.trending,
             status: DiscoveryGamesStatus.loading,
-            discoveryType: DiscoveryType.trending,
           ),
-          predicate<DiscoveryGamesState>(
-            (state) =>
-                state.status == DiscoveryGamesStatus.success &&
-                state.games.length == 2 &&
-                state.games[0].name == 'The Witcher 3: Wild Hunt',
-          ),
+          predicate<DiscoveryGamesState>((state) {
+            final typeState = state.getStateForType(DiscoveryType.trending);
+            return typeState.status == DiscoveryGamesStatus.success &&
+                typeState.games.length == 2 &&
+                typeState.games[0].name == 'The Witcher 3: Wild Hunt';
+          }),
         ],
         verify: (_) {
           verify(
@@ -109,15 +135,15 @@ void main() {
         act: (bloc) =>
             bloc.add(const DiscoveryGamesLoadRequested(DiscoveryType.trending)),
         expect: () => [
-          DiscoveryGamesState.withLegacyParams(
+          stateForType(
+            DiscoveryType.trending,
             status: DiscoveryGamesStatus.loading,
-            discoveryType: DiscoveryType.trending,
           ),
-          predicate<DiscoveryGamesState>(
-            (state) =>
-                state.status == DiscoveryGamesStatus.failure &&
-                state.errorMessage != null,
-          ),
+          predicate<DiscoveryGamesState>((state) {
+            final typeState = state.getStateForType(DiscoveryType.trending);
+            return typeState.status == DiscoveryGamesStatus.failure &&
+                typeState.errorMessage != null;
+          }),
         ],
       );
 
@@ -136,15 +162,15 @@ void main() {
         act: (bloc) =>
             bloc.add(const DiscoveryGamesLoadRequested(DiscoveryType.indie)),
         expect: () => [
-          DiscoveryGamesState.withLegacyParams(
+          stateForType(
+            DiscoveryType.indie,
             status: DiscoveryGamesStatus.loading,
-            discoveryType: DiscoveryType.indie,
           ),
-          predicate<DiscoveryGamesState>(
-            (state) =>
-                state.status == DiscoveryGamesStatus.success &&
-                state.discoveryType == DiscoveryType.indie,
-          ),
+          predicate<DiscoveryGamesState>((state) {
+            final typeState = state.getStateForType(DiscoveryType.indie);
+            return typeState.status == DiscoveryGamesStatus.success &&
+                state.activeDiscoveryType == DiscoveryType.indie;
+          }),
         ],
       );
     });
@@ -162,24 +188,26 @@ void main() {
           ).thenAnswer((_) async => mockResponseNoMore);
           return DiscoveryGamesBloc(gamesRepository: mockRepository);
         },
-        seed: () => DiscoveryGamesState.withLegacyParams(
+        seed: () => stateForType(
+          DiscoveryType.trending,
           status: DiscoveryGamesStatus.success,
           games: mockGames,
           hasMore: true,
           currentOffset: 50,
-          discoveryType: DiscoveryType.trending,
         ),
         act: (bloc) => bloc.add(const DiscoveryGamesLoadMore()),
         expect: () => [
           predicate<DiscoveryGamesState>(
-            (state) => state.status == DiscoveryGamesStatus.loadingMore,
-          ),
-          predicate<DiscoveryGamesState>(
             (state) =>
-                state.status == DiscoveryGamesStatus.success &&
-                state.games.length == 4 &&
-                state.currentOffset == 100,
+                state.getStateForType(DiscoveryType.trending).status ==
+                DiscoveryGamesStatus.loadingMore,
           ),
+          predicate<DiscoveryGamesState>((state) {
+            final typeState = state.getStateForType(DiscoveryType.trending);
+            return typeState.status == DiscoveryGamesStatus.success &&
+                typeState.games.length == 4 &&
+                typeState.currentOffset == 100;
+          }),
         ],
         verify: (_) {
           verify(
@@ -195,7 +223,8 @@ void main() {
       blocTest<DiscoveryGamesBloc, DiscoveryGamesState>(
         'does nothing when already loading more',
         build: () => DiscoveryGamesBloc(gamesRepository: mockRepository),
-        seed: () => DiscoveryGamesState.withLegacyParams(
+        seed: () => stateForType(
+          DiscoveryType.trending,
           status: DiscoveryGamesStatus.loadingMore,
           hasMore: true,
         ),
@@ -215,7 +244,8 @@ void main() {
       blocTest<DiscoveryGamesBloc, DiscoveryGamesState>(
         'does nothing when hasMore is false',
         build: () => DiscoveryGamesBloc(gamesRepository: mockRepository),
-        seed: () => DiscoveryGamesState.withLegacyParams(
+        seed: () => stateForType(
+          DiscoveryType.trending,
           status: DiscoveryGamesStatus.success,
           hasMore: false,
         ),
@@ -226,16 +256,18 @@ void main() {
       blocTest<DiscoveryGamesBloc, DiscoveryGamesState>(
         'sets offsetLimitReached when offset exceeds max',
         build: () => DiscoveryGamesBloc(gamesRepository: mockRepository),
-        seed: () => DiscoveryGamesState.withLegacyParams(
+        seed: () => stateForType(
+          DiscoveryType.trending,
           status: DiscoveryGamesStatus.success,
           hasMore: true,
           currentOffset: 10000,
         ),
         act: (bloc) => bloc.add(const DiscoveryGamesLoadMore()),
         expect: () => [
-          predicate<DiscoveryGamesState>(
-            (state) => state.offsetLimitReached && !state.hasMore,
-          ),
+          predicate<DiscoveryGamesState>((state) {
+            final typeState = state.getStateForType(DiscoveryType.trending);
+            return typeState.offsetLimitReached && !typeState.hasMore;
+          }),
         ],
       );
     });
@@ -279,25 +311,25 @@ void main() {
           ).thenAnswer((_) async => mockResponse);
           return DiscoveryGamesBloc(gamesRepository: mockRepository);
         },
-        seed: () => DiscoveryGamesState.withLegacyParams(
+        seed: () => stateForType(
+          DiscoveryType.trending,
           status: DiscoveryGamesStatus.success,
           games: mockGames,
           currentOffset: 100,
-          discoveryType: DiscoveryType.trending,
         ),
         act: (bloc) => bloc.add(const DiscoveryGamesRefreshRequested()),
         expect: () => [
-          predicate<DiscoveryGamesState>(
-            (state) =>
-                state.status == DiscoveryGamesStatus.loading &&
-                state.currentOffset == 0,
-          ),
-          predicate<DiscoveryGamesState>(
-            (state) =>
-                state.status == DiscoveryGamesStatus.success &&
-                state.games.length == 2 &&
-                state.currentOffset == 50,
-          ),
+          predicate<DiscoveryGamesState>((state) {
+            final typeState = state.getStateForType(DiscoveryType.trending);
+            return typeState.status == DiscoveryGamesStatus.loading &&
+                typeState.currentOffset == 0;
+          }),
+          predicate<DiscoveryGamesState>((state) {
+            final typeState = state.getStateForType(DiscoveryType.trending);
+            return typeState.status == DiscoveryGamesStatus.success &&
+                typeState.games.length == 2 &&
+                typeState.currentOffset == 50;
+          }),
         ],
         verify: (_) {
           verify(
