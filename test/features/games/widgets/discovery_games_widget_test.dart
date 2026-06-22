@@ -19,6 +19,26 @@ class MockDiscoveryGamesBloc
     extends MockBloc<DiscoveryGamesEvent, DiscoveryGamesState>
     implements DiscoveryGamesBloc {}
 
+/// Builds a [DiscoveryGamesState] holding state for a single discovery type
+/// via the per-type API, matching how the widget reads `getStateForType`.
+DiscoveryGamesState stateForType(
+  DiscoveryType type, {
+  DiscoveryGamesStatus status = DiscoveryGamesStatus.initial,
+  List<DiscoveryGame> games = const [],
+  String? errorMessage,
+}) {
+  return DiscoveryGamesState(
+    stateByType: {
+      type: DiscoveryTypeState(
+        status: status,
+        games: games,
+        errorMessage: errorMessage,
+      ),
+    },
+    activeDiscoveryType: type,
+  );
+}
+
 void main() {
   group('DiscoveryGameTile', () {
     const mockGame = DiscoveryGame(
@@ -190,20 +210,20 @@ void main() {
     testWidgets('should display title based on discovery type', (tester) async {
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          DiscoveryGamesState.withLegacyParams(
+          stateForType(
+            DiscoveryType.trending,
             status: DiscoveryGamesStatus.success,
             games: mockGames,
-            discoveryType: DiscoveryType.trending,
           ),
         ),
       );
 
       await tester.pumpWidget(
         createWidget(
-          state: DiscoveryGamesState.withLegacyParams(
+          state: stateForType(
+            DiscoveryType.trending,
             status: DiscoveryGamesStatus.success,
             games: mockGames,
-            discoveryType: DiscoveryType.trending,
           ),
         ),
       );
@@ -217,7 +237,8 @@ void main() {
     ) async {
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          DiscoveryGamesState.withLegacyParams(
+          stateForType(
+            DiscoveryType.trending,
             status: DiscoveryGamesStatus.loading,
           ),
         ),
@@ -225,7 +246,8 @@ void main() {
 
       await tester.pumpWidget(
         createWidget(
-          state: DiscoveryGamesState.withLegacyParams(
+          state: stateForType(
+            DiscoveryType.trending,
             status: DiscoveryGamesStatus.loading,
           ),
         ),
@@ -239,7 +261,8 @@ void main() {
       const errorMessage = 'Failed to load games';
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          DiscoveryGamesState.withLegacyParams(
+          stateForType(
+            DiscoveryType.trending,
             status: DiscoveryGamesStatus.failure,
             errorMessage: errorMessage,
           ),
@@ -248,7 +271,8 @@ void main() {
 
       await tester.pumpWidget(
         createWidget(
-          state: DiscoveryGamesState.withLegacyParams(
+          state: stateForType(
+            DiscoveryType.trending,
             status: DiscoveryGamesStatus.failure,
             errorMessage: errorMessage,
           ),
@@ -262,7 +286,8 @@ void main() {
     testWidgets('should display games when loaded', (tester) async {
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          DiscoveryGamesState.withLegacyParams(
+          stateForType(
+            DiscoveryType.trending,
             status: DiscoveryGamesStatus.success,
             games: mockGames,
           ),
@@ -271,7 +296,8 @@ void main() {
 
       await tester.pumpWidget(
         createWidget(
-          state: DiscoveryGamesState.withLegacyParams(
+          state: stateForType(
+            DiscoveryType.trending,
             status: DiscoveryGamesStatus.success,
             games: mockGames,
           ),
@@ -286,7 +312,8 @@ void main() {
     testWidgets('should display See All button', (tester) async {
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          DiscoveryGamesState.withLegacyParams(
+          stateForType(
+            DiscoveryType.trending,
             status: DiscoveryGamesStatus.success,
             games: mockGames,
           ),
@@ -295,7 +322,8 @@ void main() {
 
       await tester.pumpWidget(
         createWidget(
-          state: DiscoveryGamesState.withLegacyParams(
+          state: stateForType(
+            DiscoveryType.trending,
             status: DiscoveryGamesStatus.success,
             games: mockGames,
           ),
@@ -311,20 +339,20 @@ void main() {
     ) async {
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          DiscoveryGamesState.withLegacyParams(
+          stateForType(
+            DiscoveryType.indie,
             status: DiscoveryGamesStatus.success,
             games: mockGames,
-            discoveryType: DiscoveryType.indie,
           ),
         ),
       );
 
       await tester.pumpWidget(
         createWidget(
-          state: DiscoveryGamesState.withLegacyParams(
+          state: stateForType(
+            DiscoveryType.indie,
             status: DiscoveryGamesStatus.success,
             games: mockGames,
-            discoveryType: DiscoveryType.indie,
           ),
           discoveryType: DiscoveryType.indie,
         ),
@@ -393,18 +421,18 @@ void main() {
     testWidgets('should display loading state initially', (tester) async {
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          DiscoveryGamesState.withLegacyParams(
+          stateForType(
+            DiscoveryType.indie,
             status: DiscoveryGamesStatus.loading,
-            discoveryType: DiscoveryType.indie,
           ),
         ),
       );
 
       await tester.pumpWidget(
         createLazyWidget(
-          state: DiscoveryGamesState.withLegacyParams(
+          state: stateForType(
+            DiscoveryType.indie,
             status: DiscoveryGamesStatus.loading,
-            discoveryType: DiscoveryType.indie,
           ),
           discoveryType: DiscoveryType.indie,
         ),
@@ -423,20 +451,20 @@ void main() {
     ) async {
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          DiscoveryGamesState.withLegacyParams(
+          stateForType(
+            DiscoveryType.indie,
             status: DiscoveryGamesStatus.success,
             games: mockGames,
-            discoveryType: DiscoveryType.indie,
           ),
         ),
       );
 
       await tester.pumpWidget(
         createLazyWidget(
-          state: DiscoveryGamesState.withLegacyParams(
+          state: stateForType(
+            DiscoveryType.indie,
             status: DiscoveryGamesStatus.success,
             games: mockGames,
-            discoveryType: DiscoveryType.indie,
           ),
           discoveryType: DiscoveryType.indie,
         ),
@@ -451,18 +479,18 @@ void main() {
     ) async {
       when(() => mockBloc.stream).thenAnswer(
         (_) => Stream.value(
-          DiscoveryGamesState.withLegacyParams(
+          stateForType(
+            DiscoveryType.indie,
             status: DiscoveryGamesStatus.initial,
-            discoveryType: DiscoveryType.indie,
           ),
         ),
       );
 
       await tester.pumpWidget(
         createLazyWidget(
-          state: DiscoveryGamesState.withLegacyParams(
+          state: stateForType(
+            DiscoveryType.indie,
             status: DiscoveryGamesStatus.initial,
-            discoveryType: DiscoveryType.indie,
           ),
           discoveryType: DiscoveryType.indie,
         ),
@@ -481,10 +509,10 @@ void main() {
     });
 
     testWidgets('should display games when loaded', (tester) async {
-      final stateWithGames = DiscoveryGamesState.withLegacyParams(
+      final stateWithGames = stateForType(
+        DiscoveryType.indie,
         status: DiscoveryGamesStatus.success,
         games: mockGames,
-        discoveryType: DiscoveryType.indie,
       );
 
       when(

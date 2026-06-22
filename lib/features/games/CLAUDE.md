@@ -174,14 +174,9 @@ The state uses a per-type architecture to allow multiple discovery widgets to sh
 - **`DiscoveryGamesState`**: Main state container
   - `stateByType`: `Map<DiscoveryType, DiscoveryTypeState>` - Separate state per discovery type
   - `viewMode`: Current view mode (grid, list) - shared across types
-  - `activeDiscoveryType`: The discovery type currently active (for legacy getters)
+  - `activeDiscoveryType`: The discovery type that `DiscoveryGamesLoadMore` and `DiscoveryGamesRefreshRequested` operate on (set on load)
   - `getStateForType(DiscoveryType)`: Get the state for a specific discovery type
   - `updateTypeState(type, update)`: Update state for a specific type
-
-**Backward Compatibility**:
-
-- Legacy getters (`games`, `status`, `hasMore`, etc.) still work via `activeDiscoveryType`
-- `DiscoveryGamesState.withLegacyParams()` factory constructor for tests and legacy code
 
 **Key Design Decisions**:
 

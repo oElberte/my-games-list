@@ -76,11 +76,14 @@ class _DiscoveryGamesScreenState extends State<DiscoveryGamesScreen> {
   }
 
   Widget _buildBody(BuildContext context, DiscoveryGamesState state) {
-    if (state.isLoading && !state.hasGames) {
+    final typeState = state.getStateForType(widget.discoveryType);
+
+    if (typeState.isLoading && !typeState.hasGames) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (state.status == DiscoveryGamesStatus.failure && !state.hasGames) {
+    if (typeState.status == DiscoveryGamesStatus.failure &&
+        !typeState.hasGames) {
       return _ErrorView(
         message: context.l10n.failedToLoadGames,
         onRetry: () => context.read<DiscoveryGamesBloc>().add(
@@ -89,7 +92,7 @@ class _DiscoveryGamesScreenState extends State<DiscoveryGamesScreen> {
       );
     }
 
-    if (!state.hasGames) {
+    if (!typeState.hasGames) {
       return const _EmptyView();
     }
 
@@ -100,16 +103,16 @@ class _DiscoveryGamesScreenState extends State<DiscoveryGamesScreen> {
         );
         // Wait for the bloc to finish loading
         await context.read<DiscoveryGamesBloc>().stream.firstWhere(
-          (s) => !s.isLoading,
+          (s) => !s.getStateForType(widget.discoveryType).isLoading,
         );
       },
       child: state.isGridView
-          ? _buildGridView(context, state)
-          : _buildListView(context, state),
+          ? _buildGridView(context, typeState)
+          : _buildListView(context, typeState),
     );
   }
 
-  Widget _buildGridView(BuildContext context, DiscoveryGamesState state) {
+  Widget _buildGridView(BuildContext context, DiscoveryTypeState typeState) {
     return CustomScrollView(
       controller: _scrollController,
       slivers: [
@@ -123,21 +126,21 @@ class _DiscoveryGamesScreenState extends State<DiscoveryGamesScreen> {
               mainAxisSpacing: 12,
             ),
             delegate: SliverChildBuilderDelegate((context, index) {
-              if (index < state.games.length) {
-                return DiscoveryGameTile(game: state.games[index]);
+              if (index < typeState.games.length) {
+                return DiscoveryGameTile(game: typeState.games[index]);
               }
               return null;
-            }, childCount: state.games.length),
+            }, childCount: typeState.games.length),
           ),
         ),
-        if (state.isLoadingMore)
+        if (typeState.isLoadingMore)
           const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Center(child: CircularProgressIndicator()),
             ),
           ),
-        if (state.offsetLimitReached)
+        if (typeState.offsetLimitReached)
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -157,20 +160,20 @@ class _DiscoveryGamesScreenState extends State<DiscoveryGamesScreen> {
     );
   }
 
-  Widget _buildListView(BuildContext context, DiscoveryGamesState state) {
+  Widget _buildListView(BuildContext context, DiscoveryTypeState typeState) {
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: state.games.length + (state.isLoadingMore ? 1 : 0),
+      itemCount: typeState.games.length + (typeState.isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
-        if (index >= state.games.length) {
+        if (index >= typeState.games.length) {
           return const Padding(
             padding: EdgeInsets.all(16),
             child: Center(child: CircularProgressIndicator()),
           );
         }
 
-        final game = state.games[index];
+        final game = typeState.games[index];
         return DiscoveryGameListTile(game: game);
       },
     );
