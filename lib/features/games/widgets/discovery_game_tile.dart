@@ -59,20 +59,19 @@ class DiscoveryGameTile extends StatelessWidget {
                   height: double.infinity,
                   placeholder: (context, url) => Container(
                     color: isDark ? Colors.grey[800] : Colors.grey[300],
-                    child: const Center(
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
                   ),
                   errorWidget: (context, url, error) => Container(
                     color: isDark ? Colors.grey[800] : Colors.grey[300],
-                    child: const Icon(Icons.broken_image, size: 40),
+                    child: const Icon(Icons.videogame_asset, size: 40),
                   ),
                 ),
               )
             else
               Container(
                 color: isDark ? Colors.grey[800] : Colors.grey[300],
-                child: const Center(child: Icon(Icons.gamepad, size: 40)),
+                child: const Center(
+                  child: Icon(Icons.videogame_asset, size: 40),
+                ),
               ),
 
             // Gradient overlay for text readability
@@ -234,13 +233,13 @@ class DiscoveryGameListTile extends StatelessWidget {
                               color: isDark
                                   ? Colors.grey[800]
                                   : Colors.grey[300],
-                              child: const Icon(Icons.broken_image),
+                              child: const Icon(Icons.videogame_asset),
                             ),
                           ),
                         )
                       : Container(
                           color: isDark ? Colors.grey[800] : Colors.grey[300],
-                          child: const Icon(Icons.gamepad),
+                          child: const Icon(Icons.videogame_asset),
                         ),
                 ),
               ),

@@ -195,14 +195,14 @@ class _LibraryEntryCard extends StatelessWidget {
                                 height: 80,
                                 color:
                                     theme.colorScheme.surfaceContainerHighest,
-                                child: const Icon(Icons.gamepad),
+                                child: const Icon(Icons.videogame_asset),
                               ),
                         )
                       : Container(
                           width: 60,
                           height: 80,
                           color: theme.colorScheme.surfaceContainerHighest,
-                          child: const Icon(Icons.gamepad),
+                          child: const Icon(Icons.videogame_asset),
                         ),
                 ),
               ),
