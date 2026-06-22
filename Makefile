@@ -74,10 +74,10 @@ build-ios-production: setup-production ## Build iOS (production)
 # ─── Build: Web ───────────────────────────────────────────────────────────────
 
 build-web-staging: ## Build web (staging)
-	fvm flutter build web --dart-define-from-file=.env
+	fvm flutter build web --no-web-resources-cdn --dart-define-from-file=.env
 
 build-web-production: ## Build web (production)
-	fvm flutter build web --dart-define-from-file=.env.production
+	fvm flutter build web --no-web-resources-cdn --dart-define-from-file=.env.production
 
 # ─── Development ──────────────────────────────────────────────────────────────
 
