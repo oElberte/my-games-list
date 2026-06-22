@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -15,6 +15,7 @@ import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/env.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
+import 'package:my_games_list/core/widgets/app_error_boundary.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
@@ -52,6 +53,12 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+
+  // Friendly fallback for widget build errors in production; the error is still
+  // reported above. Debug keeps Flutter's red error screen for visibility.
+  if (!kDebugMode) {
+    ErrorWidget.builder = (_) => const AppErrorBoundary();
+  }
 
   // Register FCM background message handler (mobile only; not supported on web).
   if (!kIsWeb) {
