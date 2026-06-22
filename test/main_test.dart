@@ -112,11 +112,17 @@ void main() {
       await tester.pumpWidget(const MyGamesListApp());
       await tester.pumpAndSettle();
 
-      // Get initial theme brightness
+      // Initially light: themeMode follows the (light) setting, and the static
+      // light/dark themes carry the correct brightnesses.
       var materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
+      expect(materialApp.themeMode, equals(ThemeMode.light));
       expect(
         materialApp.theme?.colorScheme.brightness,
         equals(Brightness.light),
+      );
+      expect(
+        materialApp.darkTheme?.colorScheme.brightness,
+        equals(Brightness.dark),
       );
 
       // Act - Enable dark mode
@@ -125,12 +131,9 @@ void main() {
       settingsBloc.add(const SettingsDarkModeSet(true));
       await tester.pumpAndSettle();
 
-      // Assert - Theme should be dark
+      // Assert - themeMode switches to dark (the themes themselves are reused).
       materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
-      expect(
-        materialApp.theme?.colorScheme.brightness,
-        equals(Brightness.dark),
-      );
+      expect(materialApp.themeMode, equals(ThemeMode.dark));
     });
   });
 }
