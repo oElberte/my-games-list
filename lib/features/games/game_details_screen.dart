@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -192,9 +195,11 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
     final theme = Theme.of(context);
     final scaffoldColor = theme.scaffoldBackgroundColor;
 
-    // Get a screenshot for the header background
+    // On web Flutter ignores decode caps (the browser decodes), so request a
+    // smaller server size for the header instead of the full 1080p.
+    const headerSize = kIsWeb ? ImageSize.hd720 : ImageSize.hd1080;
     final headerImageUrl = game.screenshots.isNotEmpty
-        ? getHighResUrl(game.screenshots.first.url, ImageSize.hd1080)
+        ? getHighResUrl(game.screenshots.first.url, headerSize)
         : (game.cover != null
               ? getHighResUrl(game.cover!.url, ImageSize.coverBig)
               : null);
@@ -252,6 +257,25 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
                             CachedNetworkImage(
                               imageUrl: headerImageUrl,
                               fit: BoxFit.cover,
+                              // Decode at the width BoxFit.cover actually paints
+                              // for this 16:9 (1080p) header: the larger of the
+                              // screen width and the height-driven width, so it
+                              // neither upscales (portrait) nor under-decodes
+                              // (wide screens), while bounding source memory.
+                              memCacheWidth:
+                                  (math.max(
+                                            MediaQuery.sizeOf(context).width,
+                                            (300 +
+                                                    MediaQuery.paddingOf(
+                                                      context,
+                                                    ).top) *
+                                                16 /
+                                                9,
+                                          ) *
+                                          MediaQuery.devicePixelRatioOf(
+                                            context,
+                                          ))
+                                      .round(),
                               placeholder: (context, url) =>
                                   Container(color: Colors.grey[900]),
                               errorWidget: (context, url, error) =>
@@ -674,6 +698,9 @@ class _ScreenshotsSection extends StatelessWidget {
                   imageUrl: imageUrl,
                   height: 150,
                   fit: BoxFit.cover,
+                  // Decode at the thumbnail height, not the full source.
+                  memCacheHeight: (150 * MediaQuery.devicePixelRatioOf(context))
+                      .round(),
                   placeholder: (context, url) => Container(
                     width: 267,
                     height: 150,
