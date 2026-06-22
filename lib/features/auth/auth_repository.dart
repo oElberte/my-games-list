@@ -45,7 +45,12 @@ class AuthRepository {
     return _persistAuthResponse(AuthResponse.fromJson(response.dataOrThrow));
   }
 
-  Future<AuthResponse> signInWithGoogle() async {
+  /// Authenticates with Google. [consentVersion] is the Privacy Policy / Terms
+  /// version the user accepted on the auth screen; the API requires it on
+  /// `/auth/social` for account creation.
+  Future<AuthResponse> signInWithGoogle({
+    required String consentVersion,
+  }) async {
     try {
       final userCredential = await FirebaseAuth.instance.signInWithProvider(
         GoogleAuthProvider(),
@@ -53,7 +58,7 @@ class AuthRepository {
       final idToken = await userCredential.user?.getIdToken();
       if (idToken == null) throw Exception('Failed to get Firebase ID token');
 
-      return await _exchangeFirebaseToken('google', idToken);
+      return await _exchangeFirebaseToken('google', idToken, consentVersion);
     } catch (e) {
       throw Exception('Google sign-in failed. Please try again.');
     }
@@ -63,10 +68,12 @@ class AuthRepository {
   Future<AuthResponse> _exchangeFirebaseToken(
     String provider,
     String idToken,
+    String consentVersion,
   ) async {
     final request = SocialAuthRequest(
       provider: provider,
       firebaseIdToken: idToken,
+      consentVersion: consentVersion,
     );
 
     final response = await _httpClient.post<Map<String, dynamic>>(

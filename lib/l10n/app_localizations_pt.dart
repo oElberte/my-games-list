@@ -608,4 +608,41 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get consentPushSubtitle =>
       'Receba notificações sobre seus jogos e atualizações.';
+
+  @override
+  String get privacyPolicyTitle => 'Política de Privacidade';
+
+  @override
+  String get termsTitle => 'Termos de Uso';
+
+  @override
+  String get legalTitle => 'Jurídico';
+
+  @override
+  String get legalDraftBanner =>
+      'RASCUNHO — texto provisório. Substitua pelo texto jurídico final antes do lançamento.';
+
+  @override
+  String get legalLoadError =>
+      'Não foi possível carregar este documento. Tente novamente mais tarde.';
+
+  @override
+  String get signUpAcceptPrefix => 'Eu aceito a ';
+
+  @override
+  String get signUpAcceptPrivacyLink => 'Política de Privacidade';
+
+  @override
+  String get signUpAcceptConjunction => ' e os ';
+
+  @override
+  String get signUpAcceptTermsLink => 'Termos de Uso';
+
+  @override
+  String get signUpAcceptRequired =>
+      'Aceite a Política de Privacidade e os Termos para continuar.';
+
+  @override
+  String get signInLegalNotice =>
+      'Ao continuar, você aceita nossa Política de Privacidade e os Termos de Uso.';
 }

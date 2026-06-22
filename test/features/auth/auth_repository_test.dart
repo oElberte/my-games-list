@@ -79,6 +79,7 @@ void main() {
       email: 'newuser@example.com',
       password: 'password123',
       username: 'newuser',
+      consentVersion: '2026-06-22',
     );
 
     final mockAuthData = {

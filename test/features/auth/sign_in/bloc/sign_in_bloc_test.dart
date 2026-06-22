@@ -110,7 +110,9 @@ void main() {
       'emits [SignInLoading, SignInSuccess] when Google sign-in succeeds',
       build: () {
         when(
-          () => mockAuthRepository.signInWithGoogle(),
+          () => mockAuthRepository.signInWithGoogle(
+            consentVersion: any(named: 'consentVersion'),
+          ),
         ).thenAnswer((_) async => mockAuthResponse);
         return bloc;
       },
@@ -120,7 +122,11 @@ void main() {
         const SignInSuccess(mockAuthResponse),
       ],
       verify: (_) {
-        verify(() => mockAuthRepository.signInWithGoogle()).called(1);
+        verify(
+          () => mockAuthRepository.signInWithGoogle(
+            consentVersion: any(named: 'consentVersion'),
+          ),
+        ).called(1);
       },
     );
 
@@ -128,7 +134,9 @@ void main() {
       'emits [SignInLoading, SignInError] when Google sign-in fails',
       build: () {
         when(
-          () => mockAuthRepository.signInWithGoogle(),
+          () => mockAuthRepository.signInWithGoogle(
+            consentVersion: any(named: 'consentVersion'),
+          ),
         ).thenThrow(Exception('Google sign-in failed. Please try again.'));
         return bloc;
       },
@@ -138,7 +146,11 @@ void main() {
         const SignInError('Google sign-in failed. Please try again.'),
       ],
       verify: (_) {
-        verify(() => mockAuthRepository.signInWithGoogle()).called(1);
+        verify(
+          () => mockAuthRepository.signInWithGoogle(
+            consentVersion: any(named: 'consentVersion'),
+          ),
+        ).called(1);
       },
     );
   });

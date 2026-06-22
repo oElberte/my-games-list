@@ -45,6 +45,8 @@ import 'package:my_games_list/features/games/games_screen.dart';
 import 'package:my_games_list/features/games/i_games_repository.dart';
 import 'package:my_games_list/features/games/widgets/video_player_screen.dart';
 import 'package:my_games_list/features/home/home_screen.dart';
+import 'package:my_games_list/features/legal/legal_document.dart';
+import 'package:my_games_list/features/legal/presentation/legal_document_screen.dart';
 import 'package:my_games_list/features/library/bloc/library_bloc.dart';
 import 'package:my_games_list/features/library/bloc/library_event.dart';
 import 'package:my_games_list/features/library/library_repository.dart';
@@ -82,6 +84,8 @@ class AppRouter {
   static const String videoPlayerPath = '/video/:videoId';
   static const String discoveryPath = '/discovery/:type';
   static const String genreGamesPath = '/browse/genres/:genreId';
+  static const String privacyPolicyPath = '/privacy-policy';
+  static const String termsPath = '/terms';
 
   /// Route names for named navigation
   static const String splashName = 'splash';
@@ -98,6 +102,8 @@ class AppRouter {
   static const String videoPlayerName = 'videoPlayer';
   static const String discoveryName = 'discovery';
   static const String genreGamesName = 'genreGames';
+  static const String privacyPolicyName = 'privacyPolicy';
+  static const String termsName = 'terms';
 
   /// Creates the GoRouter configuration for the app.
   /// Auth-specific dependencies are registered lazily when routes are accessed.
@@ -119,6 +125,15 @@ class AppRouter {
 
         final isGoingToAuth =
             currentPath == signInPath || currentPath == signUpPath;
+
+        // Legal documents must be reachable before an account exists (linked
+        // from the sign-up consent gate), so never bounce them through the
+        // auth guard regardless of auth state.
+        final isLegalDocument =
+            currentPath == privacyPolicyPath || currentPath == termsPath;
+        if (isLegalDocument) {
+          return null;
+        }
 
         // If authenticated and going to auth pages, redirect to home
         if (isAuthenticated && isGoingToAuth) {
@@ -335,6 +350,24 @@ class AppRouter {
               child: const GameSearchScreen(),
             );
           },
+        ),
+
+        // Privacy Policy Route (outside bottom navigation; reachable while
+        // unauthenticated so the sign-up consent gate can link to it)
+        GoRoute(
+          path: privacyPolicyPath,
+          name: privacyPolicyName,
+          builder: (context, state) =>
+              const LegalDocumentScreen(document: LegalDocument.privacyPolicy),
+        ),
+
+        // Terms of Service Route (outside bottom navigation; reachable while
+        // unauthenticated so the sign-up consent gate can link to it)
+        GoRoute(
+          path: termsPath,
+          name: termsName,
+          builder: (context, state) =>
+              const LegalDocumentScreen(document: LegalDocument.terms),
         ),
 
         // Game Details Route (outside bottom navigation)

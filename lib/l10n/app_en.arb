@@ -290,5 +290,49 @@
     "consentPushSubtitle": "Receive notifications about your games and updates.",
     "@consentPushSubtitle": {
       "description": "Description for the push notifications consent category"
+    },
+    "privacyPolicyTitle": "Privacy Policy",
+    "@privacyPolicyTitle": {
+      "description": "Title of the Privacy Policy screen and its settings link"
+    },
+    "termsTitle": "Terms of Service",
+    "@termsTitle": {
+      "description": "Title of the Terms of Service screen and its settings link"
+    },
+    "legalTitle": "Legal",
+    "@legalTitle": {
+      "description": "Header for the legal documents section in settings"
+    },
+    "legalDraftBanner": "DRAFT — placeholder text. Replace with the final legal text before release.",
+    "@legalDraftBanner": {
+      "description": "Banner shown on legal screens warning the content is placeholder text"
+    },
+    "legalLoadError": "Could not load this document. Please try again later.",
+    "@legalLoadError": {
+      "description": "Error shown when a legal document asset fails to load"
+    },
+    "signUpAcceptPrefix": "I accept the ",
+    "@signUpAcceptPrefix": {
+      "description": "Leading text of the sign-up consent checkbox, before the Privacy Policy link"
+    },
+    "signUpAcceptPrivacyLink": "Privacy Policy",
+    "@signUpAcceptPrivacyLink": {
+      "description": "Tappable Privacy Policy link inside the sign-up consent checkbox label"
+    },
+    "signUpAcceptConjunction": " and ",
+    "@signUpAcceptConjunction": {
+      "description": "Conjunction between the Privacy Policy and Terms links in the consent checkbox label"
+    },
+    "signUpAcceptTermsLink": "Terms of Service",
+    "@signUpAcceptTermsLink": {
+      "description": "Tappable Terms of Service link inside the sign-up consent checkbox label"
+    },
+    "signUpAcceptRequired": "Please accept the Privacy Policy and Terms to continue.",
+    "@signUpAcceptRequired": {
+      "description": "Message shown when sign-up is attempted without accepting the Privacy Policy and Terms"
+    },
+    "signInLegalNotice": "By continuing you accept our Privacy Policy and Terms of Service.",
+    "@signInLegalNotice": {
+      "description": "Notice shown near the social sign-in buttons stating that continuing implies acceptance"
     }
 }

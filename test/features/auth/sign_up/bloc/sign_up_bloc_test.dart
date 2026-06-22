@@ -8,6 +8,7 @@ import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_event.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_state.dart';
 import 'package:my_games_list/features/auth/sign_up/sign_up_request.dart';
 import 'package:my_games_list/features/auth/user_model.dart';
+import 'package:my_games_list/features/legal/legal_constants.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 
@@ -26,6 +27,7 @@ void main() {
         email: 'test@example.com',
         password: 'password123',
         username: 'testuser',
+        consentVersion: '2026-06-22',
       ),
     );
   });
@@ -66,6 +68,7 @@ void main() {
           email: testEmail,
           password: testPassword,
           username: testUsername,
+          acceptedTerms: true,
         ),
       ),
       expect: () => [
@@ -74,6 +77,51 @@ void main() {
       ],
       verify: (_) {
         verify(() => mockAuthRepository.signUp(any())).called(1);
+      },
+    );
+
+    blocTest<SignUpBloc, SignUpState>(
+      'sends consent_version in the SignUpRequest when terms are accepted',
+      build: () {
+        when(
+          () => mockAuthRepository.signUp(any()),
+        ).thenAnswer((_) async => mockAuthResponse);
+        return bloc;
+      },
+      act: (bloc) => bloc.add(
+        const SignUpSubmitted(
+          email: testEmail,
+          password: testPassword,
+          username: testUsername,
+          acceptedTerms: true,
+        ),
+      ),
+      verify: (_) {
+        final captured =
+            verify(
+                  () => mockAuthRepository.signUp(captureAny()),
+                ).captured.single
+                as SignUpRequest;
+        expect(captured.consentVersion, kConsentVersion);
+        expect(captured.toJson()['consent_version'], kConsentVersion);
+      },
+    );
+
+    blocTest<SignUpBloc, SignUpState>(
+      'emits [SignUpTermsNotAccepted] and never calls the repo when terms are '
+      'not accepted',
+      build: () => bloc,
+      act: (bloc) => bloc.add(
+        const SignUpSubmitted(
+          email: testEmail,
+          password: testPassword,
+          username: testUsername,
+          acceptedTerms: false,
+        ),
+      ),
+      expect: () => [const SignUpTermsNotAccepted()],
+      verify: (_) {
+        verifyNever(() => mockAuthRepository.signUp(any()));
       },
     );
 
@@ -90,6 +138,7 @@ void main() {
           email: testEmail,
           password: testPassword,
           username: testUsername,
+          acceptedTerms: true,
         ),
       ),
       expect: () => [
@@ -114,6 +163,7 @@ void main() {
           email: testEmail,
           password: testPassword,
           username: testUsername,
+          acceptedTerms: true,
         ),
       ),
       expect: () => [
