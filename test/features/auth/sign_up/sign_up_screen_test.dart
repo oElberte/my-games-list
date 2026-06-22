@@ -92,7 +92,7 @@ void main() {
       );
     }
 
-    Finder signUpButton() => find.widgetWithText(ElevatedButton, 'Sign Up');
+    Finder signUpButton() => find.widgetWithText(FilledButton, 'Sign Up');
 
     Future<void> acceptTerms(WidgetTester tester) async {
       await tester.ensureVisible(find.byType(Checkbox));
@@ -118,13 +118,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // Disabled before checking the box.
-      expect(tester.widget<ElevatedButton>(signUpButton()).onPressed, isNull);
+      expect(tester.widget<FilledButton>(signUpButton()).onPressed, isNull);
 
       await acceptTerms(tester);
 
       // Enabled after acceptance.
       expect(
-        tester.widget<ElevatedButton>(signUpButton()).onPressed,
+        tester.widget<FilledButton>(signUpButton()).onPressed,
         isNotNull,
       );
     });
@@ -193,8 +193,8 @@ void main() {
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
         // In the loading state the button shows the spinner instead of its
         // label, so locate it by type rather than by text.
-        final button = tester.widget<ElevatedButton>(
-          find.byType(ElevatedButton),
+        final button = tester.widget<FilledButton>(
+          find.byType(FilledButton),
         );
         expect(button.onPressed, isNull);
       },

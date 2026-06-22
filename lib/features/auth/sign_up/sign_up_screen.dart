@@ -221,7 +221,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         final isLoading = state is SignUpLoading;
                         final canSubmit = _acceptedTerms && !isLoading;
 
-                        return ElevatedButton(
+                        return FilledButton(
                           onPressed: canSubmit ? _handleSignUp : null,
                           child: isLoading
                               ? const SizedBox(

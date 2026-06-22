@@ -10,7 +10,7 @@ void main() {
 
       expect(theme.useMaterial3, isTrue);
       expect(theme.brightness, Brightness.light);
-      expect(theme.colorScheme.secondary, AppColors.brandAccent);
+      expect(theme.colorScheme.secondary, AppColors.brandAccentDark);
       expect(theme.scaffoldBackgroundColor, AppColors.lightBackground);
     });
 

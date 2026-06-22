@@ -148,7 +148,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       builder: (context, state) {
                         final isLoading = state is SignInLoading;
 
-                        return ElevatedButton(
+                        return FilledButton(
                           onPressed: isLoading ? null : _handleSignIn,
                           child: isLoading
                               ? const SizedBox(

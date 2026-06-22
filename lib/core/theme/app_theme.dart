@@ -23,7 +23,7 @@ abstract final class AppTheme {
           seedColor: AppColors.brandSeed,
           brightness: brightness,
         ).copyWith(
-          secondary: AppColors.brandAccent,
+          secondary: isDark ? AppColors.brandAccent : AppColors.brandAccentDark,
           surface: isDark ? AppColors.darkSurface : Colors.white,
         );
 
