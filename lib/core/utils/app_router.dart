@@ -270,10 +270,27 @@ class AppRouter {
                   builder: (context, state) {
                     _ensureGamesRepositoryRegistered();
 
-                    return BlocProvider(
-                      create: (_) => BrowseGenresBloc(
-                        gamesRepository: sl<IGamesRepository>(),
-                      )..add(const BrowseGenresLoadRequested()),
+                    // The Browse tab owns its own discovery/collections blocs,
+                    // separate from the Home tab's instances, so both can stay
+                    // alive in the indexed stack without sharing state.
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider(
+                          create: (_) => BrowseGenresBloc(
+                            gamesRepository: sl<IGamesRepository>(),
+                          )..add(const BrowseGenresLoadRequested()),
+                        ),
+                        BlocProvider(
+                          create: (_) => DiscoveryGamesBloc(
+                            gamesRepository: sl<IGamesRepository>(),
+                          ),
+                        ),
+                        BlocProvider(
+                          create: (_) => CollectionsBloc(
+                            gamesRepository: sl<IGamesRepository>(),
+                          )..add(const CollectionsLoadRequested()),
+                        ),
+                      ],
                       child: const BrowseScreen(),
                     );
                   },

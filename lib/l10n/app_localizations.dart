@@ -602,6 +602,12 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get browseRetry;
 
+  /// Section header above the genre grid on the Browse hub
+  ///
+  /// In en, this message translates to:
+  /// **'Genres'**
+  String get browseGenresSection;
+
   /// Heading shown in an error/empty view when the device has no network connection
   ///
   /// In en, this message translates to:

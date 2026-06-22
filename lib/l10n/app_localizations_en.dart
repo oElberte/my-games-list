@@ -269,6 +269,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get browseRetry => 'Try again';
 
   @override
+  String get browseGenresSection => 'Genres';
+
+  @override
   String get offlineTitle => 'You\'re offline';
 
   @override
