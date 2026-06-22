@@ -44,7 +44,18 @@ class OfflineBanner extends StatelessWidget {
                   ),
                 ),
               ),
-            Expanded(child: child),
+            // When the banner is shown it already sits below the status bar, so
+            // strip the now-consumed top inset from the content to avoid a
+            // double gap.
+            Expanded(
+              child: online
+                  ? child
+                  : MediaQuery.removePadding(
+                      context: context,
+                      removeTop: true,
+                      child: child,
+                    ),
+            ),
           ],
         );
       },

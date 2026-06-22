@@ -9,7 +9,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// full internet reachability.
 class ConnectivityCubit extends Cubit<bool> {
   ConnectivityCubit(this._connectivity) : super(true) {
-    _subscription = _connectivity.onConnectivityChanged.listen(_update);
+    _subscription = _connectivity.onConnectivityChanged.listen(
+      _update,
+      // Ignore stream activation/runtime errors (e.g. a transient platform
+      // failure); the next event corrects the state.
+      onError: (Object _) {},
+    );
     unawaited(_init());
   }
 
