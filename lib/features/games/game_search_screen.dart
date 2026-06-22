@@ -180,17 +180,22 @@ class _InitialState extends StatelessWidget {
 class _LoadingState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: 6,
-      itemBuilder: (context, index) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        child: ShimmerLoading(
-          child: Container(
-            height: 120,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(16),
+    return Semantics(
+      label: context.l10n.loadingLabel,
+      liveRegion: true,
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        itemCount: 6,
+        itemBuilder: (context, index) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: ShimmerLoading(
+            child: Container(
+              // Matches GameSearchCard (120px cover + 12px top/bottom padding).
+              height: 144,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
           ),
         ),
