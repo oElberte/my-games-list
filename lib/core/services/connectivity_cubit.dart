@@ -10,7 +10,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ConnectivityCubit extends Cubit<bool> {
   ConnectivityCubit(this._connectivity) : super(true) {
     _subscription = _connectivity.onConnectivityChanged.listen(
-      _update,
+      (results) {
+        _receivedStreamEvent = true;
+        _update(results);
+      },
       // Ignore stream activation/runtime errors (e.g. a transient platform
       // failure); the next event corrects the state.
       onError: (Object _) {},
@@ -20,10 +23,14 @@ class ConnectivityCubit extends Cubit<bool> {
 
   final Connectivity _connectivity;
   StreamSubscription<List<ConnectivityResult>>? _subscription;
+  bool _receivedStreamEvent = false;
 
   Future<void> _init() async {
     try {
-      _update(await _connectivity.checkConnectivity());
+      final results = await _connectivity.checkConnectivity();
+      // A slow initial check must not overwrite a stream event that already
+      // arrived (e.g. the connection dropped while the check was in flight).
+      if (!_receivedStreamEvent) _update(results);
     } catch (_) {
       // Assume online if the initial check fails; the stream corrects it.
     }

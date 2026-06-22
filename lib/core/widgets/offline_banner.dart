@@ -44,17 +44,16 @@ class OfflineBanner extends StatelessWidget {
                   ),
                 ),
               ),
-            // When the banner is shown it already sits below the status bar, so
-            // strip the now-consumed top inset from the content to avoid a
-            // double gap.
+            // Always keep the router child in the same MediaQuery slot so it
+            // isn't torn down/reinflated when the banner toggles; only the top
+            // inset (consumed by the banner) is conditionally stripped to avoid
+            // a double gap.
             Expanded(
-              child: online
-                  ? child
-                  : MediaQuery.removePadding(
-                      context: context,
-                      removeTop: true,
-                      child: child,
-                    ),
+              child: MediaQuery.removePadding(
+                context: context,
+                removeTop: !online,
+                child: child,
+              ),
             ),
           ],
         );
