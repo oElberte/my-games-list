@@ -66,7 +66,7 @@ We process your personal data for the purposes below, always under a legal basis
 - To record and prove the consent you gave to the legal documents. Legal basis: compliance with a legal and regulatory obligation (Art. 7, II).
 - To send service-related push notifications when you enable them. Legal basis: consent (Art. 7, I), which can be withdrawn at any time.
 - To ensure security, prevent fraud and abuse, and operate the infrastructure. Legal basis: legitimate interest (Art. 7, IX).
-- To diagnose errors and service stability through technical reports. Legal basis: legitimate interest (Art. 7, IX). These reports are optional and configured not to send identifiable personal data: authentication headers, cookies, and request bodies are removed before sending.
+- To diagnose errors and service stability through technical reports. Legal basis: consent (Art. 7, I). These reports are sent to Firebase Crashlytics only with your explicit consent and may contain technical context about the failure (such as error messages, stack traces, device model, and app version). You can decline or withdraw this at any time in the consent settings.
 
 ## 5. Sharing and processors
 
@@ -74,7 +74,7 @@ We do not sell your personal data. We share data only with processors that handl
 
 - Google and Firebase: used for authentication (social login with Google and Apple) and for sending push notifications (Firebase Cloud Messaging). When you use social login, we receive from the provider the identifier, email, and name associated with the account.
 - IGDB (Internet Game Database): used as the source of the game catalogue (names, covers, release dates, and platforms). Queries to IGDB concern catalogue games; we do not send your personal data or your library data to IGDB.
-- Error monitoring provider: used optionally to record server failures, configured to strip personal data before sending.
+- Firebase Crashlytics (Google): used, only with your explicit consent, to record app crashes and errors in order to diagnose service stability. These reports may contain technical context about the failure.
 
 ## 6. International data transfer
 
@@ -97,7 +97,7 @@ Under the LGPD (Art. 18), you have the right to:
 - Correction of incomplete, inaccurate, or outdated data.
 - Erasure of your data and deletion of your account, available in the app under Settings (permanent, cascading deletion).
 - Withdrawal of consent. You can disable push notifications at any time. Because the record of consent to the legal documents is tied to the existence of your account, the way to broadly withdraw that consent is to delete your account.
-- End active sessions at any time by logging out, immediately invalidating the access token.
+- Log out at any time. When you log out, we remove your credentials from this device (we delete the stored token and clear the authentication header); the access token expires on the server after its validity period.
 - Information about the entities with which we share data, as described in this Policy.
 
 To exercise any right that is not available directly in the app, contact the DPO listed in section 2.

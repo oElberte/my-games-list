@@ -66,7 +66,7 @@ Tratamos seus dados pessoais para as finalidades abaixo, sempre amparados em uma
 - Registrar e comprovar o consentimento que você forneceu aos documentos legais. Base legal: cumprimento de obrigação legal e regulatória (Art. 7, II).
 - Enviar notificações push relacionadas ao serviço, quando você as ativa. Base legal: consentimento (Art. 7, I), que pode ser revogado a qualquer momento.
 - Garantir a segurança, prevenir fraudes e abusos e operar a infraestrutura. Base legal: legítimo interesse (Art. 7, IX).
-- Diagnosticar erros e a estabilidade do serviço por meio de relatórios técnicos. Base legal: legítimo interesse (Art. 7, IX). Esses relatórios são opcionais e configurados para não enviar dados pessoais identificáveis: cabeçalhos de autenticação, cookies e o corpo das requisições são removidos antes do envio.
+- Diagnosticar erros e a estabilidade do serviço por meio de relatórios técnicos. Base legal: consentimento (Art. 7, I). Esses relatórios são enviados ao Firebase Crashlytics apenas mediante o seu consentimento explícito e podem conter contexto técnico da falha (como mensagens de erro, rastreamento de pilha, modelo do dispositivo e versão do aplicativo). Você pode recusar ou revogar esse envio a qualquer momento nas configurações de consentimento.
 
 ## 5. Compartilhamento e operadores
 
@@ -74,7 +74,7 @@ Não comercializamos seus dados pessoais. Compartilhamos dados apenas com operad
 
 - Google e Firebase: utilizados para autenticação (login social com Google e Apple) e para o envio de notificações push (Firebase Cloud Messaging). Quando você usa login social, recebemos do provedor o identificador, o e-mail e o nome associados à conta.
 - IGDB (Internet Game Database): utilizado como fonte do catálogo de jogos (nomes, capas, datas de lançamento e plataformas). As consultas ao IGDB referem-se a jogos do catálogo; não enviamos seus dados pessoais ou da sua biblioteca para o IGDB.
-- Provedor de monitoramento de erros: utilizado de forma opcional para registrar falhas do servidor, configurado para remover dados pessoais antes do envio.
+- Firebase Crashlytics (Google): utilizado, apenas mediante o seu consentimento explícito, para registrar falhas e erros do aplicativo a fim de diagnosticar a estabilidade do serviço. Os relatórios podem conter contexto técnico da falha.
 
 ## 6. Transferência internacional de dados
 
@@ -97,7 +97,7 @@ Conforme a LGPD (Art. 18), você tem direito a:
 - Correção de dados incompletos, inexatos ou desatualizados.
 - Eliminação dos seus dados e exclusão da conta, disponível no aplicativo em Configurações (exclusão definitiva e em cascata).
 - Revogação do consentimento. Você pode desativar as notificações push a qualquer momento. Como o registro de consentimento aos documentos legais está vinculado à existência da conta, a forma de revogar esse consentimento de modo amplo é excluir a conta.
-- Encerrar sessões ativas a qualquer momento por meio do logout, invalidando imediatamente o token de acesso.
+- Sair a qualquer momento por meio do logout. Ao sair, removemos suas credenciais deste dispositivo (apagamos o token armazenado e limpamos o cabeçalho de autenticação); o token de acesso expira no servidor após o seu período de validade.
 - Informação sobre as entidades com as quais compartilhamos dados, conforme descrito nesta Política.
 
 Para exercer qualquer direito que não esteja disponível diretamente no aplicativo, entre em contato com o Encarregado indicado na seção 2.
