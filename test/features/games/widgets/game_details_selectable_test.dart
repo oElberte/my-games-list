@@ -36,10 +36,19 @@ void main() {
     gameDetailsBloc = MockGameDetailsBloc();
     libraryBloc = MockLibraryBloc();
 
-    when(() => gameDetailsBloc.state).thenReturn(
-      GameDetailsState(status: GameDetailsStatus.success, game: mockGame),
+    whenListen(
+      gameDetailsBloc,
+      const Stream<GameDetailsState>.empty(),
+      initialState: GameDetailsState(
+        status: GameDetailsStatus.success,
+        game: mockGame,
+      ),
     );
-    when(() => libraryBloc.state).thenReturn(const LibraryState());
+    whenListen(
+      libraryBloc,
+      const Stream<LibraryState>.empty(),
+      initialState: const LibraryState(),
+    );
   });
 
   Widget createScreen() {

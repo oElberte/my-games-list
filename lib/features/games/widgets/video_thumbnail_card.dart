@@ -105,15 +105,19 @@ class VideoThumbnailCard extends StatelessWidget {
           Positioned.fill(
             child: Material(
               type: MaterialType.transparency,
-              child: InkWell(
-                onTap: () {
-                  context.pushNamed(
-                    'videoPlayer',
-                    pathParameters: {'videoId': videoId},
-                    queryParameters: title != null ? {'title': title!} : {},
-                  );
-                },
-                mouseCursor: SystemMouseCursors.click,
+              child: Semantics(
+                label: title,
+                button: true,
+                child: InkWell(
+                  onTap: () {
+                    context.pushNamed(
+                      'videoPlayer',
+                      pathParameters: {'videoId': videoId},
+                      queryParameters: title != null ? {'title': title!} : {},
+                    );
+                  },
+                  mouseCursor: SystemMouseCursors.click,
+                ),
               ),
             ),
           ),
