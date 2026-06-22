@@ -204,6 +204,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get videos => 'Vídeos';
 
   @override
+  String get videoPlayerTitle => 'Vídeo';
+
+  @override
   String get similarGames => 'Jogos Similares';
 
   @override

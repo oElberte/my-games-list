@@ -18,7 +18,6 @@ dependencies:
   get_it: ^8.2.0
   go_router: ^16.2.4
   shared_preferences: ^2.5.3
-  webview_flutter: ^4.13.0
   equatable: ^2.0.7
   validatorless: ^1.2.5
   dio: ^5.9.0

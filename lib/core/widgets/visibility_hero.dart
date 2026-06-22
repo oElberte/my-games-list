@@ -18,6 +18,10 @@ import 'package:flutter/widgets.dart';
 /// phase, **before** layout runs for the new scroll offset. Deferring ensures
 /// [localToGlobal] reflects the current frame's real positions.
 ///
+/// Also re-evaluates on [didChangeMetrics] so a viewport/window resize — common
+/// on web, where no [ScrollPosition] notification fires — cannot leave the
+/// visibility flag stale.
+///
 /// Intended for **source** heroes in scrollable lists. Do NOT use on the
 /// destination hero (e.g. the cover on a details screen): the destination
 /// widget is off-screen while sliding in, which would disable it before the
@@ -32,7 +36,8 @@ class VisibilityHero extends StatefulWidget {
   State<VisibilityHero> createState() => _VisibilityHeroState();
 }
 
-class _VisibilityHeroState extends State<VisibilityHero> {
+class _VisibilityHeroState extends State<VisibilityHero>
+    with WidgetsBindingObserver {
   final List<ScrollPosition> _subscriptions = [];
 
   // Start enabled — hero is active before the first frame is measured.
@@ -43,6 +48,12 @@ class _VisibilityHeroState extends State<VisibilityHero> {
   bool _pendingVisibilityCheck = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _unsubscribe();
@@ -50,8 +61,16 @@ class _VisibilityHeroState extends State<VisibilityHero> {
     _scheduleVisibilityCheck();
   }
 
+  /// Fires on viewport/window resize. On web a resize can move this item in or
+  /// out of the viewport without any scroll, so re-check visibility here.
+  @override
+  void didChangeMetrics() {
+    _scheduleVisibilityCheck();
+  }
+
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _unsubscribe();
     super.dispose();
   }
