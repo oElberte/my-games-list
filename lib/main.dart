@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
@@ -12,6 +11,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/services/connectivity_cubit.dart';
+import 'package:my_games_list/core/services/consent/consent_service.dart';
+import 'package:my_games_list/core/services/consent/push_registration_coordinator.dart';
 import 'package:my_games_list/core/services/notification_service.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/env.dart';
@@ -46,19 +47,27 @@ void main() async {
   if (kIsWeb) usePathUrlStrategy();
 
   // Firebase and the service locator are independent; initialize concurrently.
+  // setupServiceLocator() loads persisted consent and leaves every collector
+  // disabled until the user grants it.
   await Future.wait([
     Firebase.initializeApp(options: _firebaseOptions),
     setupServiceLocator(),
   ]);
 
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  // Error hooks are always installed but route through ConsentService, so they
+  // no-op until crash-reporting consent is granted (LGPD). The check is read at
+  // report time, so revoking consent stops reporting immediately.
+  final consent = sl<ConsentService>();
+  FlutterError.onError = (details) {
+    unawaited(consent.reportFlutterError(details));
+  };
   PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    unawaited(consent.reportError(error, stack, fatal: true));
     return true;
   };
 
   // Friendly fallback for widget build errors in production; the error is still
-  // reported above. Debug keeps Flutter's red error screen for visibility.
+  // reported above when consent allows. Debug keeps Flutter's red error screen.
   if (!kDebugMode) {
     ErrorWidget.builder = (_) => const AppErrorBoundary();
   }
@@ -83,6 +92,7 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
   late final AuthBloc authBloc;
   late final SettingsBloc settingsBloc;
   late final GoRouter router;
+  late final PushRegistrationCoordinator _pushCoordinator;
   StreamSubscription<String>? _notificationNavSubscription;
 
   @override
@@ -94,28 +104,28 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
     // Create router once to avoid recreation on theme changes
     router = AppRouter.createRouter();
 
-    // Initialize NotificationService and wire up navigation from tapped notifications
-    _initNotificationService();
+    _initNotifications();
   }
 
-  void _initNotificationService() {
+  void _initNotifications() {
     final notificationService = sl<NotificationService>();
 
-    // Forward notification tap routes to the GoRouter
+    // Forward notification tap routes to the GoRouter.
     _notificationNavSubscription = notificationService.navigationStream.listen(
       (route) => router.go(route),
     );
 
-    // Initialize the service (request permissions, get token, register listeners).
-    // Called without await so it runs asynchronously and does not block the UI.
-    // Failures are handled internally by the service (e.g. in test environments
-    // where Firebase is not initialized).
-    notificationService.initialize().catchError((_) {});
+    // FCM is no longer started at cold start. The coordinator registers the
+    // token only once push consent is granted AND the user is authenticated
+    // (LGPD), which also fixes the unauthenticated PATCH /users/me/fcm-token
+    // 401 that fired on every launch.
+    _pushCoordinator = sl<PushRegistrationCoordinator>()..start();
   }
 
   @override
   void dispose() {
     _notificationNavSubscription?.cancel();
+    _pushCoordinator.dispose();
     sl<NotificationService>().dispose();
     // Note: These are singletons, but we close them here when the app terminates
     authBloc.close();

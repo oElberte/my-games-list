@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/core/data/services/storage/token_storage.dart';
+import 'package:my_games_list/core/services/notification_service.dart';
 import 'package:my_games_list/core/services/session_reset_service.dart';
 import 'package:my_games_list/features/library/bloc/library_bloc.dart';
 import 'package:my_games_list/features/library/library_repository.dart';
@@ -11,24 +12,30 @@ class _MockTokenStorage extends Mock implements TokenStorage {}
 
 class _MockHttpClient extends Mock implements IHttpClient {}
 
+class _MockNotificationService extends Mock implements NotificationService {}
+
 class _MockLibraryRepository extends Mock implements LibraryRepository {}
 
 void main() {
   group('SessionResetService', () {
     late _MockTokenStorage tokenStorage;
     late _MockHttpClient httpClient;
+    late _MockNotificationService notificationService;
     late GetIt locator;
 
     setUp(() {
       tokenStorage = _MockTokenStorage();
       httpClient = _MockHttpClient();
+      notificationService = _MockNotificationService();
       locator = GetIt.asNewInstance();
       when(() => tokenStorage.delete()).thenAnswer((_) async {});
+      when(() => notificationService.disable()).thenAnswer((_) async {});
     });
 
     SessionResetService buildService() => SessionResetService(
       tokenStorage: tokenStorage,
       httpClient: httpClient,
+      notificationService: notificationService,
       locator: locator,
     );
 
@@ -37,6 +44,12 @@ void main() {
 
       verify(() => tokenStorage.delete()).called(1);
       verify(() => httpClient.clearAuthToken()).called(1);
+    });
+
+    test('disables push (deletes FCM token) on logout', () async {
+      await buildService().teardownSession();
+
+      verify(() => notificationService.disable()).called(1);
     });
 
     test('is a no-op for LibraryBloc when it is not registered', () async {
