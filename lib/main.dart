@@ -113,6 +113,19 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
     super.dispose();
   }
 
+  // Built once (ColorScheme.fromSeed is not free) and reused, so a settings
+  // change doesn't rebuild the theme palette on every render.
+  static final ThemeData _lightTheme = _buildTheme(Brightness.light);
+  static final ThemeData _darkTheme = _buildTheme(Brightness.dark);
+
+  static ThemeData _buildTheme(Brightness brightness) => ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.blue,
+      brightness: brightness,
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -144,15 +157,9 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
               return const Locale('pt');
             },
             routerConfig: router,
-            theme: ThemeData(
-              useMaterial3: true,
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.blue,
-                brightness: state.isDarkMode
-                    ? Brightness.dark
-                    : Brightness.light,
-              ),
-            ),
+            theme: _lightTheme,
+            darkTheme: _darkTheme,
+            themeMode: state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
             debugShowCheckedModeBanner: false,
           );
         },
