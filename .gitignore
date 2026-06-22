@@ -67,3 +67,9 @@ firebase.json
 
 # Production env
 .env.production
+
+# Android release signing secrets — never commit (see SIGNING.md)
+android/key.properties
+**/upload-keystore.jks
+*.jks
+*.keystore
