@@ -45,7 +45,8 @@ jobs:
           TOTAL=$(grep -c '^DA:' coverage/lcov.info)
           PCT=$(awk "BEGIN{printf \"%.1f\", $HIT/$TOTAL*100}")
           echo "Coverage: $PCT% ($HIT/$TOTAL lines, minimum ${MIN}%)"
-          awk "BEGIN{exit !($PCT+0 >= $MIN)}" || { echo "::error::Coverage $PCT% is below the ${MIN}% minimum"; exit 1; }
+          # Compare the unrounded ratio so e.g. 37.96% can't pass as 38.0.
+          awk "BEGIN{exit !($HIT/$TOTAL*100 >= $MIN)}" || { echo "::error::Coverage $PCT% is below the ${MIN}% minimum"; exit 1; }
 
   build-web:
     name: Build Web
