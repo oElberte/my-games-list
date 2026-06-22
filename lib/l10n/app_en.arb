@@ -10,6 +10,10 @@
     "@offlineBannerMessage": {
       "description": "Shown in a banner when the device has no network connection"
     },
+    "loadingLabel": "Loading",
+    "@loadingLabel": {
+      "description": "Accessibility label announced while a section is loading"
+    },
     "goHome": "Go to Home",
     "signInTitle": "Sign In",
     "signInSubtitle": "Sign in to continue",

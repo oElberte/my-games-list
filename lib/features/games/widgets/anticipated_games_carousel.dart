@@ -297,15 +297,19 @@ class _CarouselLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 260,
+      height: 220,
       child: Center(
-        child: ShimmerLoading(
-          child: Container(
-            width: MediaQuery.sizeOf(context).width * 0.75,
-            height: 240,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(16),
+        child: Semantics(
+          label: context.l10n.loadingLabel,
+          liveRegion: true,
+          child: ShimmerLoading(
+            child: Container(
+              width: MediaQuery.sizeOf(context).width * 0.75,
+              height: 180,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
           ),
         ),

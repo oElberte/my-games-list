@@ -24,6 +24,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get offlineBannerMessage => 'You\'re offline';
 
   @override
+  String get loadingLabel => 'Loading';
+
+  @override
   String get goHome => 'Go to Home';
 
   @override

@@ -4,6 +4,7 @@
     "errorTitle": "Erro",
     "errorMessage": "Ops! Algo deu errado.",
     "offlineBannerMessage": "Você está offline",
+    "loadingLabel": "Carregando",
     "goHome": "Ir para o Início",
     "signInTitle": "Entrar",
     "signInSubtitle": "Entre para continuar",
