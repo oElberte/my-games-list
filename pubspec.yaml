@@ -40,6 +40,7 @@ dependencies:
   flutter_local_notifications: ^20.1.0
   crypto: ^3.0.7
   flutter_secure_storage: ^10.3.1
+  connectivity_plus: ^6.1.0
 
 dev_dependencies:
   flutter_test:

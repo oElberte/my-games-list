@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -10,12 +11,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_games_list/core/services/connectivity_cubit.dart';
 import 'package:my_games_list/core/services/notification_service.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/env.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/core/widgets/app_error_boundary.dart';
+import 'package:my_games_list/core/widgets/offline_banner.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
@@ -139,6 +142,7 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
       providers: [
         BlocProvider.value(value: authBloc),
         BlocProvider.value(value: settingsBloc),
+        BlocProvider(create: (_) => ConnectivityCubit(Connectivity())),
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
@@ -167,6 +171,8 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
             theme: _lightTheme,
             darkTheme: _darkTheme,
             themeMode: state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            builder: (context, child) =>
+                OfflineBanner(child: child ?? const SizedBox.shrink()),
             debugShowCheckedModeBanner: false,
           );
         },

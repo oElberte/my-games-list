@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'Oops! Something went wrong.'**
   String get errorMessage;
 
+  /// Shown in a banner when the device has no network connection
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline'**
+  String get offlineBannerMessage;
+
   /// No description provided for @goHome.
   ///
   /// In en, this message translates to:

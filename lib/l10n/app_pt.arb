@@ -3,6 +3,7 @@
     "welcomeMessage": "Bem Vindo ao My Games List",
     "errorTitle": "Erro",
     "errorMessage": "Ops! Algo deu errado.",
+    "offlineBannerMessage": "Você está offline",
     "goHome": "Ir para o Início",
     "signInTitle": "Entrar",
     "signInSubtitle": "Entre para continuar",
