@@ -240,6 +240,20 @@ User taps Home tab → returns to scroll position at item 50
 - `test/core/utils/app_router_test.dart`
 - `test/core/widgets/bottom_nav_bar_test.dart`
 
+### Loading Skeletons
+
+First-load states use shimmering skeleton placeholders instead of spinners so
+layout stays stable when content arrives.
+
+- `widgets/shimmer_loading.dart` — `ShimmerLoading`, a theme-aware light sweep.
+  Wrap any solid placeholder shape with it.
+- `widgets/skeleton_box.dart` — `SkeletonBox`, a `ShimmerLoading`-wrapped rounded
+  box. The building block for all skeletons.
+- Per-surface skeletons live in `features/games/widgets/skeletons/` (discovery
+  tile/row/grid/list, search card, library entry, game details). Each mirrors
+  the real card's exact dimensions so there is **no layout jump** on load — when
+  changing a card's size, update its skeleton too.
+
 ### Related Documentation
 
 - [Splash Feature](../../features/splash/CLAUDE.md) - Initial auth check

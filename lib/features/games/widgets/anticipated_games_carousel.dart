@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/image_utils.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
-import 'package:my_games_list/core/widgets/shimmer_loading.dart';
+import 'package:my_games_list/core/widgets/skeleton_box.dart';
 import 'package:my_games_list/core/widgets/visibility_hero.dart';
 import 'package:my_games_list/features/games/anticipated_game_model.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_bloc.dart';
@@ -309,23 +309,40 @@ class _CarouselLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 220,
-      child: Center(
-        child: Semantics(
-          label: context.l10n.loadingLabel,
-          liveRegion: true,
-          child: ShimmerLoading(
-            child: Container(
-              width: MediaQuery.sizeOf(context).width * 0.75,
-              height: 180,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(16),
+    final theme = Theme.of(context);
+
+    return Semantics(
+      label: context.l10n.loadingLabel,
+      liveRegion: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+            child: Row(
+              children: [
+                const Icon(Icons.local_fire_department, color: Colors.orange),
+                const SizedBox(width: 8),
+                Text(
+                  context.l10n.mostAnticipated,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 220,
+            child: Center(
+              child: SizedBox(
+                width: MediaQuery.sizeOf(context).width * 0.75,
+                height: 180,
+                child: const SkeletonBox(borderRadius: 16),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

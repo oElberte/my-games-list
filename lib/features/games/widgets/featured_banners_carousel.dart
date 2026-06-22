@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/image_utils.dart';
+import 'package:my_games_list/core/widgets/skeleton_box.dart';
 import 'package:my_games_list/features/games/bloc/featured_banners_bloc.dart';
 import 'package:my_games_list/features/games/bloc/featured_banners_state.dart';
 import 'package:my_games_list/features/games/featured_banner_model.dart';
@@ -184,16 +185,9 @@ class _BannersLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      child: Container(
-        height: 180,
-        decoration: BoxDecoration(
-          color: Colors.grey[850],
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-      ),
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: SkeletonBox(height: 180, borderRadius: 16),
     );
   }
 }

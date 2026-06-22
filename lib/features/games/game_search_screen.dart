@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
-import 'package:my_games_list/core/widgets/shimmer_loading.dart';
 import 'package:my_games_list/features/games/bloc/game_search_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_search_event.dart';
 import 'package:my_games_list/features/games/bloc/game_search_state.dart';
 import 'package:my_games_list/features/games/search_game_model.dart';
 import 'package:my_games_list/features/games/widgets/game_search_card.dart';
+import 'package:my_games_list/features/games/widgets/skeletons/search_card_skeleton.dart';
 
 class GameSearchScreen extends StatefulWidget {
   const GameSearchScreen({super.key});
@@ -173,23 +173,7 @@ class _LoadingState extends StatelessWidget {
     return Semantics(
       label: context.l10n.loadingLabel,
       liveRegion: true,
-      child: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: 6,
-        itemBuilder: (context, index) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-          child: ShimmerLoading(
-            child: Container(
-              // Matches GameSearchCard (120px cover + 12px top/bottom padding).
-              height: 144,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-          ),
-        ),
-      ),
+      child: const SearchResultsSkeleton(),
     );
   }
 }
