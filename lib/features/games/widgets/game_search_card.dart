@@ -11,6 +11,27 @@ class GameSearchCard extends StatelessWidget {
 
   final SearchGame game;
 
+  void _openDetails(BuildContext context) {
+    context.pushNamed(
+      'gameDetails',
+      pathParameters: {'id': game.id.toString()},
+    );
+  }
+
+  String _semanticsLabel() {
+    final parts = <String>[game.name];
+    if (game.genres.isNotEmpty) {
+      parts.add(game.genres.map((g) => g.name).take(2).join(', '));
+    }
+    if (game.platforms.isNotEmpty) {
+      parts.add(game.platforms.map((p) => p.name).take(2).join(', '));
+    }
+    if (game.firstReleaseDate != null) {
+      parts.add(game.firstReleaseDate!.year.toString());
+    }
+    return parts.join('. ');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -18,17 +39,13 @@ class GameSearchCard extends StatelessWidget {
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Semantics(
-        label: game.name,
+        label: _semanticsLabel(),
         button: true,
         excludeSemantics: true,
+        onTap: () => _openDetails(context),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            context.pushNamed(
-              'gameDetails',
-              pathParameters: {'id': game.id.toString()},
-            );
-          },
+          onTap: () => _openDetails(context),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Row(

@@ -246,32 +246,36 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
                       ? Stack(
                           fit: StackFit.expand,
                           children: [
-                            CachedNetworkImage(
-                              imageUrl: headerImageUrl,
-                              fit: BoxFit.cover,
-                              // Decode at the width BoxFit.cover actually paints
-                              // for this 16:9 (1080p) header: the larger of the
-                              // screen width and the height-driven width, so it
-                              // neither upscales (portrait) nor under-decodes
-                              // (wide screens), while bounding source memory.
-                              memCacheWidth:
-                                  (math.max(
-                                            MediaQuery.sizeOf(context).width,
-                                            (300 +
-                                                    MediaQuery.paddingOf(
-                                                      context,
-                                                    ).top) *
-                                                16 /
-                                                9,
-                                          ) *
-                                          MediaQuery.devicePixelRatioOf(
-                                            context,
-                                          ))
-                                      .round(),
-                              placeholder: (context, url) =>
-                                  Container(color: Colors.grey[900]),
-                              errorWidget: (context, url, error) =>
-                                  Container(color: Colors.grey[900]),
+                            Semantics(
+                              image: true,
+                              label: context.l10n.gameCoverLabel(game.name),
+                              child: CachedNetworkImage(
+                                imageUrl: headerImageUrl,
+                                fit: BoxFit.cover,
+                                // Decode at the width BoxFit.cover actually paints
+                                // for this 16:9 (1080p) header: the larger of the
+                                // screen width and the height-driven width, so it
+                                // neither upscales (portrait) nor under-decodes
+                                // (wide screens), while bounding source memory.
+                                memCacheWidth:
+                                    (math.max(
+                                              MediaQuery.sizeOf(context).width,
+                                              (300 +
+                                                      MediaQuery.paddingOf(
+                                                        context,
+                                                      ).top) *
+                                                  16 /
+                                                  9,
+                                            ) *
+                                            MediaQuery.devicePixelRatioOf(
+                                              context,
+                                            ))
+                                        .round(),
+                                placeholder: (context, url) =>
+                                    Container(color: Colors.grey[900]),
+                                errorWidget: (context, url, error) =>
+                                    Container(color: Colors.grey[900]),
+                              ),
                             ),
                             // Gradient overlay that fades to scaffold background
                             DecoratedBox(
@@ -335,6 +339,7 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
                       if (game.screenshots.isNotEmpty)
                         _ScreenshotsSection(
                           screenshots: game.screenshots,
+                          gameName: game.name,
                           l10n: l10n,
                         ),
 
@@ -441,26 +446,30 @@ class _InfoRow extends StatelessWidget {
             tag: '${heroTagPrefix}game-cover-$gameId',
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: CachedNetworkImage(
-                imageUrl: getHighResUrl(game.cover!.url, ImageSize.coverBig),
-                width: 100,
-                height: 140,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
+              child: Semantics(
+                image: true,
+                label: l10n.gameCoverLabel(game.name),
+                child: CachedNetworkImage(
+                  imageUrl: getHighResUrl(game.cover!.url, ImageSize.coverBig),
                   width: 100,
                   height: 140,
-                  color: Colors.grey[800],
-                  child: const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    width: 100,
+                    height: 140,
+                    color: Colors.grey[800],
+                    child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
                   ),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  width: 100,
-                  height: 140,
-                  color: Colors.grey[800],
-                  child: const Icon(
-                    Icons.videogame_asset,
-                    color: Colors.white38,
+                  errorWidget: (context, url, error) => Container(
+                    width: 100,
+                    height: 140,
+                    color: Colors.grey[800],
+                    child: const Icon(
+                      Icons.videogame_asset,
+                      color: Colors.white38,
+                    ),
                   ),
                 ),
               ),
@@ -671,9 +680,14 @@ class _DescriptionSection extends StatelessWidget {
 }
 
 class _ScreenshotsSection extends StatelessWidget {
-  const _ScreenshotsSection({required this.screenshots, required this.l10n});
+  const _ScreenshotsSection({
+    required this.screenshots,
+    required this.gameName,
+    required this.l10n,
+  });
 
   final List<Screenshot> screenshots;
+  final String gameName;
   final AppLocalizations l10n;
 
   @override
@@ -698,28 +712,32 @@ class _ScreenshotsSection extends StatelessWidget {
 
               return ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  height: 150,
-                  fit: BoxFit.cover,
-                  // Decode at the thumbnail height, not the full source.
-                  memCacheHeight: (150 * MediaQuery.devicePixelRatioOf(context))
-                      .round(),
-                  placeholder: (context, url) => Container(
-                    width: 267,
+                child: Semantics(
+                  image: true,
+                  label: l10n.screenshotLabel(gameName),
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrl,
                     height: 150,
-                    color: Colors.grey[800],
-                    child: const Center(
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                    fit: BoxFit.cover,
+                    // Decode at the thumbnail height, not the full source.
+                    memCacheHeight:
+                        (150 * MediaQuery.devicePixelRatioOf(context)).round(),
+                    placeholder: (context, url) => Container(
+                      width: 267,
+                      height: 150,
+                      color: Colors.grey[800],
+                      child: const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
                     ),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    width: 267,
-                    height: 150,
-                    color: Colors.grey[800],
-                    child: const Icon(
-                      Icons.videogame_asset,
-                      color: Colors.white38,
+                    errorWidget: (context, url, error) => Container(
+                      width: 267,
+                      height: 150,
+                      color: Colors.grey[800],
+                      child: const Icon(
+                        Icons.videogame_asset,
+                        color: Colors.white38,
+                      ),
                     ),
                   ),
                 ),

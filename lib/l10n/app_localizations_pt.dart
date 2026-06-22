@@ -289,6 +289,24 @@ class AppLocalizationsPt extends AppLocalizations {
   String get clearDate => 'Limpar data';
 
   @override
+  String screenshotLabel(String name) {
+    return 'Captura de tela de $name';
+  }
+
+  @override
+  String get favorited => 'Favoritado';
+
+  @override
+  String libraryEntryLabel(String name, String status) {
+    return '$name, $status';
+  }
+
+  @override
+  String genreCardLabel(String name) {
+    return 'Gênero $name';
+  }
+
+  @override
   String get navHome => 'Início';
 
   @override

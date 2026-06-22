@@ -632,6 +632,30 @@ abstract class AppLocalizations {
   /// **'Clear date'**
   String get clearDate;
 
+  /// Accessibility label for a game screenshot image
+  ///
+  /// In en, this message translates to:
+  /// **'Screenshot of {name}'**
+  String screenshotLabel(String name);
+
+  /// Accessibility label/tooltip for a favorite toggle when the game is already favorited
+  ///
+  /// In en, this message translates to:
+  /// **'Favorited'**
+  String get favorited;
+
+  /// Accessibility label for a library entry card combining the game name and its status
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, {status}'**
+  String libraryEntryLabel(String name, String status);
+
+  /// Accessibility label for a browseable genre card
+  ///
+  /// In en, this message translates to:
+  /// **'{name} genre'**
+  String genreCardLabel(String name);
+
   /// No description provided for @navHome.
   ///
   /// In en, this message translates to:

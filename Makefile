@@ -47,21 +47,21 @@ setup-production: ## Copy production Firebase config to native paths
 # ─── Run ──────────────────────────────────────────────────────────────────────
 
 run-staging: setup-staging ## Run app with staging config
-	fvm flutter run --dart-define-from-file=.env
+	fvm flutter run --flavor staging --dart-define-from-file=.env
 
 run-production: setup-production ## Run app with production config
-	fvm flutter run --dart-define-from-file=.env.production
+	fvm flutter run --flavor prod --dart-define-from-file=.env.production
 
 # ─── Build: Android ───────────────────────────────────────────────────────────
 
 build-android-staging: setup-staging ## Build Android APK (staging)
-	fvm flutter build apk --dart-define-from-file=.env
+	fvm flutter build apk --flavor staging --dart-define-from-file=.env
 
 build-android-production-apk: setup-production ## Build Android APK (production)
-	fvm flutter build apk --dart-define-from-file=.env.production
+	fvm flutter build apk --flavor prod --dart-define-from-file=.env.production
 
 build-android-production-aab: setup-production ## Build Android App Bundle for Play Store (production)
-	fvm flutter build appbundle --dart-define-from-file=.env.production
+	fvm flutter build appbundle --flavor prod --dart-define-from-file=.env.production
 
 # ─── Build: iOS ───────────────────────────────────────────────────────────────
 

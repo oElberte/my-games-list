@@ -135,5 +135,45 @@ void main() {
 
       expect(find.text('details 1942'), findsOneWidget);
     });
+
+    testWidgets('exposes a rich semantics label folding in content', (
+      tester,
+    ) async {
+      await pumpCard(tester, gameWithEverything);
+
+      expect(
+        find.bySemanticsLabel(
+          'The Witcher 3: Wild Hunt. RPG, Adventure. PC, PlayStation 5. 2015',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('semantics label falls back to the name when sparse', (
+      tester,
+    ) async {
+      await pumpCard(tester, gameMinimal);
+
+      expect(find.bySemanticsLabel('No Cover Game'), findsOneWidget);
+    });
+
+    testWidgets('exposes a screen-reader tap action on the labelled node', (
+      tester,
+    ) async {
+      await pumpCard(tester, gameWithEverything);
+
+      final handle = tester.ensureSemantics();
+
+      expect(
+        tester.getSemantics(
+          find.bySemanticsLabel(
+            'The Witcher 3: Wild Hunt. RPG, Adventure. PC, PlayStation 5. 2015',
+          ),
+        ),
+        containsSemantics(isButton: true, hasTapAction: true),
+      );
+
+      handle.dispose();
+    });
   });
 }

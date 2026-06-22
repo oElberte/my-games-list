@@ -464,6 +464,9 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                                             () => _isFavorite = !_isFavorite,
                                           );
                                         },
+                                        tooltip: _isFavorite
+                                            ? context.l10n.favorited
+                                            : context.l10n.addToFavorites,
                                         icon: Icon(
                                           _isFavorite
                                               ? Icons.favorite
@@ -473,6 +476,9 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                                               : theme
                                                     .colorScheme
                                                     .onSurfaceVariant,
+                                          semanticLabel: _isFavorite
+                                              ? context.l10n.favorited
+                                              : context.l10n.addToFavorites,
                                         ),
                                         style: IconButton.styleFrom(
                                           backgroundColor: _isFavorite
@@ -750,7 +756,6 @@ class _DatePickerButton extends StatelessWidget {
               IconButton(
                 onPressed: onClear,
                 tooltip: context.l10n.clearDate,
-                visualDensity: VisualDensity.compact,
                 iconSize: 18,
                 icon: Icon(
                   Icons.close,

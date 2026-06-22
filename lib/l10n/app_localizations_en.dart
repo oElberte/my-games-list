@@ -286,6 +286,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clearDate => 'Clear date';
 
   @override
+  String screenshotLabel(String name) {
+    return 'Screenshot of $name';
+  }
+
+  @override
+  String get favorited => 'Favorited';
+
+  @override
+  String libraryEntryLabel(String name, String status) {
+    return '$name, $status';
+  }
+
+  @override
+  String genreCardLabel(String name) {
+    return '$name genre';
+  }
+
+  @override
   String get navHome => 'Home';
 
   @override

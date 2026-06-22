@@ -138,6 +138,40 @@
     "@clearDate": {
       "description": "Accessibility label for the button that clears a selected date"
     },
+    "screenshotLabel": "Screenshot of {name}",
+    "@screenshotLabel": {
+      "description": "Accessibility label for a game screenshot image",
+      "placeholders": {
+        "name": {
+          "type": "String"
+        }
+      }
+    },
+    "favorited": "Favorited",
+    "@favorited": {
+      "description": "Accessibility label/tooltip for a favorite toggle when the game is already favorited"
+    },
+    "libraryEntryLabel": "{name}, {status}",
+    "@libraryEntryLabel": {
+      "description": "Accessibility label for a library entry card combining the game name and its status",
+      "placeholders": {
+        "name": {
+          "type": "String"
+        },
+        "status": {
+          "type": "String"
+        }
+      }
+    },
+    "genreCardLabel": "{name} genre",
+    "@genreCardLabel": {
+      "description": "Accessibility label for a browseable genre card",
+      "placeholders": {
+        "name": {
+          "type": "String"
+        }
+      }
+    },
     "navHome": "Home",
     "navBrowse": "Browse",
     "navLibrary": "Library",

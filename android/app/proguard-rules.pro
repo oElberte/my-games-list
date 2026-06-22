@@ -18,6 +18,18 @@
 -keep class com.google.firebase.crashlytics.** { *; }
 -dontwarn com.google.firebase.crashlytics.**
 
+# --- Firebase Cloud Messaging ------------------------------------------------
+# The messaging service and the RemoteMessage payload models are resolved at
+# runtime by the FCM background service; keep them so push delivery and the
+# data payload survive R8 in release builds.
+-keep class com.google.firebase.messaging.** { *; }
+-dontwarn com.google.firebase.messaging.**
+
+# --- Firebase (core / auth) --------------------------------------------------
+# firebase_core and firebase_auth ship their own consumer rules; this only
+# silences optional-dependency warnings R8 would otherwise surface as errors.
+-dontwarn com.google.firebase.**
+
 # --- flutter_local_notifications --------------------------------------------
 # The plugin deserializes notification details via Gson and relies on generic
 # signatures that R8 would otherwise strip.
