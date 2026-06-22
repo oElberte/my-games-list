@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_games_list/features/games/i_games_repository.dart';
 import 'package:my_games_list/features/games/bloc/game_search_event.dart';
+import 'package:my_games_list/features/games/bloc/game_search_filters.dart';
 import 'package:my_games_list/features/games/bloc/game_search_state.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -20,6 +21,8 @@ class GameSearchBloc extends Bloc<GameSearchEvent, GameSearchState> {
     );
     on<GameSearchLoadMore>(_onLoadMore);
     on<GameSearchClear>(_onClear);
+    on<GameSearchFiltersChanged>(_onFiltersChanged);
+    on<GameSearchFiltersCleared>(_onFiltersCleared);
   }
 
   final IGamesRepository _gamesRepository;
@@ -44,7 +47,8 @@ class GameSearchBloc extends Bloc<GameSearchEvent, GameSearchState> {
       return;
     }
 
-    // Start fresh search
+    // Start fresh search. Filters are reset because the available facets are
+    // derived from results, which a new query replaces.
     emit(
       state.copyWith(
         status: GameSearchStatus.loading,
@@ -52,6 +56,7 @@ class GameSearchBloc extends Bloc<GameSearchEvent, GameSearchState> {
         games: [],
         currentOffset: 0,
         offsetLimitReached: false,
+        filters: const GameSearchFilters(),
       ),
     );
 
@@ -126,5 +131,19 @@ class GameSearchBloc extends Bloc<GameSearchEvent, GameSearchState> {
 
   void _onClear(GameSearchClear event, Emitter<GameSearchState> emit) {
     emit(const GameSearchState());
+  }
+
+  void _onFiltersChanged(
+    GameSearchFiltersChanged event,
+    Emitter<GameSearchState> emit,
+  ) {
+    emit(state.copyWith(filters: event.filters));
+  }
+
+  void _onFiltersCleared(
+    GameSearchFiltersCleared event,
+    Emitter<GameSearchState> emit,
+  ) {
+    emit(state.copyWith(filters: const GameSearchFilters()));
   }
 }

@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/features/games/bloc/game_search_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_search_event.dart';
+import 'package:my_games_list/features/games/bloc/game_search_filters.dart';
 import 'package:my_games_list/features/games/bloc/game_search_state.dart';
 import 'package:my_games_list/features/games/search_game_model.dart';
 import 'package:my_games_list/features/games/widgets/game_search_card.dart';
+import 'package:my_games_list/features/games/widgets/search_filters_sheet.dart';
 import 'package:my_games_list/features/games/widgets/skeletons/search_card_skeleton.dart';
 
 class GameSearchScreen extends StatefulWidget {
@@ -52,6 +54,15 @@ class _GameSearchScreenState extends State<GameSearchScreen> {
       body: Column(
         children: [
           _SearchBar(controller: _searchController),
+          BlocBuilder<GameSearchBloc, GameSearchState>(
+            buildWhen: (previous, current) =>
+                previous.games != current.games ||
+                previous.filters != current.filters,
+            builder: (context, state) {
+              if (state.games.isEmpty) return const SizedBox.shrink();
+              return _ActiveFiltersRow(state: state);
+            },
+          ),
           Expanded(
             child: BlocBuilder<GameSearchBloc, GameSearchState>(
               builder: (context, state) {
@@ -71,12 +82,16 @@ class _GameSearchScreenState extends State<GameSearchScreen> {
                   );
                 }
 
+                if (state.isEmptyByFilters) {
+                  return _FilteredEmptyState();
+                }
+
                 if (state.isEmpty) {
                   return _EmptyState(query: state.query);
                 }
 
                 return _SearchResults(
-                  games: state.games,
+                  games: state.visibleGames,
                   hasMore: state.canLoadMore,
                   isLoadingMore: state.isLoadingMore,
                   offsetLimitReached: state.offsetLimitReached,
@@ -91,6 +106,22 @@ class _GameSearchScreenState extends State<GameSearchScreen> {
   }
 }
 
+/// Opens the filter/sort sheet seeded with the current state and dispatches
+/// the edited filters back to the bloc.
+Future<void> _openFilters(BuildContext context, GameSearchState state) async {
+  final bloc = context.read<GameSearchBloc>();
+  final result = await SearchFiltersSheet.show(
+    context: context,
+    filters: state.filters,
+    genres: state.availableGenres,
+    platforms: state.availablePlatforms,
+    years: state.availableYears,
+  );
+  if (result != null) {
+    bloc.add(GameSearchFiltersChanged(result));
+  }
+}
+
 class _SearchBar extends StatelessWidget {
   const _SearchBar({required this.controller});
 
@@ -100,27 +131,179 @@ class _SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          hintText: context.l10n.searchGamesHint,
-          prefixIcon: const Icon(Icons.search),
-          suffixIcon: IconButton(
-            icon: const Icon(Icons.clear),
-            tooltip: context.l10n.clearSearch,
-            onPressed: () {
-              controller.clear();
-              context.read<GameSearchBloc>().add(const GameSearchClear());
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: context.l10n.searchGamesHint,
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear),
+                  tooltip: context.l10n.clearSearch,
+                  onPressed: () {
+                    controller.clear();
+                    context.read<GameSearchBloc>().add(const GameSearchClear());
+                  },
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+              ),
+              onChanged: (query) {
+                context.read<GameSearchBloc>().add(
+                  GameSearchQueryChanged(query),
+                );
+              },
+            ),
+          ),
+          BlocBuilder<GameSearchBloc, GameSearchState>(
+            buildWhen: (previous, current) =>
+                previous.games != current.games ||
+                previous.filters != current.filters,
+            builder: (context, state) {
+              if (state.games.isEmpty) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: _FilterButton(state: state),
+              );
             },
           ),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          filled: true,
+        ],
+      ),
+    );
+  }
+}
+
+/// Filter/sort entry point with a badge showing the active filter count.
+class _FilterButton extends StatelessWidget {
+  const _FilterButton({required this.state});
+
+  final GameSearchState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final count = state.filters.activeFilterCount;
+    return Badge(
+      isLabelVisible: count > 0,
+      label: Text('$count'),
+      child: IconButton.filledTonal(
+        icon: const Icon(Icons.tune),
+        tooltip: context.l10n.searchFiltersTooltip,
+        onPressed: () => _openFilters(context, state),
+      ),
+    );
+  }
+}
+
+/// Horizontally scrolling row of removable chips for the active sort and
+/// filters, with a quick "clear all" affordance.
+class _ActiveFiltersRow extends StatelessWidget {
+  const _ActiveFiltersRow({required this.state});
+
+  final GameSearchState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<GameSearchBloc>();
+    final filters = state.filters;
+
+    final chips = <Widget>[];
+
+    if (filters.sort != GameSearchSort.relevance) {
+      chips.add(
+        _ActiveFilterChip(
+          label: context.l10n.searchFilterChipSort(
+            sortLabel(context, filters.sort),
+          ),
+          onRemoved: () => bloc.add(
+            GameSearchFiltersChanged(
+              filters.copyWith(sort: GameSearchSort.relevance),
+            ),
+          ),
         ),
-        onChanged: (query) {
-          context.read<GameSearchBloc>().add(GameSearchQueryChanged(query));
+      );
+    }
+
+    for (final genre in state.availableGenres) {
+      if (!filters.genreIds.contains(genre.id)) continue;
+      chips.add(
+        _ActiveFilterChip(
+          label: genre.name,
+          onRemoved: () => bloc.add(
+            GameSearchFiltersChanged(
+              filters.copyWith(
+                genreIds: {...filters.genreIds}..remove(genre.id),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    for (final platform in state.availablePlatforms) {
+      if (!filters.platformIds.contains(platform.id)) continue;
+      chips.add(
+        _ActiveFilterChip(
+          label: platform.name,
+          onRemoved: () => bloc.add(
+            GameSearchFiltersChanged(
+              filters.copyWith(
+                platformIds: {...filters.platformIds}..remove(platform.id),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (filters.year != null) {
+      chips.add(
+        _ActiveFilterChip(
+          label: context.l10n.searchFilterChipYear(filters.year!),
+          onRemoved: () => bloc.add(
+            GameSearchFiltersChanged(filters.copyWith(clearYear: true)),
+          ),
+        ),
+      );
+    }
+
+    if (chips.isEmpty) return const SizedBox.shrink();
+
+    return SizedBox(
+      height: 48,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: chips.length + 1,
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          if (index == chips.length) {
+            return Center(
+              child: TextButton(
+                onPressed: () => bloc.add(const GameSearchFiltersCleared()),
+                child: Text(context.l10n.searchFiltersClearAll),
+              ),
+            );
+          }
+          return Center(child: chips[index]);
         },
       ),
     );
+  }
+}
+
+class _ActiveFilterChip extends StatelessWidget {
+  const _ActiveFilterChip({required this.label, required this.onRemoved});
+
+  final String label;
+  final VoidCallback onRemoved;
+
+  @override
+  Widget build(BuildContext context) {
+    return InputChip(label: Text(label), onDeleted: onRemoved);
   }
 }
 
@@ -216,6 +399,17 @@ class _EmptyState extends StatelessWidget {
       icon: Icons.search_off,
       title: context.l10n.searchGamesNoResultsTitle,
       hint: context.l10n.searchGamesNoResults(query),
+    );
+  }
+}
+
+class _FilteredEmptyState extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return _SearchMessageView(
+      icon: Icons.filter_alt_off,
+      title: context.l10n.searchNoResultsForFiltersTitle,
+      hint: context.l10n.searchNoResultsForFiltersHint,
     );
   }
 }

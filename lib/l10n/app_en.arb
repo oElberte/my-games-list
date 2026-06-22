@@ -82,6 +82,37 @@
     "searchGamesErrorMessage": "An error occurred",
     "searchGamesOffsetLimitReached": "Maximum search results reached. Please refine your search.",
     "searchGamesLoadMoreFailed": "Failed to load more results",
+    "searchFiltersTitle": "Filters & sort",
+    "searchFiltersTooltip": "Filters and sort",
+    "searchFiltersApply": "Show results",
+    "searchFiltersClearAll": "Clear all",
+    "searchSortLabel": "Sort by",
+    "searchSortRelevance": "Relevance",
+    "searchSortNameAsc": "Name (A–Z)",
+    "searchSortYearDesc": "Newest first",
+    "searchSortYearAsc": "Oldest first",
+    "searchFilterGenresLabel": "Genres",
+    "searchFilterPlatformsLabel": "Platforms",
+    "searchFilterYearLabel": "Release year",
+    "searchFilterNoFacets": "Filters appear once results load.",
+    "searchFilterChipYear": "Year: {year}",
+    "@searchFilterChipYear": {
+      "placeholders": {
+        "year": {
+          "type": "int"
+        }
+      }
+    },
+    "searchFilterChipSort": "Sort: {sort}",
+    "@searchFilterChipSort": {
+      "placeholders": {
+        "sort": {
+          "type": "String"
+        }
+      }
+    },
+    "searchNoResultsForFiltersTitle": "No matches for these filters",
+    "searchNoResultsForFiltersHint": "Try removing a filter to see more games.",
     "gameDetailsTitle": "Game Details",
     "developer": "Developer",
     "rating": "Rating",

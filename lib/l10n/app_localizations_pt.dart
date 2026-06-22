@@ -177,6 +177,63 @@ class AppLocalizationsPt extends AppLocalizations {
   String get searchGamesLoadMoreFailed => 'Falha ao carregar mais resultados';
 
   @override
+  String get searchFiltersTitle => 'Filtros e ordenação';
+
+  @override
+  String get searchFiltersTooltip => 'Filtros e ordenação';
+
+  @override
+  String get searchFiltersApply => 'Ver resultados';
+
+  @override
+  String get searchFiltersClearAll => 'Limpar tudo';
+
+  @override
+  String get searchSortLabel => 'Ordenar por';
+
+  @override
+  String get searchSortRelevance => 'Relevância';
+
+  @override
+  String get searchSortNameAsc => 'Nome (A–Z)';
+
+  @override
+  String get searchSortYearDesc => 'Mais recentes';
+
+  @override
+  String get searchSortYearAsc => 'Mais antigos';
+
+  @override
+  String get searchFilterGenresLabel => 'Gêneros';
+
+  @override
+  String get searchFilterPlatformsLabel => 'Plataformas';
+
+  @override
+  String get searchFilterYearLabel => 'Ano de lançamento';
+
+  @override
+  String get searchFilterNoFacets =>
+      'Os filtros aparecem quando os resultados carregam.';
+
+  @override
+  String searchFilterChipYear(int year) {
+    return 'Ano: $year';
+  }
+
+  @override
+  String searchFilterChipSort(String sort) {
+    return 'Ordenar: $sort';
+  }
+
+  @override
+  String get searchNoResultsForFiltersTitle => 'Nenhum jogo com esses filtros';
+
+  @override
+  String get searchNoResultsForFiltersHint =>
+      'Remova um filtro para ver mais jogos.';
+
+  @override
   String get gameDetailsTitle => 'Detalhes do Jogo';
 
   @override

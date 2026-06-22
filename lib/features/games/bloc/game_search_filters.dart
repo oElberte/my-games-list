@@ -1,0 +1,99 @@
+import 'package:equatable/equatable.dart';
+import 'package:my_games_list/features/games/search_game_model.dart';
+
+/// How search results are ordered. [relevance] keeps the API's original
+/// ordering; the others are applied client-side over the loaded results.
+enum GameSearchSort { relevance, nameAsc, yearDesc, yearAsc }
+
+/// Client-side refinement applied to the loaded search results.
+///
+/// The search API is text-only (it binds query/limit/offset), so genre,
+/// platform and year filtering plus sorting are computed over the results the
+/// API already returned, using the fields the [SearchGame] model exposes.
+class GameSearchFilters extends Equatable {
+  const GameSearchFilters({
+    this.sort = GameSearchSort.relevance,
+    this.genreIds = const {},
+    this.platformIds = const {},
+    this.year,
+  });
+
+  final GameSearchSort sort;
+  final Set<int> genreIds;
+  final Set<int> platformIds;
+  final int? year;
+
+  bool get isEmpty =>
+      sort == GameSearchSort.relevance &&
+      genreIds.isEmpty &&
+      platformIds.isEmpty &&
+      year == null;
+
+  /// Number of active filter constraints (sort excluded — it is always set).
+  int get activeFilterCount =>
+      genreIds.length + platformIds.length + (year != null ? 1 : 0);
+
+  GameSearchFilters copyWith({
+    GameSearchSort? sort,
+    Set<int>? genreIds,
+    Set<int>? platformIds,
+    int? year,
+    bool clearYear = false,
+  }) {
+    return GameSearchFilters(
+      sort: sort ?? this.sort,
+      genreIds: genreIds ?? this.genreIds,
+      platformIds: platformIds ?? this.platformIds,
+      year: clearYear ? null : (year ?? this.year),
+    );
+  }
+
+  /// Applies the active filters and sort to [games].
+  List<SearchGame> apply(List<SearchGame> games) {
+    final filtered = games.where((game) {
+      if (genreIds.isNotEmpty &&
+          !game.genres.any((g) => genreIds.contains(g.id))) {
+        return false;
+      }
+      if (platformIds.isNotEmpty &&
+          !game.platforms.any((p) => platformIds.contains(p.id))) {
+        return false;
+      }
+      if (year != null && game.firstReleaseDate?.year != year) {
+        return false;
+      }
+      return true;
+    }).toList();
+
+    switch (sort) {
+      case GameSearchSort.relevance:
+        break;
+      case GameSearchSort.nameAsc:
+        filtered.sort(
+          (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+        );
+      case GameSearchSort.yearDesc:
+        filtered.sort(_byYear(descending: true));
+      case GameSearchSort.yearAsc:
+        filtered.sort(_byYear(descending: false));
+    }
+
+    return filtered;
+  }
+
+  /// Sorts by release year, always pushing games without a release date to the
+  /// end regardless of direction.
+  Comparator<SearchGame> _byYear({required bool descending}) {
+    return (a, b) {
+      final ay = a.firstReleaseDate?.year;
+      final by = b.firstReleaseDate?.year;
+      if (ay == null && by == null) return 0;
+      if (ay == null) return 1;
+      if (by == null) return -1;
+      return descending ? by.compareTo(ay) : ay.compareTo(by);
+    };
+  }
+
+  @override
+  List<Object?> get props => [sort, genreIds, platformIds, year];
+}
