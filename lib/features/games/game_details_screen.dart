@@ -350,7 +350,11 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
 
                       // Videos
                       if (game.videos.isNotEmpty)
-                        _VideosSection(videos: game.videos, l10n: l10n),
+                        _VideosSection(
+                          videos: game.videos,
+                          gameName: game.name,
+                          l10n: l10n,
+                        ),
 
                       const SizedBox(height: 24),
 
@@ -462,7 +466,10 @@ class _InfoRow extends StatelessWidget {
                   width: 100,
                   height: 140,
                   color: Colors.grey[800],
-                  child: const Icon(Icons.broken_image, color: Colors.white38),
+                  child: const Icon(
+                    Icons.videogame_asset,
+                    color: Colors.white38,
+                  ),
                 ),
               ),
             ),
@@ -719,7 +726,7 @@ class _ScreenshotsSection extends StatelessWidget {
                     height: 150,
                     color: Colors.grey[800],
                     child: const Icon(
-                      Icons.broken_image,
+                      Icons.videogame_asset,
                       color: Colors.white38,
                     ),
                   ),
@@ -734,9 +741,14 @@ class _ScreenshotsSection extends StatelessWidget {
 }
 
 class _VideosSection extends StatelessWidget {
-  const _VideosSection({required this.videos, required this.l10n});
+  const _VideosSection({
+    required this.videos,
+    required this.gameName,
+    required this.l10n,
+  });
 
   final List<Video> videos;
+  final String gameName;
   final AppLocalizations l10n;
 
   @override
@@ -754,7 +766,10 @@ class _VideosSection extends StatelessWidget {
             separatorBuilder: (_, _) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
               final video = videos[index];
-              return VideoThumbnailCard(videoId: video.videoId);
+              return VideoThumbnailCard(
+                videoId: video.videoId,
+                title: gameName,
+              );
             },
           ),
         ),
@@ -816,7 +831,7 @@ class _SimilarGamesSection extends StatelessWidget {
                                           height: 140,
                                           color: Colors.grey[800],
                                           child: const Icon(
-                                            Icons.broken_image,
+                                            Icons.videogame_asset,
                                             color: Colors.white38,
                                           ),
                                         ),

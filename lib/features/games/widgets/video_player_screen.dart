@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 /// Full-screen YouTube video player.
@@ -45,7 +46,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       builder: (context, player) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.title ?? 'Video'),
+            title: Text(widget.title ?? context.l10n.videoPlayerTitle),
             backgroundColor: Colors.black,
             foregroundColor: Colors.white,
           ),

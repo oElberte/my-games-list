@@ -112,8 +112,8 @@ void main() {
       await tester.pumpWidget(createTile(game: mockGameNoCover));
       await tester.pump();
 
-      // Should show gamepad icon placeholder
-      expect(find.byIcon(Icons.gamepad), findsOneWidget);
+      // Should show the game-art placeholder glyph
+      expect(find.byIcon(Icons.videogame_asset), findsOneWidget);
     });
 
     testWidgets('should be tappable with a hover/focus affordance', (

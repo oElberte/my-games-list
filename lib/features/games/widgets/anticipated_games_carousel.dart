@@ -246,7 +246,7 @@ class _GameCoverImage extends StatelessWidget {
       return Container(
         color: Colors.grey[800],
         child: const Center(
-          child: Icon(Icons.gamepad, size: 48, color: Colors.white38),
+          child: Icon(Icons.videogame_asset, size: 48, color: Colors.white38),
         ),
       );
     }
@@ -261,7 +261,7 @@ class _GameCoverImage extends StatelessWidget {
       errorWidget: (context, url, error) => Container(
         color: Colors.grey[800],
         child: const Center(
-          child: Icon(Icons.broken_image, size: 48, color: Colors.white38),
+          child: Icon(Icons.videogame_asset, size: 48, color: Colors.white38),
         ),
       ),
     );

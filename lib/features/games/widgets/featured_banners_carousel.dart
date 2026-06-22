@@ -101,7 +101,7 @@ class _BannerCard extends StatelessWidget {
               placeholder: (context, url) => Container(color: Colors.grey[800]),
               errorWidget: (context, url, error) => Container(
                 color: Colors.grey[800],
-                child: const Icon(Icons.broken_image, size: 48),
+                child: const Icon(Icons.videogame_asset, size: 48),
               ),
             ),
             Container(

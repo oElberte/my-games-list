@@ -202,6 +202,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get videos => 'Videos';
 
   @override
+  String get videoPlayerTitle => 'Video';
+
+  @override
   String get similarGames => 'Similar Games';
 
   @override

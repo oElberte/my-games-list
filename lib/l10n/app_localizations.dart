@@ -470,6 +470,12 @@ abstract class AppLocalizations {
   /// **'Videos'**
   String get videos;
 
+  /// No description provided for @videoPlayerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get videoPlayerTitle;
+
   /// No description provided for @similarGames.
   ///
   /// In en, this message translates to:
