@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:my_games_list/features/games/bloc/game_details_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_details_event.dart';
 import 'package:my_games_list/features/games/bloc/game_details_state.dart';
