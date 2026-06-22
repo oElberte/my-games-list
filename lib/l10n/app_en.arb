@@ -238,7 +238,7 @@
     },
     "deleteAccountConfirmButton": "Delete account",
     "deleteAccountError": "Could not delete your account. Please try again.",
-    "consentBannerTitle": "Help improve the app",
+    "consentBannerTitle": "Your privacy choices",
     "@consentBannerTitle": {
       "description": "Title of the first-run / web consent banner"
     },
@@ -265,14 +265,6 @@
     "consentSave": "Save",
     "@consentSave": {
       "description": "Button that saves the per-category consent choices"
-    },
-    "consentSettingsTitle": "Data & consent",
-    "@consentSettingsTitle": {
-      "description": "Settings section title for per-category consent toggles"
-    },
-    "consentSettingsSubtitle": "Choose what data you allow. You can change these anytime.",
-    "@consentSettingsSubtitle": {
-      "description": "Settings section subtitle for per-category consent toggles"
     },
     "consentAnalyticsTitle": "Usage analytics",
     "@consentAnalyticsTitle": {

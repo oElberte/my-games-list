@@ -111,4 +111,24 @@ void main() {
 
     expect(cubit.state.isGranted(ConsentCategory.crash), isFalse);
   });
+
+  test(
+    're-shows the prompt after revokeAll (cross-session re-prompt)',
+    () async {
+      // First account answers, so the banner is hidden.
+      await cubit.acceptAll();
+      expect(cubit.state.hasAnswered, isTrue);
+
+      // Same-session logout teardown revokes everything and clears the
+      // answered flag. The cubit must re-read hasAnswered via the changes
+      // stream so the next account on this device sees the prompt again.
+      await service.revokeAll();
+      await Future<void>.delayed(Duration.zero);
+
+      expect(cubit.state.hasAnswered, isFalse);
+      for (final category in ConsentCategory.values) {
+        expect(cubit.state.isGranted(category), isFalse);
+      }
+    },
+  );
 }

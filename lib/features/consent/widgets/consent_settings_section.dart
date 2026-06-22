@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_games_list/core/services/consent/consent_category.dart';
-import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/features/consent/bloc/consent_cubit.dart';
 import 'package:my_games_list/features/consent/bloc/consent_state.dart';
 import 'package:my_games_list/features/consent/consent_category_l10n.dart';
@@ -15,42 +14,30 @@ class ConsentSettingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          context.l10n.consentSettingsTitle,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          context.l10n.consentSettingsSubtitle,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-        const SizedBox(height: 8),
-        Card(
-          child: BlocBuilder<ConsentCubit, ConsentState>(
-            builder: (context, state) {
-              const categories = ConsentCategory.values;
-              return Column(
-                children: [
-                  for (var i = 0; i < categories.length; i++) ...[
-                    if (i > 0) const Divider(height: 1),
-                    SwitchListTile(
-                      title: Text(categories[i].localizedTitle(context)),
-                      subtitle: Text(categories[i].localizedSubtitle(context)),
-                      value: state.isGranted(categories[i]),
-                      onChanged: (value) => context
-                          .read<ConsentCubit>()
-                          .setCategory(categories[i], granted: value),
-                    ),
-                  ],
-                ],
-              );
-            },
-          ),
-        ),
-      ],
+    // No section header/subtitle of its own: this card sits directly under the
+    // "Privacy & data" section so the two read as one privacy area rather than
+    // two competing ones.
+    return Card(
+      child: BlocBuilder<ConsentCubit, ConsentState>(
+        builder: (context, state) {
+          const categories = ConsentCategory.values;
+          return Column(
+            children: [
+              for (var i = 0; i < categories.length; i++) ...[
+                if (i > 0) const Divider(height: 1),
+                SwitchListTile(
+                  title: Text(categories[i].localizedTitle(context)),
+                  subtitle: Text(categories[i].localizedSubtitle(context)),
+                  value: state.isGranted(categories[i]),
+                  onChanged: (value) => context
+                      .read<ConsentCubit>()
+                      .setCategory(categories[i], granted: value),
+                ),
+              ],
+            ],
+          );
+        },
+      ),
     );
   }
 }

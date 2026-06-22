@@ -62,7 +62,7 @@ void main() {
   testWidgets('shows the banner when consent is unanswered', (tester) async {
     await tester.pumpWidget(buildApp());
 
-    expect(find.text('Help improve the app'), findsOneWidget);
+    expect(find.text('Your privacy choices'), findsOneWidget);
     expect(find.text('Accept all'), findsOneWidget);
     expect(find.text('Reject all'), findsOneWidget);
     expect(find.text('Customize'), findsOneWidget);
@@ -78,7 +78,7 @@ void main() {
     await tester.tap(find.text('Accept all'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Help improve the app'), findsNothing);
+    expect(find.text('Your privacy choices'), findsNothing);
     expect(service.hasAnswered, isTrue);
     for (final category in ConsentCategory.values) {
       expect(service.isGranted(category), isTrue);
@@ -93,7 +93,7 @@ void main() {
     await tester.tap(find.text('Reject all'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Help improve the app'), findsNothing);
+    expect(find.text('Your privacy choices'), findsNothing);
     expect(service.hasAnswered, isTrue);
     for (final category in ConsentCategory.values) {
       expect(service.isGranted(category), isFalse);
@@ -114,7 +114,7 @@ void main() {
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Help improve the app'), findsNothing);
+    expect(find.text('Your privacy choices'), findsNothing);
     expect(service.isGranted(ConsentCategory.crash), isTrue);
     expect(service.isGranted(ConsentCategory.analytics), isFalse);
     expect(service.hasAnswered, isTrue);
@@ -130,6 +130,6 @@ void main() {
 
     await tester.pumpWidget(buildApp());
 
-    expect(find.text('Help improve the app'), findsNothing);
+    expect(find.text('Your privacy choices'), findsNothing);
   });
 }

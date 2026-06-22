@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_games_list/core/services/consent/consent_category.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
+import 'package:my_games_list/core/widgets/bottom_nav_bar.dart';
 import 'package:my_games_list/features/consent/bloc/consent_cubit.dart';
 import 'package:my_games_list/features/consent/bloc/consent_state.dart';
 import 'package:my_games_list/features/consent/widgets/consent_customize_sheet.dart';
@@ -45,52 +46,76 @@ class ConsentBanner extends StatelessWidget {
 class _ConsentBannerCard extends StatelessWidget {
   const _ConsentBannerCard();
 
+  /// Material 3 [NavigationBar] height. The compact banner floats this far
+  /// above the bottom so it never covers the tappable bottom nav.
+  static const double _navigationBarHeight = 80;
+
+  /// Wide content cap so the banner reads as a centered card rather than a
+  /// stretched mobile component on web/desktop viewports.
+  static const double _maxContentWidth = 720;
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final cubit = context.read<ConsentCubit>();
+    final media = MediaQuery.of(context);
+    // Same breakpoint the app shell uses: compact (< 600px) shows the bottom
+    // NavigationBar, wide (>= 600px) shows the side NavigationRail.
+    final isCompact = media.size.width < BottomNavBar.railBreakpoint;
+    // On compact, clear the bottom NavigationBar (its own height already
+    // includes the system inset) plus the system inset so the nav stays
+    // tappable. SafeArea handles the inset on wide layouts.
+    final bottomOffset = isCompact
+        ? _navigationBarHeight + media.viewPadding.bottom
+        : 0.0;
 
     return Material(
       color: colors.surfaceContainerHigh,
       elevation: 8,
       child: SafeArea(
         top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                context.l10n.consentBannerTitle,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                context.l10n.consentBannerBody,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                alignment: WrapAlignment.end,
-                spacing: 8,
-                runSpacing: 4,
+        bottom: !isCompact,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: _maxContentWidth),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16, 16, 16, 12 + bottomOffset),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton(
-                    onPressed: () => _openCustomize(context, cubit),
-                    child: Text(context.l10n.consentCustomize),
+                  Text(
+                    context.l10n.consentBannerTitle,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  TextButton(
-                    onPressed: cubit.rejectAll,
-                    child: Text(context.l10n.consentRejectAll),
+                  const SizedBox(height: 4),
+                  Text(
+                    context.l10n.consentBannerBody,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  FilledButton(
-                    onPressed: cubit.acceptAll,
-                    child: Text(context.l10n.consentAcceptAll),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    alignment: WrapAlignment.end,
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      TextButton(
+                        onPressed: () => _openCustomize(context, cubit),
+                        child: Text(context.l10n.consentCustomize),
+                      ),
+                      FilledButton.tonal(
+                        onPressed: cubit.rejectAll,
+                        child: Text(context.l10n.consentRejectAll),
+                      ),
+                      FilledButton.tonal(
+                        onPressed: cubit.acceptAll,
+                        child: Text(context.l10n.consentAcceptAll),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),

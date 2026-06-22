@@ -1145,7 +1145,7 @@ abstract class AppLocalizations {
   /// Title of the first-run / web consent banner
   ///
   /// In en, this message translates to:
-  /// **'Help improve the app'**
+  /// **'Your privacy choices'**
   String get consentBannerTitle;
 
   /// Body text of the first-run / web consent banner
@@ -1183,18 +1183,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get consentSave;
-
-  /// Settings section title for per-category consent toggles
-  ///
-  /// In en, this message translates to:
-  /// **'Data & consent'**
-  String get consentSettingsTitle;
-
-  /// Settings section subtitle for per-category consent toggles
-  ///
-  /// In en, this message translates to:
-  /// **'Choose what data you allow. You can change these anytime.'**
-  String get consentSettingsSubtitle;
 
   /// Label for the usage analytics consent category
   ///

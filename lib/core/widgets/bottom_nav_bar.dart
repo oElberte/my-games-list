@@ -15,7 +15,7 @@ class BottomNavBar extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   /// Width at/above which the side rail replaces the bottom bar.
-  static const double _railBreakpoint = 600;
+  static const double railBreakpoint = 600;
 
   // Single source of destination icons so the bar and rail stay in sync.
   // Labels are resolved from localizations at build time (see [build]).
@@ -45,7 +45,7 @@ class BottomNavBar extends StatelessWidget {
       l10n.navLibrary,
       l10n.navProfile,
     ];
-    final isWide = MediaQuery.sizeOf(context).width >= _railBreakpoint;
+    final isWide = MediaQuery.sizeOf(context).width >= railBreakpoint;
 
     if (isWide) {
       return Scaffold(

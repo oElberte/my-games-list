@@ -559,7 +559,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not delete your account. Please try again.';
 
   @override
-  String get consentBannerTitle => 'Help improve the app';
+  String get consentBannerTitle => 'Your privacy choices';
 
   @override
   String get consentBannerBody =>
@@ -579,13 +579,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get consentSave => 'Save';
-
-  @override
-  String get consentSettingsTitle => 'Data & consent';
-
-  @override
-  String get consentSettingsSubtitle =>
-      'Choose what data you allow. You can change these anytime.';
 
   @override
   String get consentAnalyticsTitle => 'Usage analytics';

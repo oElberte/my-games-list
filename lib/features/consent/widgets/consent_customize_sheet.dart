@@ -54,12 +54,24 @@ class _ConsentCustomizeSheetState extends State<ConsentCustomizeSheet> {
               ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () => Navigator.of(context).pop(_choices),
-                  child: Text(context.l10n.consentSave),
-                ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      // Returns null → no change, so the caller leaves consent
+                      // untouched (an explicit dismissal for mouse/web users).
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(context.l10n.cancel),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: () => Navigator.of(context).pop(_choices),
+                      child: Text(context.l10n.consentSave),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

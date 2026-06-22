@@ -89,6 +89,11 @@ class ConsentService {
     // see the first-run consent prompt again rather than inheriting this one.
     _answered = false;
     await _storage.remove(answeredStorageKey);
+    // Signal listeners so the cubit re-reads [hasAnswered] and re-shows the
+    // first-run banner. The per-category [_set] calls above stay silent when a
+    // category was already denied, so without this a same-session logout +
+    // re-login would leave the banner hidden for the next account.
+    _changes.add(ConsentCategory.values.first);
   }
 
   Future<void> _set(ConsentCategory category, bool granted) async {

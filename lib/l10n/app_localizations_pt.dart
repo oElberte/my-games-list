@@ -564,7 +564,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não foi possível excluir sua conta. Tente novamente.';
 
   @override
-  String get consentBannerTitle => 'Ajude a melhorar o app';
+  String get consentBannerTitle => 'Suas escolhas de privacidade';
 
   @override
   String get consentBannerBody =>
@@ -584,13 +584,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get consentSave => 'Salvar';
-
-  @override
-  String get consentSettingsTitle => 'Dados e consentimento';
-
-  @override
-  String get consentSettingsSubtitle =>
-      'Escolha quais dados você permite. Você pode alterar isso quando quiser.';
 
   @override
   String get consentAnalyticsTitle => 'Análise de uso';

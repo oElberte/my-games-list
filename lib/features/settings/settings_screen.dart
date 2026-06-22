@@ -130,11 +130,11 @@ class SettingsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Privacy & data Section (LGPD: export + delete)
+            // Privacy & data Section (LGPD: export + delete), with the
+            // per-category consent toggles grouped directly under it so the two
+            // read as one privacy area rather than two competing sections.
             const _PrivacyDataSection(),
-            const SizedBox(height: 24),
-
-            // Consent toggles (LGPD: per-category data-collection consent)
+            const SizedBox(height: 8),
             const ConsentSettingsSection(),
             const SizedBox(height: 24),
 

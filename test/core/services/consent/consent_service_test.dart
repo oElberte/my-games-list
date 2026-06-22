@@ -152,6 +152,19 @@ void main() {
           () => storage.remove(ConsentService.answeredStorageKey),
         ).called(1);
       });
+
+      test(
+        'revokeAll signals the changes stream so the prompt re-shows',
+        () async {
+          await service.markAnswered();
+
+          // The stream emission is what makes the cubit re-read hasAnswered
+          // (false again) on a same-session logout + re-login, otherwise the
+          // banner stays hidden for the next account.
+          expectLater(service.changes, emits(isA<ConsentCategory>()));
+          await service.revokeAll();
+        },
+      );
     });
 
     test(
