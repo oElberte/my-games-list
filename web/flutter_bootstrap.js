@@ -20,4 +20,11 @@ _flutter.loader.load({
     renderer: "canvaskit",
     canvasKitBaseUrl: "canvaskit/",
   },
+  // Keep Flutter's generated service worker registration (PWA offline /
+  // app-shell cache) that the default bootstrap would otherwise provide.
+  // The placeholder resolves to the build's version string, or null when no
+  // service worker is emitted, so it is safe to pass unconditionally.
+  serviceWorkerSettings: {
+    serviceWorkerVersion: {{flutter_service_worker_version}},
+  },
 });
