@@ -1063,6 +1063,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start adding games to track your collection and never lose progress.'**
   String get emptyLibraryHint;
+
+  /// No description provided for @privacyDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & data'**
+  String get privacyDataTitle;
+
+  /// No description provided for @exportDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export my data'**
+  String get exportDataTitle;
+
+  /// No description provided for @exportDataSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Download a copy of your account data as a JSON file.'**
+  String get exportDataSubtitle;
+
+  /// No description provided for @exportDataSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data export is ready.'**
+  String get exportDataSuccess;
+
+  /// No description provided for @exportDataError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not export your data. Please try again.'**
+  String get exportDataError;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete your account and all your data.'**
+  String get deleteAccountSubtitle;
+
+  /// No description provided for @deleteAccountDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account?'**
+  String get deleteAccountDialogTitle;
+
+  /// No description provided for @deleteAccountDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes your account and all your data. This cannot be undone.'**
+  String get deleteAccountDialogBody;
+
+  /// Label for the type-to-confirm field in the delete-account dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Type {word} to confirm'**
+  String deleteAccountConfirmLabel(String word);
+
+  /// The exact word the user must type to confirm account deletion
+  ///
+  /// In en, this message translates to:
+  /// **'DELETE'**
+  String get deleteAccountConfirmWord;
+
+  /// No description provided for @deleteAccountConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccountConfirmButton;
+
+  /// No description provided for @deleteAccountError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete your account. Please try again.'**
+  String get deleteAccountError;
 }
 
 class _AppLocalizationsDelegate

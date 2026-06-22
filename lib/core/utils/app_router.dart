@@ -51,6 +51,7 @@ import 'package:my_games_list/features/library/library_repository.dart';
 import 'package:my_games_list/features/onboarding/onboarding_screen.dart';
 import 'package:my_games_list/features/onboarding/onboarding_service.dart';
 import 'package:my_games_list/features/profile/profile_screen.dart';
+import 'package:my_games_list/features/settings/bloc/account_management_bloc.dart';
 import 'package:my_games_list/features/settings/settings_screen.dart';
 import 'package:my_games_list/features/splash/splash_screen.dart';
 
@@ -309,7 +310,14 @@ class AppRouter {
         GoRoute(
           path: settingsPath,
           name: settingsName,
-          builder: (context, state) => const SettingsScreen(),
+          builder: (context, state) {
+            _ensureAuthRepositoryRegistered();
+            return BlocProvider(
+              create: (_) =>
+                  AccountManagementBloc(authRepository: sl<AuthRepository>()),
+              child: const SettingsScreen(),
+            );
+          },
         ),
 
         // Search Route (outside bottom navigation)

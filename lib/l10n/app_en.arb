@@ -213,5 +213,29 @@
     "searchGamesInitialHint": "Search by title to add games to your library.",
     "searchGamesNoResultsTitle": "No matches yet",
     "emptyLibraryTitle": "Your library is empty",
-    "emptyLibraryHint": "Start adding games to track your collection and never lose progress."
+    "emptyLibraryHint": "Start adding games to track your collection and never lose progress.",
+    "privacyDataTitle": "Privacy & data",
+    "exportDataTitle": "Export my data",
+    "exportDataSubtitle": "Download a copy of your account data as a JSON file.",
+    "exportDataSuccess": "Your data export is ready.",
+    "exportDataError": "Could not export your data. Please try again.",
+    "deleteAccountTitle": "Delete my account",
+    "deleteAccountSubtitle": "Permanently delete your account and all your data.",
+    "deleteAccountDialogTitle": "Delete account?",
+    "deleteAccountDialogBody": "This permanently deletes your account and all your data. This cannot be undone.",
+    "deleteAccountConfirmLabel": "Type {word} to confirm",
+    "@deleteAccountConfirmLabel": {
+      "description": "Label for the type-to-confirm field in the delete-account dialog",
+      "placeholders": {
+        "word": {
+          "type": "String"
+        }
+      }
+    },
+    "deleteAccountConfirmWord": "DELETE",
+    "@deleteAccountConfirmWord": {
+      "description": "The exact word the user must type to confirm account deletion"
+    },
+    "deleteAccountConfirmButton": "Delete account",
+    "deleteAccountError": "Could not delete your account. Please try again."
 }

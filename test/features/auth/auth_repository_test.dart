@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
 import 'package:my_games_list/core/data/services/storage/token_storage.dart';
+import 'package:my_games_list/core/domain/models/api_error.dart';
 import 'package:my_games_list/core/domain/models/api_response.dart';
 import 'package:my_games_list/features/auth/auth_repository.dart';
 import 'package:my_games_list/features/auth/auth_response.dart';
@@ -170,6 +171,88 @@ void main() {
       // Assert
       verify(() => mockTokenStorage.delete()).called(1);
       verify(() => mockHttpClient.clearAuthToken()).called(1);
+    });
+  });
+
+  group('AuthRepository Account Deletion Tests', () {
+    test('deleteAccount calls DELETE /users/me', () async {
+      // Arrange
+      when(
+        () => mockHttpClient.delete<void>(any()),
+      ).thenAnswer((_) async => ApiResponse.success(null));
+
+      // Act
+      await repository.deleteAccount();
+
+      // Assert
+      verify(() => mockHttpClient.delete<void>('/users/me')).called(1);
+    });
+
+    test('deleteAccount throws when the request fails', () async {
+      // Arrange
+      when(() => mockHttpClient.delete<void>(any())).thenAnswer(
+        (_) async => ApiResponse.failure(
+          const ApiError(
+            name: 'Server Error',
+            message: 'boom',
+            action: 'retry',
+            statusCode: 500,
+            errorCode: 'error.server',
+          ),
+        ),
+      );
+
+      // Act & Assert
+      await expectLater(repository.deleteAccount(), throwsException);
+    });
+  });
+
+  group('AuthRepository Data Export Tests', () {
+    final exportPayload = {
+      'user': {
+        'id': 'user-1',
+        'email': 'test@example.com',
+        'username': 'testuser',
+      },
+      'library': <dynamic>[],
+    };
+
+    test(
+      'exportData returns pretty-printed JSON from GET /users/me/export',
+      () async {
+        // Arrange
+        when(
+          () => mockHttpClient.get<Map<String, dynamic>>(any()),
+        ).thenAnswer((_) async => ApiResponse.success(exportPayload));
+
+        // Act
+        final result = await repository.exportData();
+
+        // Assert
+        verify(
+          () => mockHttpClient.get<Map<String, dynamic>>('/users/me/export'),
+        ).called(1);
+        expect(result, contains('"email": "test@example.com"'));
+        expect(result, contains('\n')); // pretty-printed (indented)
+      },
+    );
+
+    test('exportData throws when the request fails', () async {
+      // Arrange
+      when(() => mockHttpClient.get<Map<String, dynamic>>(any())).thenAnswer(
+        (_) async => ApiResponse.failure(
+          const ApiError(
+            name: 'Server Error',
+            message: 'boom',
+            action: 'retry',
+            statusCode: 500,
+            errorCode: 'error.server',
+          ),
+        ),
+      );
+
+      // Act & Assert
+      await expectLater(repository.exportData(), throwsException);
     });
   });
 }

@@ -512,4 +512,49 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get emptyLibraryHint =>
       'Start adding games to track your collection and never lose progress.';
+
+  @override
+  String get privacyDataTitle => 'Privacy & data';
+
+  @override
+  String get exportDataTitle => 'Export my data';
+
+  @override
+  String get exportDataSubtitle =>
+      'Download a copy of your account data as a JSON file.';
+
+  @override
+  String get exportDataSuccess => 'Your data export is ready.';
+
+  @override
+  String get exportDataError => 'Could not export your data. Please try again.';
+
+  @override
+  String get deleteAccountTitle => 'Delete my account';
+
+  @override
+  String get deleteAccountSubtitle =>
+      'Permanently delete your account and all your data.';
+
+  @override
+  String get deleteAccountDialogTitle => 'Delete account?';
+
+  @override
+  String get deleteAccountDialogBody =>
+      'This permanently deletes your account and all your data. This cannot be undone.';
+
+  @override
+  String deleteAccountConfirmLabel(String word) {
+    return 'Type $word to confirm';
+  }
+
+  @override
+  String get deleteAccountConfirmWord => 'DELETE';
+
+  @override
+  String get deleteAccountConfirmButton => 'Delete account';
+
+  @override
+  String get deleteAccountError =>
+      'Could not delete your account. Please try again.';
 }
