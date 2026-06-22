@@ -15,16 +15,18 @@
 {{flutter_js}}
 {{flutter_build_config}}
 
+// Resolves to the build's version string, or null for --pwa-strategy=none.
+const serviceWorkerVersion = {{flutter_service_worker_version}};
+
 _flutter.loader.load({
   config: {
     renderer: "canvaskit",
     canvasKitBaseUrl: "canvaskit/",
   },
-  // Keep Flutter's generated service worker registration (PWA offline /
-  // app-shell cache) that the default bootstrap would otherwise provide.
-  // The placeholder resolves to the build's version string, or null when no
-  // service worker is emitted, so it is safe to pass unconditionally.
-  serviceWorkerSettings: {
-    serviceWorkerVersion: {{flutter_service_worker_version}},
-  },
+  // Register Flutter's generated service worker (PWA offline / app-shell
+  // cache) only when one was emitted; omit it for no-PWA builds so the loader
+  // doesn't try to register a missing worker.
+  serviceWorkerSettings: serviceWorkerVersion == null
+    ? undefined
+    : { serviceWorkerVersion },
 });
