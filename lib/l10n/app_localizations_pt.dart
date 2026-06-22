@@ -562,4 +562,54 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get deleteAccountError =>
       'Não foi possível excluir sua conta. Tente novamente.';
+
+  @override
+  String get consentBannerTitle => 'Ajude a melhorar o app';
+
+  @override
+  String get consentBannerBody =>
+      'Escolha quais dados você permite. Você pode alterar isso quando quiser em Configurações.';
+
+  @override
+  String get consentAcceptAll => 'Aceitar tudo';
+
+  @override
+  String get consentRejectAll => 'Recusar tudo';
+
+  @override
+  String get consentCustomize => 'Personalizar';
+
+  @override
+  String get consentCustomizeTitle => 'Escolha o que você permite';
+
+  @override
+  String get consentSave => 'Salvar';
+
+  @override
+  String get consentSettingsTitle => 'Dados e consentimento';
+
+  @override
+  String get consentSettingsSubtitle =>
+      'Escolha quais dados você permite. Você pode alterar isso quando quiser.';
+
+  @override
+  String get consentAnalyticsTitle => 'Análise de uso';
+
+  @override
+  String get consentAnalyticsSubtitle =>
+      'Dados de uso anônimos para ajudar a melhorar o app.';
+
+  @override
+  String get consentCrashTitle => 'Relatórios de falhas';
+
+  @override
+  String get consentCrashSubtitle =>
+      'Enviar relatórios de falhas e erros para ajudar a corrigir problemas.';
+
+  @override
+  String get consentPushTitle => 'Notificações push';
+
+  @override
+  String get consentPushSubtitle =>
+      'Receba notificações sobre seus jogos e atualizações.';
 }

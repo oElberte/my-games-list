@@ -557,4 +557,54 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get deleteAccountError =>
       'Could not delete your account. Please try again.';
+
+  @override
+  String get consentBannerTitle => 'Help improve the app';
+
+  @override
+  String get consentBannerBody =>
+      'Choose what data you allow. You can change these anytime in Settings.';
+
+  @override
+  String get consentAcceptAll => 'Accept all';
+
+  @override
+  String get consentRejectAll => 'Reject all';
+
+  @override
+  String get consentCustomize => 'Customize';
+
+  @override
+  String get consentCustomizeTitle => 'Choose what you allow';
+
+  @override
+  String get consentSave => 'Save';
+
+  @override
+  String get consentSettingsTitle => 'Data & consent';
+
+  @override
+  String get consentSettingsSubtitle =>
+      'Choose what data you allow. You can change these anytime.';
+
+  @override
+  String get consentAnalyticsTitle => 'Usage analytics';
+
+  @override
+  String get consentAnalyticsSubtitle =>
+      'Anonymous usage data to help improve the app.';
+
+  @override
+  String get consentCrashTitle => 'Crash reports';
+
+  @override
+  String get consentCrashSubtitle =>
+      'Send crash and error reports to help fix problems.';
+
+  @override
+  String get consentPushTitle => 'Push notifications';
+
+  @override
+  String get consentPushSubtitle =>
+      'Receive notifications about your games and updates.';
 }

@@ -1,0 +1,114 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:my_games_list/core/data/services/storage/local_storage_service.dart';
+import 'package:my_games_list/core/services/consent/consent_category.dart';
+import 'package:my_games_list/core/services/consent/consent_service.dart';
+import 'package:my_games_list/core/services/consent/telemetry_gateway.dart';
+import 'package:my_games_list/features/consent/bloc/consent_cubit.dart';
+
+class _MockStorage extends Mock implements LocalStorageService {}
+
+class _MockGateway extends Mock implements TelemetryGateway {}
+
+void main() {
+  setUpAll(() {
+    registerFallbackValue(ConsentCategory.crash);
+  });
+
+  late _MockStorage storage;
+  late _MockGateway gateway;
+  late ConsentService service;
+  late ConsentCubit cubit;
+
+  setUp(() {
+    storage = _MockStorage();
+    gateway = _MockGateway();
+    when(() => storage.getBool(any())).thenAnswer((_) async => null);
+    when(() => storage.setBool(any(), any())).thenAnswer((_) async => true);
+    when(() => storage.remove(any())).thenAnswer((_) async => true);
+    when(
+      () => gateway.applyConsent(any(), granted: any(named: 'granted')),
+    ).thenAnswer((_) async {});
+    service = ConsentService(storage: storage, gateway: gateway);
+    cubit = ConsentCubit(service);
+  });
+
+  tearDown(() async {
+    await cubit.close();
+    await service.dispose();
+  });
+
+  test('initial state mirrors the service (not answered, all denied)', () {
+    expect(cubit.state.hasAnswered, isFalse);
+    for (final category in ConsentCategory.values) {
+      expect(cubit.state.isGranted(category), isFalse);
+    }
+  });
+
+  test('acceptAll grants every category and marks answered', () async {
+    await cubit.acceptAll();
+
+    for (final category in ConsentCategory.values) {
+      expect(service.isGranted(category), isTrue);
+      expect(cubit.state.isGranted(category), isTrue);
+    }
+    expect(service.hasAnswered, isTrue);
+    expect(cubit.state.hasAnswered, isTrue);
+  });
+
+  test('rejectAll denies every category and marks answered', () async {
+    await cubit.rejectAll();
+
+    for (final category in ConsentCategory.values) {
+      expect(service.isGranted(category), isFalse);
+    }
+    expect(service.hasAnswered, isTrue);
+    expect(cubit.state.hasAnswered, isTrue);
+  });
+
+  test('setCategory(granted: true) grants only that category', () async {
+    await cubit.setCategory(ConsentCategory.crash, granted: true);
+
+    expect(service.isGranted(ConsentCategory.crash), isTrue);
+    expect(service.isGranted(ConsentCategory.analytics), isFalse);
+    verify(
+      () => gateway.applyConsent(ConsentCategory.crash, granted: true),
+    ).called(1);
+    expect(service.hasAnswered, isTrue);
+  });
+
+  test('setCategory(granted: false) revokes that category', () async {
+    await cubit.setCategory(ConsentCategory.push, granted: true);
+    clearInteractions(gateway);
+
+    await cubit.setCategory(ConsentCategory.push, granted: false);
+
+    expect(service.isGranted(ConsentCategory.push), isFalse);
+    verify(
+      () => gateway.applyConsent(ConsentCategory.push, granted: false),
+    ).called(1);
+  });
+
+  test('applyChoices applies a mixed map and marks answered', () async {
+    await cubit.applyChoices({
+      ConsentCategory.analytics: true,
+      ConsentCategory.crash: false,
+      ConsentCategory.push: true,
+    });
+
+    expect(service.isGranted(ConsentCategory.analytics), isTrue);
+    expect(service.isGranted(ConsentCategory.crash), isFalse);
+    expect(service.isGranted(ConsentCategory.push), isTrue);
+    expect(service.hasAnswered, isTrue);
+  });
+
+  test('reflects a revoke triggered on the service (e.g. logout)', () async {
+    await cubit.setCategory(ConsentCategory.crash, granted: true);
+    expect(cubit.state.isGranted(ConsentCategory.crash), isTrue);
+
+    await service.revoke(ConsentCategory.crash);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(cubit.state.isGranted(ConsentCategory.crash), isFalse);
+  });
+}

@@ -237,5 +237,65 @@
       "description": "The exact word the user must type to confirm account deletion"
     },
     "deleteAccountConfirmButton": "Delete account",
-    "deleteAccountError": "Could not delete your account. Please try again."
+    "deleteAccountError": "Could not delete your account. Please try again.",
+    "consentBannerTitle": "Help improve the app",
+    "@consentBannerTitle": {
+      "description": "Title of the first-run / web consent banner"
+    },
+    "consentBannerBody": "Choose what data you allow. You can change these anytime in Settings.",
+    "@consentBannerBody": {
+      "description": "Body text of the first-run / web consent banner"
+    },
+    "consentAcceptAll": "Accept all",
+    "@consentAcceptAll": {
+      "description": "Consent banner button that grants every data-collection category"
+    },
+    "consentRejectAll": "Reject all",
+    "@consentRejectAll": {
+      "description": "Consent banner button that denies every data-collection category"
+    },
+    "consentCustomize": "Customize",
+    "@consentCustomize": {
+      "description": "Consent banner button that opens the per-category choices sheet"
+    },
+    "consentCustomizeTitle": "Choose what you allow",
+    "@consentCustomizeTitle": {
+      "description": "Title of the per-category consent customization sheet"
+    },
+    "consentSave": "Save",
+    "@consentSave": {
+      "description": "Button that saves the per-category consent choices"
+    },
+    "consentSettingsTitle": "Data & consent",
+    "@consentSettingsTitle": {
+      "description": "Settings section title for per-category consent toggles"
+    },
+    "consentSettingsSubtitle": "Choose what data you allow. You can change these anytime.",
+    "@consentSettingsSubtitle": {
+      "description": "Settings section subtitle for per-category consent toggles"
+    },
+    "consentAnalyticsTitle": "Usage analytics",
+    "@consentAnalyticsTitle": {
+      "description": "Label for the usage analytics consent category"
+    },
+    "consentAnalyticsSubtitle": "Anonymous usage data to help improve the app.",
+    "@consentAnalyticsSubtitle": {
+      "description": "Description for the usage analytics consent category"
+    },
+    "consentCrashTitle": "Crash reports",
+    "@consentCrashTitle": {
+      "description": "Label for the crash reporting consent category"
+    },
+    "consentCrashSubtitle": "Send crash and error reports to help fix problems.",
+    "@consentCrashSubtitle": {
+      "description": "Description for the crash reporting consent category"
+    },
+    "consentPushTitle": "Push notifications",
+    "@consentPushTitle": {
+      "description": "Label for the push notifications consent category"
+    },
+    "consentPushSubtitle": "Receive notifications about your games and updates.",
+    "@consentPushSubtitle": {
+      "description": "Description for the push notifications consent category"
+    }
 }

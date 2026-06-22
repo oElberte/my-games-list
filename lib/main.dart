@@ -20,6 +20,8 @@ import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/core/widgets/app_error_boundary.dart';
 import 'package:my_games_list/core/widgets/offline_banner.dart';
+import 'package:my_games_list/features/consent/bloc/consent_cubit.dart';
+import 'package:my_games_list/features/consent/widgets/consent_banner.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
@@ -92,6 +94,7 @@ class MyGamesListApp extends StatefulWidget {
 class _MyGamesListAppState extends State<MyGamesListApp> {
   late final AuthBloc authBloc;
   late final SettingsBloc settingsBloc;
+  late final ConsentCubit consentCubit;
   late final GoRouter router;
   late final PushRegistrationCoordinator _pushCoordinator;
   StreamSubscription<String>? _notificationNavSubscription;
@@ -102,6 +105,7 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
     // Initialize global BLoCs
     authBloc = sl<AuthBloc>()..add(const AuthStateLoaded());
     settingsBloc = sl<SettingsBloc>()..add(const SettingsInitialized());
+    consentCubit = sl<ConsentCubit>();
     // Create router once to avoid recreation on theme changes
     router = AppRouter.createRouter();
 
@@ -131,6 +135,7 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
     // Note: These are singletons, but we close them here when the app terminates
     authBloc.close();
     settingsBloc.close();
+    consentCubit.close();
     super.dispose();
   }
 
@@ -153,6 +158,7 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
       providers: [
         BlocProvider.value(value: authBloc),
         BlocProvider.value(value: settingsBloc),
+        BlocProvider.value(value: consentCubit),
         BlocProvider(create: (_) => ConnectivityCubit(Connectivity())),
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
@@ -182,8 +188,9 @@ class _MyGamesListAppState extends State<MyGamesListApp> {
             theme: _lightTheme,
             darkTheme: _darkTheme,
             themeMode: state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-            builder: (context, child) =>
-                OfflineBanner(child: child ?? const SizedBox.shrink()),
+            builder: (context, child) => ConsentBanner(
+              child: OfflineBanner(child: child ?? const SizedBox.shrink()),
+            ),
             debugShowCheckedModeBanner: false,
           );
         },
