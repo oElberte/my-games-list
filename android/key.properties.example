@@ -1,0 +1,9 @@
+# Android upload/release signing — template.
+# Copy to `android/key.properties` and fill in real values. NEVER commit the
+# real file or the keystore (both are gitignored). See ../SIGNING.md.
+
+storePassword=your-keystore-password
+keyPassword=your-key-password
+keyAlias=upload
+# Absolute path to the keystore, or relative to the `android/` directory.
+storeFile=/absolute/path/to/upload-keystore.jks
