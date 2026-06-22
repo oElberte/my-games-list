@@ -128,6 +128,12 @@ abstract class AppLocalizations {
   /// **'You\'re offline'**
   String get offlineBannerMessage;
 
+  /// Accessibility label announced while a section is loading
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get loadingLabel;
+
   /// No description provided for @goHome.
   ///
   /// In en, this message translates to:

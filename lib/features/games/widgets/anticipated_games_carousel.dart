@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/image_utils.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
+import 'package:my_games_list/core/widgets/shimmer_loading.dart';
 import 'package:my_games_list/core/widgets/visibility_hero.dart';
 import 'package:my_games_list/features/games/anticipated_game_model.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_bloc.dart';
@@ -295,9 +296,24 @@ class _CarouselLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      height: 260,
-      child: Center(child: CircularProgressIndicator()),
+    return SizedBox(
+      height: 220,
+      child: Center(
+        child: Semantics(
+          label: context.l10n.loadingLabel,
+          liveRegion: true,
+          child: ShimmerLoading(
+            child: Container(
+              width: MediaQuery.sizeOf(context).width * 0.75,
+              height: 180,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
