@@ -69,7 +69,11 @@ void main() {
       'username': 'tester',
     });
 
-    await boot(tester, {'onboarding_completed': true, 'current_user': user});
+    await boot(tester, {
+      'onboarding_completed': true,
+      'is_logged_in': true,
+      'current_user': user,
+    });
 
     // The home dashboard hosts perpetually-animating widgets (auto-play
     // carousels), so pumpAndSettle would never return. Advance past the splash
