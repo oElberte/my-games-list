@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:my_games_list/core/widgets/shimmer_loading.dart';
 import 'package:my_games_list/features/games/discovery_game_model.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_event.dart';
@@ -231,7 +232,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(CircularProgressIndicator), findsWidgets);
+      expect(find.byType(ShimmerLoading), findsWidgets);
     });
 
     testWidgets('should display error message on failure', (tester) async {
@@ -414,7 +415,7 @@ void main() {
 
       // Loading state shows the title with loading placeholder
       expect(find.text('Indie Gems'), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsWidgets);
+      expect(find.byType(ShimmerLoading), findsWidgets);
     });
 
     testWidgets('should display Indie Gems title for indie type', (
