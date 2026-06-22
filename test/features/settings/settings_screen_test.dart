@@ -25,9 +25,16 @@ class FakeAuthEvent extends Fake implements AuthEvent {}
 class FakeAccountExportSaver implements AccountExportSaver {
   bool called = false;
 
+  Rect? sharePositionOrigin;
+
   @override
-  Future<void> save({required String fileName, required String json}) async {
+  Future<void> save({
+    required String fileName,
+    required String json,
+    Rect? sharePositionOrigin,
+  }) async {
     called = true;
+    this.sharePositionOrigin = sharePositionOrigin;
   }
 }
 
@@ -167,6 +174,9 @@ void main() {
 
     verify(() => mockRepository.exportData()).called(1);
     expect(fakeSaver.called, isTrue);
+    // The tile's anchor rect is threaded through for the iPad share sheet.
+    expect(fakeSaver.sharePositionOrigin, isNotNull);
+    expect(fakeSaver.sharePositionOrigin!.isEmpty, isFalse);
     expect(accountBloc.state.exportStatus, AccountActionStatus.success);
   });
 }

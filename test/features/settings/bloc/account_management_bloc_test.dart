@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -15,7 +17,11 @@ class FakeAccountExportSaver implements AccountExportSaver {
   bool shouldThrow = false;
 
   @override
-  Future<void> save({required String fileName, required String json}) async {
+  Future<void> save({
+    required String fileName,
+    required String json,
+    Rect? sharePositionOrigin,
+  }) async {
     if (shouldThrow) throw Exception('save failed');
     savedFileName = fileName;
     savedJson = json;

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:my_games_list/features/settings/services/account_export_saver_stub.dart'
     if (dart.library.io) 'package:my_games_list/features/settings/services/account_export_saver_io.dart'
     if (dart.library.js_interop) 'package:my_games_list/features/settings/services/account_export_saver_web.dart';
@@ -9,5 +11,13 @@ abstract class AccountExportSaver {
 
   /// Saves or shares [json] under [fileName]. Throws on failure so callers can
   /// surface an error to the user.
-  Future<void> save({required String fileName, required String json});
+  ///
+  /// [sharePositionOrigin] anchors the iPad share sheet to the triggering
+  /// widget; share_plus requires it on iPad to avoid a failed or unresponsive
+  /// share. It is ignored on other platforms and on web.
+  Future<void> save({
+    required String fileName,
+    required String json,
+    Rect? sharePositionOrigin,
+  });
 }

@@ -182,23 +182,31 @@ class _PrivacyDataSection extends StatelessWidget {
               Card(
                 child: Column(
                   children: [
-                    ListTile(
-                      leading: const Icon(Icons.download_outlined),
-                      title: Text(context.l10n.exportDataTitle),
-                      subtitle: Text(context.l10n.exportDataSubtitle),
-                      trailing:
-                          state.exportStatus == AccountActionStatus.loading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.chevron_right),
-                      onTap: state.isBusy
-                          ? null
-                          : () => context.read<AccountManagementBloc>().add(
-                              const AccountManagementExportRequested(),
-                            ),
+                    Builder(
+                      builder: (tileContext) => ListTile(
+                        leading: const Icon(Icons.download_outlined),
+                        title: Text(context.l10n.exportDataTitle),
+                        subtitle: Text(context.l10n.exportDataSubtitle),
+                        trailing:
+                            state.exportStatus == AccountActionStatus.loading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.chevron_right),
+                        onTap: state.isBusy
+                            ? null
+                            : () => context.read<AccountManagementBloc>().add(
+                                AccountManagementExportRequested(
+                                  sharePositionOrigin: _shareOrigin(
+                                    tileContext,
+                                  ),
+                                ),
+                              ),
+                      ),
                     ),
                     const Divider(height: 1),
                     ListTile(
@@ -233,6 +241,15 @@ class _PrivacyDataSection extends StatelessWidget {
         },
       ),
     );
+  }
+
+  /// The screen-space rect of the tapped tile, used to anchor the iPad share
+  /// sheet. Returns null if the render box isn't available yet (share_plus
+  /// tolerates a null origin on non-iPad platforms).
+  Rect? _shareOrigin(BuildContext context) {
+    final box = context.findRenderObject();
+    if (box is! RenderBox || !box.hasSize) return null;
+    return box.localToGlobal(Offset.zero) & box.size;
   }
 
   void _onStateChanged(BuildContext context, AccountManagementState state) {

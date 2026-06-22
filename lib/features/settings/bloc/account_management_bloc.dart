@@ -31,7 +31,11 @@ class AccountManagementBloc
     emit(state.copyWith(exportStatus: AccountActionStatus.loading));
     try {
       final json = await _authRepository.exportData();
-      await _exportSaver.save(fileName: _exportFileName, json: json);
+      await _exportSaver.save(
+        fileName: _exportFileName,
+        json: json,
+        sharePositionOrigin: event.sharePositionOrigin,
+      );
       emit(state.copyWith(exportStatus: AccountActionStatus.success));
     } catch (e) {
       emit(
