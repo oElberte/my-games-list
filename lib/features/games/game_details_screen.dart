@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -252,12 +254,19 @@ class _GameDetailsContentState extends State<_GameDetailsContent> {
                             CachedNetworkImage(
                               imageUrl: headerImageUrl,
                               fit: BoxFit.cover,
-                              // Decode at the header height (the fixed
-                              // dimension BoxFit.cover scales to fill), so the
-                              // 1080p source's memory is bounded without
-                              // upscaling the hero image.
-                              memCacheHeight:
-                                  (300 * MediaQuery.devicePixelRatioOf(context))
+                              // Decode at the width BoxFit.cover actually paints
+                              // for this 16:9 (1080p) header: the larger of the
+                              // screen width and the height-driven width, so it
+                              // neither upscales (portrait) nor under-decodes
+                              // (wide screens), while bounding source memory.
+                              memCacheWidth:
+                                  (math.max(
+                                            MediaQuery.sizeOf(context).width,
+                                            300 * 16 / 9,
+                                          ) *
+                                          MediaQuery.devicePixelRatioOf(
+                                            context,
+                                          ))
                                       .round(),
                               placeholder: (context, url) =>
                                   Container(color: Colors.grey[900]),
