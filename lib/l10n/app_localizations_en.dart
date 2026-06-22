@@ -638,4 +638,41 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get consentPushSubtitle =>
       'Receive notifications about your games and updates.';
+
+  @override
+  String get privacyPolicyTitle => 'Privacy Policy';
+
+  @override
+  String get termsTitle => 'Terms of Service';
+
+  @override
+  String get legalTitle => 'Legal';
+
+  @override
+  String get legalDraftBanner =>
+      'DRAFT — placeholder text. Replace with the final legal text before release.';
+
+  @override
+  String get legalLoadError =>
+      'Could not load this document. Please try again later.';
+
+  @override
+  String get signUpAcceptPrefix => 'I accept the ';
+
+  @override
+  String get signUpAcceptPrivacyLink => 'Privacy Policy';
+
+  @override
+  String get signUpAcceptConjunction => ' and ';
+
+  @override
+  String get signUpAcceptTermsLink => 'Terms of Service';
+
+  @override
+  String get signUpAcceptRequired =>
+      'Please accept the Privacy Policy and Terms to continue.';
+
+  @override
+  String get signInLegalNotice =>
+      'By continuing you accept our Privacy Policy and Terms of Service.';
 }

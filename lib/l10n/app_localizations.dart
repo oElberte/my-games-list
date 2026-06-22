@@ -1279,6 +1279,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Receive notifications about your games and updates.'**
   String get consentPushSubtitle;
+
+  /// Title of the Privacy Policy screen and its settings link
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicyTitle;
+
+  /// Title of the Terms of Service screen and its settings link
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsTitle;
+
+  /// Header for the legal documents section in settings
+  ///
+  /// In en, this message translates to:
+  /// **'Legal'**
+  String get legalTitle;
+
+  /// Banner shown on legal screens warning the content is placeholder text
+  ///
+  /// In en, this message translates to:
+  /// **'DRAFT — placeholder text. Replace with the final legal text before release.'**
+  String get legalDraftBanner;
+
+  /// Error shown when a legal document asset fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load this document. Please try again later.'**
+  String get legalLoadError;
+
+  /// Leading text of the sign-up consent checkbox, before the Privacy Policy link
+  ///
+  /// In en, this message translates to:
+  /// **'I accept the '**
+  String get signUpAcceptPrefix;
+
+  /// Tappable Privacy Policy link inside the sign-up consent checkbox label
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get signUpAcceptPrivacyLink;
+
+  /// Conjunction between the Privacy Policy and Terms links in the consent checkbox label
+  ///
+  /// In en, this message translates to:
+  /// **' and '**
+  String get signUpAcceptConjunction;
+
+  /// Tappable Terms of Service link inside the sign-up consent checkbox label
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get signUpAcceptTermsLink;
+
+  /// Message shown when sign-up is attempted without accepting the Privacy Policy and Terms
+  ///
+  /// In en, this message translates to:
+  /// **'Please accept the Privacy Policy and Terms to continue.'**
+  String get signUpAcceptRequired;
+
+  /// Notice shown near the social sign-in buttons stating that continuing implies acceptance
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing you accept our Privacy Policy and Terms of Service.'**
+  String get signInLegalNotice;
 }
 
 class _AppLocalizationsDelegate

@@ -195,5 +195,16 @@
     "consentCrashTitle": "Relatórios de falhas",
     "consentCrashSubtitle": "Enviar relatórios de falhas e erros para ajudar a corrigir problemas.",
     "consentPushTitle": "Notificações push",
-    "consentPushSubtitle": "Receba notificações sobre seus jogos e atualizações."
+    "consentPushSubtitle": "Receba notificações sobre seus jogos e atualizações.",
+    "privacyPolicyTitle": "Política de Privacidade",
+    "termsTitle": "Termos de Uso",
+    "legalTitle": "Jurídico",
+    "legalDraftBanner": "RASCUNHO — texto provisório. Substitua pelo texto jurídico final antes do lançamento.",
+    "legalLoadError": "Não foi possível carregar este documento. Tente novamente mais tarde.",
+    "signUpAcceptPrefix": "Eu aceito a ",
+    "signUpAcceptPrivacyLink": "Política de Privacidade",
+    "signUpAcceptConjunction": " e os ",
+    "signUpAcceptTermsLink": "Termos de Uso",
+    "signUpAcceptRequired": "Aceite a Política de Privacidade e os Termos para continuar.",
+    "signInLegalNotice": "Ao continuar, você aceita nossa Política de Privacidade e os Termos de Uso."
 }

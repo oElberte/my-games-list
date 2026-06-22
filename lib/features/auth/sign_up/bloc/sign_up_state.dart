@@ -36,3 +36,10 @@ final class SignUpError extends SignUpState {
   @override
   List<Object?> get props => [message];
 }
+
+/// Emitted when submission is attempted without accepting the Privacy Policy
+/// and Terms. The UI surfaces a localized prompt; the message is intentionally
+/// not carried here so it can be localized at the presentation layer.
+final class SignUpTermsNotAccepted extends SignUpState {
+  const SignUpTermsNotAccepted();
+}

@@ -45,6 +45,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return BlocListener<SignInBloc, SignInState>(
       listener: (context, state) {
         if (state is SignInSuccess) {
@@ -230,6 +232,33 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         );
                       },
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Legal notice: continuing (incl. Google) implies acceptance
+                    // of the Privacy Policy and Terms, both reachable below.
+                    Text(
+                      context.l10n.signInLegalNotice,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: () =>
+                              context.pushNamed(AppRouter.privacyPolicyName),
+                          child: Text(context.l10n.privacyPolicyTitle),
+                        ),
+                        Text(context.l10n.signUpAcceptConjunction),
+                        TextButton(
+                          onPressed: () =>
+                              context.pushNamed(AppRouter.termsName),
+                          child: Text(context.l10n.termsTitle),
+                        ),
+                      ],
                     ),
                   ],
                 ),

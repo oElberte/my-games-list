@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/messages_extensions.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
@@ -136,6 +137,10 @@ class SettingsScreen extends StatelessWidget {
             const _PrivacyDataSection(),
             const SizedBox(height: 8),
             const ConsentSettingsSection(),
+            const SizedBox(height: 24),
+
+            // Legal Section — Privacy Policy & Terms documents
+            const _LegalSection(),
             const SizedBox(height: 24),
 
             // Logout Button
@@ -283,5 +288,42 @@ class _PrivacyDataSection extends StatelessWidget {
     if (confirmed ?? false) {
       bloc.add(const AccountManagementDeleteRequested());
     }
+  }
+}
+
+class _LegalSection extends StatelessWidget {
+  const _LegalSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          context.l10n.legalTitle,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        Card(
+          child: Column(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.privacy_tip_outlined),
+                title: Text(context.l10n.privacyPolicyTitle),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.pushNamed(AppRouter.privacyPolicyName),
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.description_outlined),
+                title: Text(context.l10n.termsTitle),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.pushNamed(AppRouter.termsName),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }

@@ -3,6 +3,7 @@ import 'package:my_games_list/features/auth/auth_repository.dart';
 import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_event.dart';
 import 'package:my_games_list/features/auth/sign_in/bloc/sign_in_state.dart';
 import 'package:my_games_list/features/auth/sign_in/sign_in_request.dart';
+import 'package:my_games_list/features/legal/legal_constants.dart';
 
 /// BLoC that handles sign-in business logic.
 class SignInBloc extends Bloc<SignInEvent, SignInState> {
@@ -38,7 +39,13 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   ) async {
     emit(const SignInLoading());
     try {
-      final authResponse = await _authRepository.signInWithGoogle();
+      // Google sign-in can create an account, so the API requires the accepted
+      // consent version. The sign-in screen surfaces the Privacy Policy / Terms
+      // links next to the social buttons; tapping Continue with Google is the
+      // acceptance, mirroring common social-auth consent UX.
+      final authResponse = await _authRepository.signInWithGoogle(
+        consentVersion: kConsentVersion,
+      );
       emit(SignInSuccess(authResponse));
     } catch (e) {
       emit(SignInError(e.toString().replaceFirst('Exception: ', '')));

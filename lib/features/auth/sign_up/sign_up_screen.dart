@@ -9,6 +9,7 @@ import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_bloc.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_event.dart';
 import 'package:my_games_list/features/auth/sign_up/bloc/sign_up_state.dart';
+import 'package:my_games_list/features/legal/presentation/legal_acceptance_checkbox.dart';
 import 'package:validatorless/validatorless.dart';
 
 /// SignUp screen for new user registration.
@@ -27,6 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _acceptedTerms = false;
 
   @override
   void dispose() {
@@ -45,6 +47,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
           username: _usernameController.text.trim(),
+          acceptedTerms: _acceptedTerms,
         ),
       );
     }
@@ -64,6 +67,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         } else if (state is SignUpError) {
           // Show error message
           context.showErrorMessage(state.message);
+        } else if (state is SignUpTermsNotAccepted) {
+          // Defensive: the button is disabled until acceptance, but surface a
+          // localized prompt if a submission still arrives unaccepted.
+          context.showErrorMessage(context.l10n.signUpAcceptRequired);
         }
       },
       child: Scaffold(
@@ -201,15 +208,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ]),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
-                    // Sign Up Button
+                    // Required Privacy Policy / Terms acceptance gate
+                    LegalAcceptanceCheckbox(
+                      value: _acceptedTerms,
+                      onChanged: (value) =>
+                          setState(() => _acceptedTerms = value),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Sign Up Button — disabled until the user accepts the
+                    // Privacy Policy and Terms.
                     BlocBuilder<SignUpBloc, SignUpState>(
                       builder: (context, state) {
                         final isLoading = state is SignUpLoading;
+                        final canSubmit = _acceptedTerms && !isLoading;
 
                         return ElevatedButton(
-                          onPressed: isLoading ? null : _handleSignUp,
+                          onPressed: canSubmit ? _handleSignUp : null,
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
