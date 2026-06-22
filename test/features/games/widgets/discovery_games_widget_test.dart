@@ -116,12 +116,16 @@ void main() {
       expect(find.byIcon(Icons.gamepad), findsOneWidget);
     });
 
-    testWidgets('should be tappable', (tester) async {
+    testWidgets('should be tappable with a hover/focus affordance', (
+      tester,
+    ) async {
       await tester.pumpWidget(createTile(game: mockGame));
       await tester.pump();
 
-      // Just verify the GestureDetector exists
-      expect(find.byType(GestureDetector), findsOneWidget);
+      // The tap target is an InkWell so web users get hover + focus highlights.
+      final inkWell = tester.widget<InkWell>(find.byType(InkWell));
+      expect(inkWell.onTap, isNotNull);
+      expect(inkWell.mouseCursor, SystemMouseCursors.click);
     });
   });
 

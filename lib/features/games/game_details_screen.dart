@@ -630,38 +630,43 @@ class _DescriptionSection extends StatelessWidget {
 
     const maxLines = 4;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (game.storyline != null) ...[
-          Text(l10n.storyline, style: Theme.of(context).textTheme.titleSmall),
-          const SizedBox(height: 8),
-          Text(
-            game.storyline!,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-            maxLines: isExpanded ? null : 3,
-            overflow: isExpanded ? null : TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 12),
+    // Make the long-form storyline/summary selectable so web users can copy
+    // descriptions. Wrapping only the content text keeps the toggle button and
+    // the rest of the screen behaving normally.
+    return SelectionArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (game.storyline != null) ...[
+            Text(l10n.storyline, style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 8),
+            Text(
+              game.storyline!,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+              maxLines: isExpanded ? null : 3,
+              overflow: isExpanded ? null : TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 12),
+          ],
+          if (game.summary != null) ...[
+            Text(l10n.summary, style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 8),
+            Text(
+              game.summary!,
+              style: Theme.of(context).textTheme.bodyMedium,
+              maxLines: isExpanded ? null : maxLines,
+              overflow: isExpanded ? null : TextOverflow.ellipsis,
+            ),
+          ],
+          if (fullText.length > 200)
+            TextButton(
+              onPressed: onToggle,
+              child: Text(isExpanded ? l10n.readLess : l10n.readMore),
+            ),
         ],
-        if (game.summary != null) ...[
-          Text(l10n.summary, style: Theme.of(context).textTheme.titleSmall),
-          const SizedBox(height: 8),
-          Text(
-            game.summary!,
-            style: Theme.of(context).textTheme.bodyMedium,
-            maxLines: isExpanded ? null : maxLines,
-            overflow: isExpanded ? null : TextOverflow.ellipsis,
-          ),
-        ],
-        if (fullText.length > 200)
-          TextButton(
-            onPressed: onToggle,
-            child: Text(isExpanded ? l10n.readLess : l10n.readMore),
-          ),
-      ],
+      ),
     );
   }
 }
@@ -783,64 +788,79 @@ class _SimilarGamesSection extends StatelessWidget {
                   ? getHighResUrl(game.cover!.url, ImageSize.coverBig)
                   : null;
 
-              return GestureDetector(
-                onTap: () {
-                  context.pushNamed(
-                    'gameDetails',
-                    pathParameters: {'id': game.id.toString()},
-                  );
-                },
-                child: SizedBox(
-                  width: 100,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      VisibilityHero(
-                        tag: 'game-cover-${game.id}',
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: coverUrl != null
-                              ? CachedNetworkImage(
-                                  imageUrl: coverUrl,
-                                  width: 100,
-                                  height: 140,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Container(
+              return SizedBox(
+                width: 100,
+                child: Stack(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        VisibilityHero(
+                          tag: 'game-cover-${game.id}',
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: coverUrl != null
+                                ? CachedNetworkImage(
+                                    imageUrl: coverUrl,
+                                    width: 100,
+                                    height: 140,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Container(
+                                      width: 100,
+                                      height: 140,
+                                      color: Colors.grey[800],
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                          width: 100,
+                                          height: 140,
+                                          color: Colors.grey[800],
+                                          child: const Icon(
+                                            Icons.broken_image,
+                                            color: Colors.white38,
+                                          ),
+                                        ),
+                                  )
+                                : Container(
                                     width: 100,
                                     height: 140,
                                     color: Colors.grey[800],
+                                    child: const Icon(
+                                      Icons.videogame_asset,
+                                      color: Colors.white38,
+                                    ),
                                   ),
-                                  errorWidget: (context, url, error) =>
-                                      Container(
-                                        width: 100,
-                                        height: 140,
-                                        color: Colors.grey[800],
-                                        child: const Icon(
-                                          Icons.broken_image,
-                                          color: Colors.white38,
-                                        ),
-                                      ),
-                                )
-                              : Container(
-                                  width: 100,
-                                  height: 140,
-                                  color: Colors.grey[800],
-                                  child: const Icon(
-                                    Icons.videogame_asset,
-                                    color: Colors.white38,
-                                  ),
-                                ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          game.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                    Positioned.fill(
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: Semantics(
+                          label: game.name,
+                          button: true,
+                          child: InkWell(
+                            onTap: () {
+                              context.pushNamed(
+                                'gameDetails',
+                                pathParameters: {'id': game.id.toString()},
+                              );
+                            },
+                            mouseCursor: SystemMouseCursors.click,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        game.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               );
             },
