@@ -5,6 +5,7 @@ import 'package:my_games_list/features/games/bloc/recommendations_bloc.dart';
 import 'package:my_games_list/features/games/bloc/recommendations_state.dart';
 import 'package:my_games_list/features/games/discovery_game_model.dart';
 import 'package:my_games_list/features/games/widgets/discovery_game_tile.dart';
+import 'package:my_games_list/features/games/widgets/skeletons/discovery_tile_skeleton.dart';
 
 const double _rowHeight = 200;
 const double _tileAspectRatio = 0.7;
@@ -20,7 +21,7 @@ class RecommendationsWidget extends StatelessWidget {
     return BlocBuilder<RecommendationsBloc, RecommendationsState>(
       builder: (context, state) {
         if (state.isLoading && !state.hasGames) {
-          return const _Section(child: _LoadingRow());
+          return const _Section(child: DiscoveryRowSkeleton());
         }
         if (!state.hasGames) {
           return const SizedBox.shrink();
@@ -95,37 +96,6 @@ class _GamesRow extends StatelessWidget {
                 game: game,
                 isCompact: true,
                 heroTagPrefix: 'rec-',
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _LoadingRow extends StatelessWidget {
-  const _LoadingRow();
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.surfaceContainerHighest;
-    return SizedBox(
-      height: _rowHeight,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: AspectRatio(
-              aspectRatio: _tileAspectRatio,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(12),
-                ),
               ),
             ),
           );

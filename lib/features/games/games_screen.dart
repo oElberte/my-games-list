@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/widgets/visibility_hero.dart';
+import 'package:my_games_list/features/games/widgets/skeletons/library_entry_skeleton.dart';
 import 'package:my_games_list/features/library/bloc/library_bloc.dart';
 import 'package:my_games_list/features/library/bloc/library_event.dart';
 import 'package:my_games_list/features/library/bloc/library_state.dart';
@@ -36,7 +37,7 @@ class GamesScreen extends StatelessWidget {
       body: BlocBuilder<LibraryBloc, LibraryState>(
         builder: (context, state) {
           if (state.isLoading && !state.hasEntries) {
-            return const Center(child: CircularProgressIndicator());
+            return const LibraryListSkeleton();
           }
 
           if (state.status == LibraryStatus.failure && !state.hasEntries) {

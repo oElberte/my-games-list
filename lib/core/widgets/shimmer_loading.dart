@@ -28,7 +28,7 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final base = isDark ? Colors.grey.shade800 : Colors.grey.shade300;
-    final highlight = isDark ? Colors.grey.shade700 : Colors.grey.shade100;
+    final highlight = isDark ? Colors.grey.shade600 : Colors.grey.shade100;
 
     return AnimatedBuilder(
       animation: _controller,

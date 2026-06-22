@@ -17,6 +17,7 @@ import 'package:my_games_list/core/utils/website_category.dart';
 import 'package:my_games_list/features/games/bloc/game_details_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_details_state.dart';
 import 'package:my_games_list/features/games/game_detail_model.dart';
+import 'package:my_games_list/features/games/widgets/skeletons/game_details_skeleton.dart';
 import 'package:my_games_list/features/games/widgets/video_thumbnail_card.dart';
 import 'package:my_games_list/features/library/bloc/library_bloc.dart';
 import 'package:my_games_list/features/library/bloc/library_event.dart';
@@ -43,7 +44,7 @@ class GameDetailsScreen extends StatelessWidget {
     return BlocBuilder<GameDetailsBloc, GameDetailsState>(
       builder: (context, state) {
         if (state.status == GameDetailsStatus.loading) {
-          return const _LoadingScreen();
+          return const GameDetailsSkeleton();
         }
 
         if (state.status == GameDetailsStatus.failure) {
@@ -51,7 +52,7 @@ class GameDetailsScreen extends StatelessWidget {
         }
 
         if (state.game == null) {
-          return const _LoadingScreen();
+          return const GameDetailsSkeleton();
         }
 
         return _GameDetailsContent(
@@ -61,15 +62,6 @@ class GameDetailsScreen extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-class _LoadingScreen extends StatelessWidget {
-  const _LoadingScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
 

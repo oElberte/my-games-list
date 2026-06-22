@@ -6,6 +6,7 @@ import 'package:my_games_list/features/browse/bloc/browse_genre_games_event.dart
 import 'package:my_games_list/features/browse/bloc/browse_genre_games_state.dart';
 import 'package:my_games_list/features/browse/widgets/browse_status_views.dart';
 import 'package:my_games_list/features/games/widgets/discovery_game_tile.dart';
+import 'package:my_games_list/features/games/widgets/skeletons/discovery_grid_skeleton.dart';
 
 /// Top-rated games for a single genre, reached from the Browse hub.
 class BrowseGenreGamesScreen extends StatelessWidget {
@@ -25,7 +26,7 @@ class BrowseGenreGamesScreen extends StatelessWidget {
       body: BlocBuilder<BrowseGenreGamesBloc, BrowseGenreGamesState>(
         builder: (context, state) {
           if (state.isLoading && !state.hasGames) {
-            return const Center(child: CircularProgressIndicator());
+            return const DiscoveryGridSkeleton();
           }
 
           if (state.status == BrowseGenreGamesStatus.failure &&
