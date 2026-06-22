@@ -272,6 +272,23 @@ class AppLocalizationsPt extends AppLocalizations {
   String get browseRetry => 'Tentar novamente';
 
   @override
+  String get offlineTitle => 'Você está offline';
+
+  @override
+  String get offlineErrorMessage => 'Verifique sua conexão e tente novamente.';
+
+  @override
+  String gameCoverLabel(String name) {
+    return 'Capa de $name';
+  }
+
+  @override
+  String get clearSearch => 'Limpar busca';
+
+  @override
+  String get clearDate => 'Limpar data';
+
+  @override
   String get navHome => 'Início';
 
   @override

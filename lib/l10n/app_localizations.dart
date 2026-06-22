@@ -602,6 +602,36 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get browseRetry;
 
+  /// Heading shown in an error/empty view when the device has no network connection
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline'**
+  String get offlineTitle;
+
+  /// Body shown in an error view when a load failed because the device is offline
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get offlineErrorMessage;
+
+  /// Accessibility label for a game cover image
+  ///
+  /// In en, this message translates to:
+  /// **'Cover of {name}'**
+  String gameCoverLabel(String name);
+
+  /// Tooltip and accessibility label for the button that clears the search field
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearch;
+
+  /// Accessibility label for the button that clears a selected date
+  ///
+  /// In en, this message translates to:
+  /// **'Clear date'**
+  String get clearDate;
+
   /// No description provided for @navHome.
   ///
   /// In en, this message translates to:

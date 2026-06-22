@@ -17,23 +17,28 @@ class GameSearchCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          context.pushNamed(
-            'gameDetails',
-            pathParameters: {'id': game.id.toString()},
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _GameCover(coverUrl: game.coverUrl, gameId: game.id),
-              const SizedBox(width: 16),
-              Expanded(child: _GameInfo(game: game)),
-            ],
+      child: Semantics(
+        label: game.name,
+        button: true,
+        excludeSemantics: true,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            context.pushNamed(
+              'gameDetails',
+              pathParameters: {'id': game.id.toString()},
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _GameCover(coverUrl: game.coverUrl, gameId: game.id),
+                const SizedBox(width: 16),
+                Expanded(child: _GameInfo(game: game)),
+              ],
+            ),
           ),
         ),
       ),

@@ -113,6 +113,31 @@
     "browseGenreGamesError": "Couldn't load games for this genre. Please try again.",
     "browseGenreEmpty": "No games found in this genre yet.",
     "browseRetry": "Try again",
+    "offlineTitle": "You're offline",
+    "@offlineTitle": {
+      "description": "Heading shown in an error/empty view when the device has no network connection"
+    },
+    "offlineErrorMessage": "Check your connection and try again.",
+    "@offlineErrorMessage": {
+      "description": "Body shown in an error view when a load failed because the device is offline"
+    },
+    "gameCoverLabel": "Cover of {name}",
+    "@gameCoverLabel": {
+      "description": "Accessibility label for a game cover image",
+      "placeholders": {
+        "name": {
+          "type": "String"
+        }
+      }
+    },
+    "clearSearch": "Clear search",
+    "@clearSearch": {
+      "description": "Tooltip and accessibility label for the button that clears the search field"
+    },
+    "clearDate": "Clear date",
+    "@clearDate": {
+      "description": "Accessibility label for the button that clears a selected date"
+    },
     "navHome": "Home",
     "navBrowse": "Browse",
     "navLibrary": "Library",

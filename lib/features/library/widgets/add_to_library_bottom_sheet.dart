@@ -747,19 +747,23 @@ class _DatePickerButton extends StatelessWidget {
               ),
             ),
             if (hasDate)
-              GestureDetector(
-                onTap: onClear,
-                child: Icon(
+              IconButton(
+                onPressed: onClear,
+                tooltip: context.l10n.clearDate,
+                visualDensity: VisualDensity.compact,
+                iconSize: 18,
+                icon: Icon(
                   Icons.close,
-                  size: 18,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               )
             else
-              Icon(
-                Icons.calendar_today,
-                size: 18,
-                color: theme.colorScheme.onSurfaceVariant,
+              ExcludeSemantics(
+                child: Icon(
+                  Icons.calendar_today,
+                  size: 18,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
           ],
         ),
