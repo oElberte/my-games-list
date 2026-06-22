@@ -15,7 +15,6 @@ class RetryInterceptor extends Interceptor {
   final int maxRetries;
   final Duration Function(int attempt) _backoff;
 
-  static const Set<int> _retryableStatus = {502, 503, 504};
   static const String _attemptKey = 'retry_attempt';
 
   @override
@@ -23,7 +22,13 @@ class RetryInterceptor extends Interceptor {
     final request = err.requestOptions;
     final attempt = (request.extra[_attemptKey] as int?) ?? 0;
 
-    if (attempt < maxRetries && _isRetryable(err)) {
+    // Don't replay a request whose session changed during the backoff — a
+    // logout/login would otherwise resend it with the previous token.
+    final authUnchanged =
+        request.headers['Authorization'] ==
+        _dio.options.headers['Authorization'];
+
+    if (attempt < maxRetries && authUnchanged && _isRetryable(err)) {
       final nextAttempt = attempt + 1;
       await Future<void>.delayed(_backoff(nextAttempt));
       request.extra[_attemptKey] = nextAttempt;
@@ -47,7 +52,8 @@ class RetryInterceptor extends Interceptor {
       case DioExceptionType.connectionError:
         return true;
       case DioExceptionType.badResponse:
-        return _retryableStatus.contains(err.response?.statusCode);
+        final status = err.response?.statusCode;
+        return status != null && status >= 500 && status < 600;
       case DioExceptionType.badCertificate:
       case DioExceptionType.cancel:
       case DioExceptionType.unknown:
