@@ -15,9 +15,13 @@ class SearchGame extends Equatable {
       id: json['id'] as int,
       name: json['name'] as String,
       coverUrl: json['cover_url'] as String?,
+      // The API returns release timestamps at midnight UTC. Parsing as UTC
+      // keeps the derived year stable across time zones — a 2017-01-01T00:00Z
+      // release must land in 2017 even on devices west of UTC.
       firstReleaseDate: json['first_release_date'] != null
           ? DateTime.fromMillisecondsSinceEpoch(
               (json['first_release_date'] as int) * 1000,
+              isUtc: true,
             )
           : null,
       genres:

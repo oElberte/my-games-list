@@ -77,11 +77,14 @@ class GameSearchState extends Equatable {
     return list;
   }
 
-  /// Release years present in the loaded results, newest first.
+  /// Release years present in the loaded results, newest first. The year is
+  /// derived in UTC to match how the API reports release timestamps, so a
+  /// midnight-UTC release does not slip into the previous year on devices west
+  /// of UTC.
   List<int> get availableYears {
     final years = <int>{};
     for (final game in games) {
-      final year = game.firstReleaseDate?.year;
+      final year = game.firstReleaseDate?.toUtc().year;
       if (year != null) years.add(year);
     }
     final list = years.toList()..sort((a, b) => b.compareTo(a));

@@ -59,7 +59,9 @@ class GameSearchFilters extends Equatable {
           !game.platforms.any((p) => platformIds.contains(p.id))) {
         return false;
       }
-      if (year != null && game.firstReleaseDate?.year != year) {
+      // Match on the UTC year so the filter agrees with the year facet and the
+      // API's midnight-UTC release timestamps regardless of the device zone.
+      if (year != null && game.firstReleaseDate?.toUtc().year != year) {
         return false;
       }
       return true;

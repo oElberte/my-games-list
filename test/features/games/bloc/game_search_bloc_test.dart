@@ -401,6 +401,26 @@ void main() {
         expect(state.availableYears, [2021, 2019, 2017]);
       });
 
+      test('availableYears derives the year in UTC for a midnight-UTC '
+          'release', () {
+        // 2017-01-01T00:00:00Z resolves to 2016 in local time west of UTC, but
+        // the year facet must report the UTC year (2017).
+        final state = GameSearchState(
+          status: GameSearchStatus.success,
+          query: 'q',
+          games: [
+            SearchGame(
+              id: 1,
+              name: 'New Year Release',
+              firstReleaseDate: DateTime.utc(2017, 1, 1),
+              genres: const [],
+              platforms: const [],
+            ),
+          ],
+        );
+        expect(state.availableYears, [2017]);
+      });
+
       blocTest<GameSearchBloc, GameSearchState>(
         'GameSearchFiltersChanged applies the filters to the state',
         build: () => bloc,

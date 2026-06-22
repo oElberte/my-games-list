@@ -77,4 +77,23 @@ void main() {
       expect(asc.map((g) => g.id).toList(), [dated.id, undated.id]);
     });
   });
+
+  group('GameSearchFilters.apply year filter (UTC)', () {
+    test('a midnight-UTC Jan-1 release matches its UTC year, not the local '
+        'previous year', () {
+      // 2017-01-01T00:00:00Z. On devices west of UTC the local year is 2016,
+      // but the filter must match the UTC year (2017).
+      final game = _game(
+        id: 1,
+        name: 'New Year Release',
+        releaseDate: DateTime.utc(2017, 1, 1),
+      );
+
+      final matched = const GameSearchFilters(year: 2017).apply([game]);
+      expect(matched.map((g) => g.id).toList(), [1]);
+
+      final unmatched = const GameSearchFilters(year: 2016).apply([game]);
+      expect(unmatched, isEmpty);
+    });
+  });
 }

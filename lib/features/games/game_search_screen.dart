@@ -83,7 +83,7 @@ class _GameSearchScreenState extends State<GameSearchScreen> {
                 }
 
                 if (state.isEmptyByFilters) {
-                  return _FilteredEmptyState();
+                  return _FilteredEmptyState(canLoadMore: state.canLoadMore);
                 }
 
                 if (state.isEmpty) {
@@ -460,7 +460,43 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
-class _FilteredEmptyState extends StatelessWidget {
+/// Shown when the active filters hide every loaded result. It keeps the
+/// "no matches / clear filters" guidance visible, but when more catalog pages
+/// exist it auto-fetches them: filtering must never halt paging, otherwise a
+/// later page holding matching games would never be loaded.
+class _FilteredEmptyState extends StatefulWidget {
+  const _FilteredEmptyState({required this.canLoadMore});
+
+  final bool canLoadMore;
+
+  @override
+  State<_FilteredEmptyState> createState() => _FilteredEmptyStateState();
+}
+
+class _FilteredEmptyStateState extends State<_FilteredEmptyState> {
+  @override
+  void initState() {
+    super.initState();
+    _maybeLoadMore();
+  }
+
+  @override
+  void didUpdateWidget(covariant _FilteredEmptyState oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _maybeLoadMore();
+  }
+
+  /// The filtered-empty view never overflows the viewport, so the scroll-driven
+  /// load-more can't fire. While more pages exist, fetch the next one so paging
+  /// continues until a matching game shows up or the catalog is exhausted.
+  void _maybeLoadMore() {
+    if (!widget.canLoadMore) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !widget.canLoadMore) return;
+      context.read<GameSearchBloc>().add(const GameSearchLoadMore());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return _SearchMessageView(

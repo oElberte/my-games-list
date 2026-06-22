@@ -188,6 +188,53 @@ void main() {
       verify(() => bloc.add(const GameSearchLoadMore())).called(1);
     });
 
+    testWidgets('filters that hide every loaded result keep paging while '
+        'hasMore is true so later matching pages are still fetched', (
+      tester,
+    ) async {
+      // The active filter narrows the only loaded game out (year 1990 vs a
+      // game with no release date), so the screen shows the filtered-empty
+      // guidance. Because hasMore is true, it must auto-fetch the next page
+      // instead of dead-ending pagination.
+      when(() => bloc.state).thenReturn(
+        GameSearchState(
+          status: GameSearchStatus.success,
+          query: 'game',
+          games: _games(2),
+          hasMore: true,
+          filters: const GameSearchFilters(year: 1990),
+        ),
+      );
+
+      await tester.pumpWidget(buildSubject());
+      await tester.pump();
+
+      // The recovery guidance is still present...
+      expect(find.text('No matches for these filters'), findsOneWidget);
+      expect(find.text('Clear filters'), findsOneWidget);
+      // ...but paging continues regardless.
+      verify(() => bloc.add(const GameSearchLoadMore())).called(1);
+    });
+
+    testWidgets('the filtered-empty state does not page when the catalog is '
+        'exhausted', (tester) async {
+      when(() => bloc.state).thenReturn(
+        GameSearchState(
+          status: GameSearchStatus.success,
+          query: 'game',
+          games: _games(2),
+          hasMore: false,
+          filters: const GameSearchFilters(year: 1990),
+        ),
+      );
+
+      await tester.pumpWidget(buildSubject());
+      await tester.pump();
+
+      expect(find.text('No matches for these filters'), findsOneWidget);
+      verifyNever(() => bloc.add(const GameSearchLoadMore()));
+    });
+
     testWidgets('a caption clarifies that filters apply to loaded results', (
       tester,
     ) async {
