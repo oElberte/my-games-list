@@ -416,6 +416,126 @@ abstract class AppLocalizations {
   /// **'Failed to load more results'**
   String get searchGamesLoadMoreFailed;
 
+  /// No description provided for @searchFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters & sort'**
+  String get searchFiltersTitle;
+
+  /// No description provided for @searchFiltersTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters and sort'**
+  String get searchFiltersTooltip;
+
+  /// No description provided for @searchFiltersApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Show results'**
+  String get searchFiltersApply;
+
+  /// No description provided for @searchFiltersClearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get searchFiltersClearAll;
+
+  /// No description provided for @searchFiltersReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get searchFiltersReset;
+
+  /// No description provided for @searchFiltersLoadedScopeCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters apply to loaded results'**
+  String get searchFiltersLoadedScopeCaption;
+
+  /// No description provided for @searchSortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get searchSortLabel;
+
+  /// No description provided for @searchSortRelevance.
+  ///
+  /// In en, this message translates to:
+  /// **'Relevance'**
+  String get searchSortRelevance;
+
+  /// No description provided for @searchSortNameAsc.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (A–Z)'**
+  String get searchSortNameAsc;
+
+  /// No description provided for @searchSortYearDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest first'**
+  String get searchSortYearDesc;
+
+  /// No description provided for @searchSortYearAsc.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest first'**
+  String get searchSortYearAsc;
+
+  /// No description provided for @searchFilterGenresLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Genres'**
+  String get searchFilterGenresLabel;
+
+  /// No description provided for @searchFilterPlatformsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Platforms'**
+  String get searchFilterPlatformsLabel;
+
+  /// No description provided for @searchFilterYearLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Release year'**
+  String get searchFilterYearLabel;
+
+  /// No description provided for @searchFilterNoFacets.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters appear once results load.'**
+  String get searchFilterNoFacets;
+
+  /// No description provided for @searchFilterChipYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Year: {year}'**
+  String searchFilterChipYear(int year);
+
+  /// No description provided for @searchFilterChipSort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort: {sort}'**
+  String searchFilterChipSort(String sort);
+
+  /// No description provided for @searchNoResultsForFiltersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches for these filters'**
+  String get searchNoResultsForFiltersTitle;
+
+  /// No description provided for @searchNoResultsForFiltersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Try removing a filter to see more games.'**
+  String get searchNoResultsForFiltersHint;
+
+  /// No description provided for @searchClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get searchClearFilters;
+
   /// No description provided for @gameDetailsTitle.
   ///
   /// In en, this message translates to:

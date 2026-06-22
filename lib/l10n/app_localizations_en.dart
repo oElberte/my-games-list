@@ -175,6 +175,72 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchGamesLoadMoreFailed => 'Failed to load more results';
 
   @override
+  String get searchFiltersTitle => 'Filters & sort';
+
+  @override
+  String get searchFiltersTooltip => 'Filters and sort';
+
+  @override
+  String get searchFiltersApply => 'Show results';
+
+  @override
+  String get searchFiltersClearAll => 'Clear all';
+
+  @override
+  String get searchFiltersReset => 'Reset';
+
+  @override
+  String get searchFiltersLoadedScopeCaption =>
+      'Filters apply to loaded results';
+
+  @override
+  String get searchSortLabel => 'Sort by';
+
+  @override
+  String get searchSortRelevance => 'Relevance';
+
+  @override
+  String get searchSortNameAsc => 'Name (A–Z)';
+
+  @override
+  String get searchSortYearDesc => 'Newest first';
+
+  @override
+  String get searchSortYearAsc => 'Oldest first';
+
+  @override
+  String get searchFilterGenresLabel => 'Genres';
+
+  @override
+  String get searchFilterPlatformsLabel => 'Platforms';
+
+  @override
+  String get searchFilterYearLabel => 'Release year';
+
+  @override
+  String get searchFilterNoFacets => 'Filters appear once results load.';
+
+  @override
+  String searchFilterChipYear(int year) {
+    return 'Year: $year';
+  }
+
+  @override
+  String searchFilterChipSort(String sort) {
+    return 'Sort: $sort';
+  }
+
+  @override
+  String get searchNoResultsForFiltersTitle => 'No matches for these filters';
+
+  @override
+  String get searchNoResultsForFiltersHint =>
+      'Try removing a filter to see more games.';
+
+  @override
+  String get searchClearFilters => 'Clear filters';
+
+  @override
   String get gameDetailsTitle => 'Game Details';
 
   @override
