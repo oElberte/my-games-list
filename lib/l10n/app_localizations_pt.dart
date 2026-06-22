@@ -469,4 +469,51 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get languageSystem => 'Padrão do sistema';
+
+  @override
+  String get onboardingTrackTitle => 'Acompanhe cada jogo que você joga';
+
+  @override
+  String get onboardingTrackSubtitle =>
+      'Monte sua biblioteca pessoal e mantenha sua coleção organizada por status.';
+
+  @override
+  String get onboardingDiscoverTitle => 'Descubra o que jogar a seguir';
+
+  @override
+  String get onboardingDiscoverSubtitle =>
+      'Explore títulos em alta, joias escondidas e próximos lançamentos feitos para você.';
+
+  @override
+  String get onboardingShareTitle => 'Deixe do seu jeito';
+
+  @override
+  String get onboardingShareSubtitle =>
+      'Marque favoritos, avalie seus jogos e continue de onde parou.';
+
+  @override
+  String get onboardingSkip => 'Pular';
+
+  @override
+  String get onboardingNext => 'Próximo';
+
+  @override
+  String get onboardingGetStarted => 'Começar';
+
+  @override
+  String get searchGamesInitialTitle => 'Encontre seu próximo favorito';
+
+  @override
+  String get searchGamesInitialHint =>
+      'Busque pelo título para adicionar jogos à sua biblioteca.';
+
+  @override
+  String get searchGamesNoResultsTitle => 'Nenhuma correspondência ainda';
+
+  @override
+  String get emptyLibraryTitle => 'Sua biblioteca está vazia';
+
+  @override
+  String get emptyLibraryHint =>
+      'Comece a adicionar jogos para acompanhar sua coleção e nunca perder o progresso.';
 }

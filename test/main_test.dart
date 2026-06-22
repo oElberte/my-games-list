@@ -10,9 +10,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   group('MyGamesListApp', () {
     setUp(() async {
-      // Reset GetIt and setup mock data
+      // Reset GetIt and setup mock data. Mark onboarding completed so the app
+      // routes straight to the auth flow — these tests assert returning-user
+      // navigation, not the first-run onboarding screen.
       await sl.reset();
-      SharedPreferences.setMockInitialValues({});
+      SharedPreferences.setMockInitialValues({'onboarding_completed': true});
       await setupServiceLocator();
     });
 

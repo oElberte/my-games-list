@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
+import 'package:my_games_list/core/data/services/storage/local_storage_service.dart';
 import 'package:my_games_list/core/data/services/storage/token_storage.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
@@ -46,6 +47,8 @@ import 'package:my_games_list/features/home/home_screen.dart';
 import 'package:my_games_list/features/library/bloc/library_bloc.dart';
 import 'package:my_games_list/features/library/bloc/library_event.dart';
 import 'package:my_games_list/features/library/library_repository.dart';
+import 'package:my_games_list/features/onboarding/onboarding_screen.dart';
+import 'package:my_games_list/features/onboarding/onboarding_service.dart';
 import 'package:my_games_list/features/profile/profile_screen.dart';
 import 'package:my_games_list/features/settings/settings_screen.dart';
 import 'package:my_games_list/features/splash/splash_screen.dart';
@@ -64,6 +67,7 @@ import 'package:my_games_list/features/splash/splash_screen.dart';
 /// - State preservation: Each bottom nav tab maintains its state when switching
 class AppRouter {
   static const String splashPath = '/splash';
+  static const String onboardingPath = '/onboarding';
   static const String signInPath = '/signin';
   static const String signUpPath = '/signup';
   static const String homePath = '/home';
@@ -79,6 +83,7 @@ class AppRouter {
 
   /// Route names for named navigation
   static const String splashName = 'splash';
+  static const String onboardingName = 'onboarding';
   static const String signInName = 'signin';
   static const String signUpName = 'signup';
   static const String homeName = 'home';
@@ -103,8 +108,10 @@ class AppRouter {
         final isAuthenticated = authState is AuthAuthenticated;
         final currentPath = state.matchedLocation;
 
-        // Allow splash screen to handle initial navigation
-        if (currentPath == splashPath) {
+        // Splash performs the initial auth + onboarding routing, and the
+        // onboarding flow is shown once regardless of auth state. Let both
+        // through untouched so the auth redirect below never bounces them.
+        if (currentPath == splashPath || currentPath == onboardingPath) {
           return null;
         }
 
@@ -130,6 +137,21 @@ class AppRouter {
           path: splashPath,
           name: splashName,
           builder: (context, state) => const SplashScreen(),
+        ),
+
+        // Onboarding Route - First-run welcome flow (shown once per install)
+        GoRoute(
+          path: onboardingPath,
+          name: onboardingName,
+          builder: (context, state) {
+            _ensureOnboardingServiceRegistered();
+
+            return OnboardingScreen(
+              onboardingService: sl<OnboardingService>(),
+              // Destination depends on auth state, which only the router knows.
+              onCompleted: () => context.go(_postOnboardingDestination()),
+            );
+          },
         ),
 
         // SignIn Route with modular dependency injection
@@ -416,6 +438,25 @@ class AppRouter {
       errorBuilder: (context, state) => _ErrorScreen(error: state.error),
       debugLogDiagnostics: kDebugMode,
     );
+  }
+
+  /// Resolves where to send the user after onboarding finishes.
+  /// Mirrors the splash decision: authenticated users go home, everyone else
+  /// goes to sign in.
+  static String _postOnboardingDestination() {
+    final isAuthenticated = sl<AuthBloc>().state is AuthAuthenticated;
+    return isAuthenticated ? homePath : signInPath;
+  }
+
+  /// Ensures OnboardingService is registered in the service locator.
+  /// Called lazily when the onboarding route is accessed; reads/writes the
+  /// one-time completion flag through the shared local storage service.
+  static void _ensureOnboardingServiceRegistered() {
+    if (!sl.isRegistered<OnboardingService>()) {
+      sl.registerLazySingleton<OnboardingService>(
+        () => OnboardingService(sl<LocalStorageService>()),
+      );
+    }
   }
 
   /// Ensures AuthRepository is registered in the service locator.

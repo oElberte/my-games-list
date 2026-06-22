@@ -159,20 +159,10 @@ class _SearchResults extends StatelessWidget {
 class _InitialState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.search, size: 64, color: Colors.grey[400]),
-          const SizedBox(height: 16),
-          Text(
-            context.l10n.searchGamesInitialMessage,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
-          ),
-        ],
-      ),
+    return _SearchMessageView(
+      icon: Icons.search,
+      title: context.l10n.searchGamesInitialTitle,
+      hint: context.l10n.searchGamesInitialHint,
     );
   }
 }
@@ -235,20 +225,60 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _SearchMessageView(
+      icon: Icons.search_off,
+      title: context.l10n.searchGamesNoResultsTitle,
+      hint: context.l10n.searchGamesNoResults(query),
+    );
+  }
+}
+
+/// Shared friendly placeholder for the search screen's initial and no-results
+/// states: a soft icon, a warm headline and a short supporting hint.
+class _SearchMessageView extends StatelessWidget {
+  const _SearchMessageView({
+    required this.icon,
+    required this.title,
+    required this.hint,
+  });
+
+  final IconData icon;
+  final String title;
+  final String hint;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
-          const SizedBox(height: 16),
-          Text(
-            context.l10n.searchGamesNoResults(query),
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
-            textAlign: TextAlign.center,
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 72,
+              color: theme.colorScheme.primary.withValues(alpha: 0.5),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              hint,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

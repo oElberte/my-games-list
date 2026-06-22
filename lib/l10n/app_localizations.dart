@@ -979,6 +979,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System default'**
   String get languageSystem;
+
+  /// No description provided for @onboardingTrackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track every game you play'**
+  String get onboardingTrackTitle;
+
+  /// No description provided for @onboardingTrackSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Build your personal library and keep your collection organized by status.'**
+  String get onboardingTrackSubtitle;
+
+  /// No description provided for @onboardingDiscoverTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover what to play next'**
+  String get onboardingDiscoverTitle;
+
+  /// No description provided for @onboardingDiscoverSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse trending titles, hidden gems and upcoming releases tailored for you.'**
+  String get onboardingDiscoverSubtitle;
+
+  /// No description provided for @onboardingShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Make it yours'**
+  String get onboardingShareTitle;
+
+  /// No description provided for @onboardingShareSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark favorites, rate your games and pick up right where you left off.'**
+  String get onboardingShareSubtitle;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingGetStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingGetStarted;
+
+  /// No description provided for @searchGamesInitialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find your next favorite'**
+  String get searchGamesInitialTitle;
+
+  /// No description provided for @searchGamesInitialHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by title to add games to your library.'**
+  String get searchGamesInitialHint;
+
+  /// No description provided for @searchGamesNoResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches yet'**
+  String get searchGamesNoResultsTitle;
+
+  /// No description provided for @emptyLibraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your library is empty'**
+  String get emptyLibraryTitle;
+
+  /// No description provided for @emptyLibraryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Start adding games to track your collection and never lose progress.'**
+  String get emptyLibraryHint;
 }
 
 class _AppLocalizationsDelegate

@@ -465,4 +465,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageSystem => 'System default';
+
+  @override
+  String get onboardingTrackTitle => 'Track every game you play';
+
+  @override
+  String get onboardingTrackSubtitle =>
+      'Build your personal library and keep your collection organized by status.';
+
+  @override
+  String get onboardingDiscoverTitle => 'Discover what to play next';
+
+  @override
+  String get onboardingDiscoverSubtitle =>
+      'Browse trending titles, hidden gems and upcoming releases tailored for you.';
+
+  @override
+  String get onboardingShareTitle => 'Make it yours';
+
+  @override
+  String get onboardingShareSubtitle =>
+      'Mark favorites, rate your games and pick up right where you left off.';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingGetStarted => 'Get started';
+
+  @override
+  String get searchGamesInitialTitle => 'Find your next favorite';
+
+  @override
+  String get searchGamesInitialHint =>
+      'Search by title to add games to your library.';
+
+  @override
+  String get searchGamesNoResultsTitle => 'No matches yet';
+
+  @override
+  String get emptyLibraryTitle => 'Your library is empty';
+
+  @override
+  String get emptyLibraryHint =>
+      'Start adding games to track your collection and never lose progress.';
 }
