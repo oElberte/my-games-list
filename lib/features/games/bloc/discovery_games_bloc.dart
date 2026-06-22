@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_event.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_state.dart';
 
 class DiscoveryGamesBloc
     extends Bloc<DiscoveryGamesEvent, DiscoveryGamesState> {
-  DiscoveryGamesBloc({required GamesRepository gamesRepository})
+  DiscoveryGamesBloc({required IGamesRepository gamesRepository})
     : _gamesRepository = gamesRepository,
       super(const DiscoveryGamesState()) {
     on<DiscoveryGamesLoadRequested>(_onLoadRequested);
@@ -15,7 +15,7 @@ class DiscoveryGamesBloc
     on<DiscoveryGamesRefreshRequested>(_onRefreshRequested);
   }
 
-  final GamesRepository _gamesRepository;
+  final IGamesRepository _gamesRepository;
 
   static const int _pageSize = 50;
   static const int _maxOffset = 10000;

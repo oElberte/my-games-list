@@ -5,9 +5,9 @@ import 'package:my_games_list/features/games/bloc/game_search_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_search_event.dart';
 import 'package:my_games_list/features/games/bloc/game_search_state.dart';
 import 'package:my_games_list/features/games/search_game_model.dart';
-import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 
-class MockGamesRepository extends Mock implements GamesRepository {}
+class MockGamesRepository extends Mock implements IGamesRepository {}
 
 void main() {
   group('GameSearchBloc', () {

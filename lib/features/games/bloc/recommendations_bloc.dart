@@ -1,17 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_games_list/features/games/bloc/recommendations_event.dart';
 import 'package:my_games_list/features/games/bloc/recommendations_state.dart';
-import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 
 class RecommendationsBloc
     extends Bloc<RecommendationsEvent, RecommendationsState> {
-  RecommendationsBloc({required GamesRepository gamesRepository})
+  RecommendationsBloc({required IGamesRepository gamesRepository})
     : _gamesRepository = gamesRepository,
       super(const RecommendationsState()) {
     on<RecommendationsLoadRequested>(_onLoadRequested);
   }
 
-  final GamesRepository _gamesRepository;
+  final IGamesRepository _gamesRepository;
 
   Future<void> _onLoadRequested(
     RecommendationsLoadRequested event,

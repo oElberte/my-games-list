@@ -5,9 +5,9 @@ import 'package:my_games_list/features/games/bloc/game_details_bloc.dart';
 import 'package:my_games_list/features/games/bloc/game_details_event.dart';
 import 'package:my_games_list/features/games/bloc/game_details_state.dart';
 import 'package:my_games_list/features/games/game_detail_model.dart';
-import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 
-class MockGamesRepository extends Mock implements GamesRepository {}
+class MockGamesRepository extends Mock implements IGamesRepository {}
 
 void main() {
   late GameDetailsBloc bloc;

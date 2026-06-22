@@ -1,18 +1,18 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_games_list/features/games/bloc/featured_banners_event.dart';
 import 'package:my_games_list/features/games/bloc/featured_banners_state.dart';
-import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 
 class FeaturedBannersBloc
     extends Bloc<FeaturedBannersEvent, FeaturedBannersState> {
-  FeaturedBannersBloc({required GamesRepository gamesRepository})
+  FeaturedBannersBloc({required IGamesRepository gamesRepository})
     : _gamesRepository = gamesRepository,
       super(const FeaturedBannersState()) {
     on<FeaturedBannersLoadRequested>(_onLoadRequested);
     on<FeaturedBannersRefreshRequested>(_onRefreshRequested);
   }
 
-  final GamesRepository _gamesRepository;
+  final IGamesRepository _gamesRepository;
 
   Future<void> _onLoadRequested(
     FeaturedBannersLoadRequested event,

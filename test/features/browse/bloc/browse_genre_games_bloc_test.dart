@@ -5,9 +5,9 @@ import 'package:my_games_list/features/browse/bloc/browse_genre_games_bloc.dart'
 import 'package:my_games_list/features/browse/bloc/browse_genre_games_event.dart';
 import 'package:my_games_list/features/browse/bloc/browse_genre_games_state.dart';
 import 'package:my_games_list/features/games/discovery_game_model.dart';
-import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 
-class MockGamesRepository extends Mock implements GamesRepository {}
+class MockGamesRepository extends Mock implements IGamesRepository {}
 
 void main() {
   late MockGamesRepository mockRepository;

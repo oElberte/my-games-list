@@ -1,16 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_games_list/features/games/bloc/collections_event.dart';
 import 'package:my_games_list/features/games/bloc/collections_state.dart';
-import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 
 class CollectionsBloc extends Bloc<CollectionsEvent, CollectionsState> {
-  CollectionsBloc({required GamesRepository gamesRepository})
+  CollectionsBloc({required IGamesRepository gamesRepository})
     : _gamesRepository = gamesRepository,
       super(const CollectionsState()) {
     on<CollectionsLoadRequested>(_onLoadRequested);
   }
 
-  final GamesRepository _gamesRepository;
+  final IGamesRepository _gamesRepository;
 
   Future<void> _onLoadRequested(
     CollectionsLoadRequested event,

@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_event.dart';
 import 'package:my_games_list/features/games/bloc/anticipated_games_state.dart';
-import 'package:my_games_list/features/games/games_repository.dart';
+import 'package:my_games_list/features/games/i_games_repository.dart';
 
 /// BLoC for managing anticipated games state
 class AnticipatedGamesBloc
     extends Bloc<AnticipatedGamesEvent, AnticipatedGamesState> {
-  AnticipatedGamesBloc({required GamesRepository gamesRepository})
+  AnticipatedGamesBloc({required IGamesRepository gamesRepository})
     : _gamesRepository = gamesRepository,
       super(const AnticipatedGamesState()) {
     on<AnticipatedGamesLoadRequested>(_onLoadRequested);
@@ -16,7 +16,7 @@ class AnticipatedGamesBloc
     on<AnticipatedGamesCountdownTick>(_onCountdownTick);
   }
 
-  final GamesRepository _gamesRepository;
+  final IGamesRepository _gamesRepository;
   Timer? _countdownTimer;
 
   /// Starts the countdown timer that updates every minute
