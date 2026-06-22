@@ -788,20 +788,11 @@ class _SimilarGamesSection extends StatelessWidget {
                   ? getHighResUrl(game.cover!.url, ImageSize.coverBig)
                   : null;
 
-              return Material(
-                type: MaterialType.transparency,
-                child: InkWell(
-                  onTap: () {
-                    context.pushNamed(
-                      'gameDetails',
-                      pathParameters: {'id': game.id.toString()},
-                    );
-                  },
-                  mouseCursor: SystemMouseCursors.click,
-                  borderRadius: BorderRadius.circular(8),
-                  child: SizedBox(
-                    width: 100,
-                    child: Column(
+              return SizedBox(
+                width: 100,
+                child: Stack(
+                  children: [
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         VisibilityHero(
@@ -850,7 +841,26 @@ class _SimilarGamesSection extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ),
+                    Positioned.fill(
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: Semantics(
+                          label: game.name,
+                          button: true,
+                          child: InkWell(
+                            onTap: () {
+                              context.pushNamed(
+                                'gameDetails',
+                                pathParameters: {'id': game.id.toString()},
+                              );
+                            },
+                            mouseCursor: SystemMouseCursors.click,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               );
             },
