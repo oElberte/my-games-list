@@ -3,17 +3,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_games_list/core/data/services/storage/local_storage_service.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
+import 'package:my_games_list/core/utils/service_locator.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
+import 'package:my_games_list/features/onboarding/onboarding_service.dart';
 
 /// Splash screen that checks authentication status before navigating to the app.
 ///
 /// Behavior:
 /// - Shows app branding (name + icon) for minimum 800ms
 /// - Waits for AuthBloc to load authentication state
+/// - On first launch (onboarding not completed) → navigates to /onboarding,
+///   which then forwards to the auth-resolved destination below
 /// - If authenticated → navigates to /home
 /// - If not authenticated or error → navigates to /signin
 class SplashScreen extends StatefulWidget {
@@ -44,6 +49,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _handleNavigation(String path) async {
     if (_hasNavigated) return;
 
+    // First launch shows onboarding once before the normal destination.
+    // Resolve the flag before honoring the minimum splash duration so both the
+    // storage read and the branding delay overlap.
+    final showOnboarding = !await _onboardingService.isCompleted();
+
     // Ensure minimum display duration
     final elapsed = DateTime.now().difference(_splashStartTime!);
     if (elapsed < _minDisplayDuration) {
@@ -53,7 +63,18 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
 
     _hasNavigated = true;
-    context.go(path);
+    context.go(showOnboarding ? AppRouter.onboardingPath : path);
+  }
+
+  /// Lazily resolved so the splash works whether or not the onboarding route
+  /// has been visited yet; registration is idempotent.
+  OnboardingService get _onboardingService {
+    if (!sl.isRegistered<OnboardingService>()) {
+      sl.registerLazySingleton<OnboardingService>(
+        () => OnboardingService(sl<LocalStorageService>()),
+      );
+    }
+    return sl<OnboardingService>();
   }
 
   @override

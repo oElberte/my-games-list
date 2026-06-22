@@ -325,13 +325,23 @@ class _EmptyLibraryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String message;
+    final theme = Theme.of(context);
+
+    // The default (unfiltered) empty library is the user's first impression,
+    // so it gets a warm headline + hint. Filtered views keep their concise,
+    // self-explanatory single message.
+    final bool isDefaultEmpty = !showFavoritesOnly && statusFilter == null;
+    final String title;
+    final String? hint;
     if (showFavoritesOnly) {
-      message = context.l10n.emptyFavorites;
+      title = context.l10n.emptyFavorites;
+      hint = null;
     } else if (statusFilter != null) {
-      message = context.l10n.emptyStatusGames;
+      title = context.l10n.emptyStatusGames;
+      hint = null;
     } else {
-      message = context.l10n.emptyLibrary;
+      title = context.l10n.emptyLibraryTitle;
+      hint = context.l10n.emptyLibraryHint;
     }
 
     return Center(
@@ -343,16 +353,28 @@ class _EmptyLibraryView extends StatelessWidget {
             Icon(
               Icons.sports_esports_outlined,
               size: 80,
-              color: Theme.of(
-                context,
-              ).colorScheme.primary.withValues(alpha: 0.5),
+              color: theme.colorScheme.primary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 24),
             Text(
-              message,
+              title,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: isDefaultEmpty
+                  ? theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    )
+                  : theme.textTheme.bodyLarge,
             ),
+            if (hint != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                hint,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
             const SizedBox(height: 16),
             FilledButton.icon(
               onPressed: () => context.pushNamed(AppRouter.searchName),

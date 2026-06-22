@@ -145,5 +145,19 @@
     "notesHint": "Adicione suas notas...",
     "notSet": "Não definido",
     "languageTitle": "Idioma",
-    "languageSystem": "Padrão do sistema"
+    "languageSystem": "Padrão do sistema",
+    "onboardingTrackTitle": "Acompanhe cada jogo que você joga",
+    "onboardingTrackSubtitle": "Monte sua biblioteca pessoal e mantenha sua coleção organizada por status.",
+    "onboardingDiscoverTitle": "Descubra o que jogar a seguir",
+    "onboardingDiscoverSubtitle": "Explore títulos em alta, joias escondidas e próximos lançamentos feitos para você.",
+    "onboardingShareTitle": "Deixe do seu jeito",
+    "onboardingShareSubtitle": "Marque favoritos, avalie seus jogos e continue de onde parou.",
+    "onboardingSkip": "Pular",
+    "onboardingNext": "Próximo",
+    "onboardingGetStarted": "Começar",
+    "searchGamesInitialTitle": "Encontre seu próximo favorito",
+    "searchGamesInitialHint": "Busque pelo título para adicionar jogos à sua biblioteca.",
+    "searchGamesNoResultsTitle": "Nenhuma correspondência ainda",
+    "emptyLibraryTitle": "Sua biblioteca está vazia",
+    "emptyLibraryHint": "Comece a adicionar jogos para acompanhar sua coleção e nunca perder o progresso."
 }

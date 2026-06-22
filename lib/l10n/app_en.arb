@@ -199,5 +199,19 @@
     "notesHint": "Add your notes...",
     "notSet": "Not set",
     "languageTitle": "Language",
-    "languageSystem": "System default"
+    "languageSystem": "System default",
+    "onboardingTrackTitle": "Track every game you play",
+    "onboardingTrackSubtitle": "Build your personal library and keep your collection organized by status.",
+    "onboardingDiscoverTitle": "Discover what to play next",
+    "onboardingDiscoverSubtitle": "Browse trending titles, hidden gems and upcoming releases tailored for you.",
+    "onboardingShareTitle": "Make it yours",
+    "onboardingShareSubtitle": "Mark favorites, rate your games and pick up right where you left off.",
+    "onboardingSkip": "Skip",
+    "onboardingNext": "Next",
+    "onboardingGetStarted": "Get started",
+    "searchGamesInitialTitle": "Find your next favorite",
+    "searchGamesInitialHint": "Search by title to add games to your library.",
+    "searchGamesNoResultsTitle": "No matches yet",
+    "emptyLibraryTitle": "Your library is empty",
+    "emptyLibraryHint": "Start adding games to track your collection and never lose progress."
 }

@@ -14,6 +14,7 @@ import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
 import 'package:my_games_list/features/auth/user_model.dart';
+import 'package:my_games_list/features/onboarding/onboarding_screen.dart';
 import 'package:my_games_list/features/splash/splash_screen.dart';
 import 'package:my_games_list/l10n/app_localizations.dart';
 
@@ -32,14 +33,14 @@ void main() {
 
   group('SplashScreen', () {
     late MockAuthBloc mockAuthBloc;
+    late MockLocalStorageService mockStorage;
 
     setUp(() {
       mockAuthBloc = MockAuthBloc();
+      mockStorage = MockLocalStorageService();
 
       sl.registerLazySingleton<AuthRepository>(() => MockAuthRepository());
-      sl.registerLazySingleton<LocalStorageService>(
-        () => MockLocalStorageService(),
-      );
+      sl.registerLazySingleton<LocalStorageService>(() => mockStorage);
       sl.registerLazySingleton<AuthBloc>(
         () => AuthBloc(sl<LocalStorageService>(), FakeSessionResetService()),
       );
@@ -108,6 +109,7 @@ void main() {
 
     testWidgets('should wait minimum 800ms before navigation', (tester) async {
       // Arrange
+      await mockStorage.setBool('onboarding_completed', true);
       const testUser = User(
         id: '123',
         email: 'test@example.com',
@@ -155,6 +157,7 @@ void main() {
       'should navigate to home when authenticated after min duration',
       (tester) async {
         // Arrange
+        await mockStorage.setBool('onboarding_completed', true);
         const testUser = User(
           id: '123',
           email: 'test@example.com',
@@ -203,6 +206,7 @@ void main() {
       'should navigate to signin when unauthenticated after min duration',
       (tester) async {
         // Arrange
+        await mockStorage.setBool('onboarding_completed', true);
         final controller = StreamController<AuthState>();
         whenListen(
           mockAuthBloc,
@@ -243,6 +247,7 @@ void main() {
 
     testWidgets('should navigate to signin on auth error', (tester) async {
       // Arrange
+      await mockStorage.setBool('onboarding_completed', true);
       final controller = StreamController<AuthState>();
       whenListen(
         mockAuthBloc,
@@ -279,5 +284,48 @@ void main() {
       // Cleanup
       await controller.close();
     });
+
+    testWidgets(
+      'should navigate to onboarding on first launch (flag not set)',
+      (tester) async {
+        // Arrange - onboarding flag intentionally left unset (fresh install)
+        final controller = StreamController<AuthState>();
+        whenListen(
+          mockAuthBloc,
+          controller.stream,
+          initialState: const AuthInitial(),
+        );
+
+        // Act
+        await tester.pumpWidget(
+          BlocProvider<AuthBloc>.value(
+            value: mockAuthBloc,
+            child: MaterialApp.router(
+              routerConfig: AppRouter.createRouter(),
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: AppLocalizations.supportedLocales,
+            ),
+          ),
+        );
+
+        // Even an authenticated user sees onboarding once before continuing.
+        controller.add(
+          const AuthAuthenticated(User(id: '1', email: 'a@b.com', name: 'A')),
+        );
+        await tester.pumpAndSettle();
+
+        // Assert - first launch routes to onboarding, not home/signin
+        expect(find.byType(SplashScreen), findsNothing);
+        expect(find.byType(OnboardingScreen), findsOneWidget);
+
+        // Cleanup
+        await controller.close();
+      },
+    );
   });
 }
