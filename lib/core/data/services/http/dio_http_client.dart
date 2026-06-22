@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:my_games_list/core/data/services/http/i_http_client.dart';
+import 'package:my_games_list/core/data/services/http/retry_interceptor.dart';
 import 'package:my_games_list/core/domain/models/api_error.dart';
 import 'package:my_games_list/core/domain/models/api_response.dart';
 import 'package:my_games_list/core/utils/env.dart';
@@ -45,6 +46,9 @@ class DioHttpClient implements IHttpClient {
         },
       ),
     );
+
+    // Retry idempotent reads on transient network failures with backoff.
+    _dio.interceptors.add(RetryInterceptor(_dio));
   }
   late final Dio _dio;
   bool Function()? _onUnauthorized;
