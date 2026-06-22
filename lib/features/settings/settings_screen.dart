@@ -6,6 +6,7 @@ import 'package:my_games_list/core/utils/messages_extensions.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
+import 'package:my_games_list/features/consent/widgets/consent_settings_section.dart';
 import 'package:my_games_list/features/settings/bloc/account_management_bloc.dart';
 import 'package:my_games_list/features/settings/bloc/account_management_event.dart';
 import 'package:my_games_list/features/settings/bloc/account_management_state.dart';
@@ -129,8 +130,12 @@ class SettingsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Privacy & data Section (LGPD: export + delete)
+            // Privacy & data Section (LGPD: export + delete), with the
+            // per-category consent toggles grouped directly under it so the two
+            // read as one privacy area rather than two competing sections.
             const _PrivacyDataSection(),
+            const SizedBox(height: 8),
+            const ConsentSettingsSection(),
             const SizedBox(height: 24),
 
             // Logout Button

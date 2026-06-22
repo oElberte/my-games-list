@@ -8,6 +8,9 @@ import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
 import 'package:my_games_list/features/auth/user_model.dart';
+import 'package:my_games_list/core/services/consent/consent_category.dart';
+import 'package:my_games_list/features/consent/bloc/consent_cubit.dart';
+import 'package:my_games_list/features/consent/bloc/consent_state.dart';
 import 'package:my_games_list/features/settings/bloc/account_management_bloc.dart';
 import 'package:my_games_list/features/settings/bloc/account_management_state.dart';
 import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
@@ -41,13 +44,24 @@ class FakeAccountExportSaver implements AccountExportSaver {
 void main() {
   setUpAll(() {
     registerFallbackValue(FakeAuthEvent());
+    registerFallbackValue(ConsentCategory.crash);
   });
 
   late MockAuthBloc mockAuthBloc;
   late MockSettingsBloc mockSettingsBloc;
+  late MockConsentCubit mockConsentCubit;
   late MockAuthRepository mockRepository;
   late FakeAccountExportSaver fakeSaver;
   late AccountManagementBloc accountBloc;
+
+  const deniedConsent = ConsentState(
+    hasAnswered: true,
+    granted: {
+      ConsentCategory.analytics: false,
+      ConsentCategory.crash: false,
+      ConsentCategory.push: false,
+    },
+  );
 
   const testUser = User(
     id: '123',
@@ -59,6 +73,7 @@ void main() {
   setUp(() {
     mockAuthBloc = MockAuthBloc();
     mockSettingsBloc = MockSettingsBloc();
+    mockConsentCubit = MockConsentCubit();
     mockRepository = MockAuthRepository();
     fakeSaver = FakeAccountExportSaver();
 
@@ -66,11 +81,16 @@ void main() {
       () => mockAuthBloc.state,
     ).thenReturn(const AuthAuthenticated(testUser));
     when(() => mockSettingsBloc.state).thenReturn(const SettingsState());
+    when(() => mockConsentCubit.state).thenReturn(deniedConsent);
+    when(
+      () => mockConsentCubit.setCategory(any(), granted: any(named: 'granted')),
+    ).thenAnswer((_) async {});
   });
 
   tearDown(() async {
     await mockAuthBloc.close();
     await mockSettingsBloc.close();
+    await mockConsentCubit.close();
   });
 
   // The AccountManagementBloc is created inside BlocProvider.create so it lives
@@ -81,6 +101,7 @@ void main() {
       providers: [
         BlocProvider<AuthBloc>.value(value: mockAuthBloc),
         BlocProvider<SettingsBloc>.value(value: mockSettingsBloc),
+        BlocProvider<ConsentCubit>.value(value: mockConsentCubit),
         BlocProvider<AccountManagementBloc>(
           create: (_) {
             accountBloc = AccountManagementBloc(
@@ -178,5 +199,26 @@ void main() {
     expect(fakeSaver.sharePositionOrigin, isNotNull);
     expect(fakeSaver.sharePositionOrigin!.isEmpty, isFalse);
     expect(accountBloc.state.exportStatus, AccountActionStatus.success);
+  });
+
+  testWidgets('shows the per-category consent toggles', (tester) async {
+    await tester.pumpWidget(buildScreen());
+
+    expect(find.text('Usage analytics'), findsOneWidget);
+    expect(find.text('Crash reports'), findsOneWidget);
+    expect(find.text('Push notifications'), findsOneWidget);
+  });
+
+  testWidgets('toggling a consent switch grants that category', (tester) async {
+    await tester.pumpWidget(buildScreen());
+
+    final crashSwitch = find.widgetWithText(SwitchListTile, 'Crash reports');
+    await tester.ensureVisible(crashSwitch);
+    await tester.tap(crashSwitch);
+    await tester.pumpAndSettle();
+
+    verify(
+      () => mockConsentCubit.setCategory(ConsentCategory.crash, granted: true),
+    ).called(1);
   });
 }

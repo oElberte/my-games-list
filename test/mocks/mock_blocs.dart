@@ -2,6 +2,8 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
+import 'package:my_games_list/features/consent/bloc/consent_cubit.dart';
+import 'package:my_games_list/features/consent/bloc/consent_state.dart';
 import 'package:my_games_list/features/library/bloc/library_bloc.dart';
 import 'package:my_games_list/features/library/bloc/library_event.dart';
 import 'package:my_games_list/features/library/bloc/library_state.dart';
@@ -16,3 +18,6 @@ class MockSettingsBloc extends MockBloc<SettingsEvent, SettingsState>
 
 class MockLibraryBloc extends MockBloc<LibraryEvent, LibraryState>
     implements LibraryBloc {}
+
+class MockConsentCubit extends MockCubit<ConsentState>
+    implements ConsentCubit {}

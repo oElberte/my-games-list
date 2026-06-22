@@ -1147,6 +1147,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not delete your account. Please try again.'**
   String get deleteAccountError;
+
+  /// Title of the first-run / web consent banner
+  ///
+  /// In en, this message translates to:
+  /// **'Your privacy choices'**
+  String get consentBannerTitle;
+
+  /// Body text of the first-run / web consent banner
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what data you allow. You can change these anytime in Settings.'**
+  String get consentBannerBody;
+
+  /// Consent banner button that grants every data-collection category
+  ///
+  /// In en, this message translates to:
+  /// **'Accept all'**
+  String get consentAcceptAll;
+
+  /// Consent banner button that denies every data-collection category
+  ///
+  /// In en, this message translates to:
+  /// **'Reject all'**
+  String get consentRejectAll;
+
+  /// Consent banner button that opens the per-category choices sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Customize'**
+  String get consentCustomize;
+
+  /// Title of the per-category consent customization sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what you allow'**
+  String get consentCustomizeTitle;
+
+  /// Button that saves the per-category consent choices
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get consentSave;
+
+  /// Label for the usage analytics consent category
+  ///
+  /// In en, this message translates to:
+  /// **'Usage analytics'**
+  String get consentAnalyticsTitle;
+
+  /// Description for the usage analytics consent category
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous usage data to help improve the app.'**
+  String get consentAnalyticsSubtitle;
+
+  /// Label for the crash reporting consent category
+  ///
+  /// In en, this message translates to:
+  /// **'Crash reports'**
+  String get consentCrashTitle;
+
+  /// Description for the crash reporting consent category
+  ///
+  /// In en, this message translates to:
+  /// **'Send crash and error reports to help fix problems.'**
+  String get consentCrashSubtitle;
+
+  /// Label for the push notifications consent category
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications'**
+  String get consentPushTitle;
+
+  /// Description for the push notifications consent category
+  ///
+  /// In en, this message translates to:
+  /// **'Receive notifications about your games and updates.'**
+  String get consentPushSubtitle;
 }
 
 class _AppLocalizationsDelegate

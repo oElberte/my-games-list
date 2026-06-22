@@ -24,9 +24,14 @@ class ConsentService {
   final LocalStorageService _storage;
   final TelemetryGateway _gateway;
 
+  /// Storage key for the "user has made an explicit consent choice" flag.
+  static const String answeredStorageKey = 'consent_answered';
+
   final Map<ConsentCategory, bool> _granted = {
     for (final category in ConsentCategory.values) category: false,
   };
+
+  bool _answered = false;
 
   final _changes = StreamController<ConsentCategory>.broadcast();
 
@@ -39,11 +44,26 @@ class ConsentService {
   /// every category to denied when storage has no value, then pushes that state
   /// to the gateway so a fresh install collects nothing.
   Future<void> load() async {
+    _answered = await _readAnswered();
     for (final category in ConsentCategory.values) {
       final stored = await _readStored(category);
       _granted[category] = stored;
       await _gateway.applyConsent(category, granted: stored);
     }
+  }
+
+  /// Whether the user has already made an explicit consent choice. Defaults to
+  /// `false` so a fresh install shows the first-run consent prompt; flips to
+  /// `true` via [markAnswered] once the user accepts, rejects, or customizes,
+  /// so the prompt is not shown again.
+  bool get hasAnswered => _answered;
+
+  /// Persists that the user has made an explicit consent choice, so the
+  /// first-run prompt is not shown again. Idempotent.
+  Future<void> markAnswered() async {
+    if (_answered) return;
+    _answered = true;
+    await _storage.setBool(answeredStorageKey, true);
   }
 
   /// Whether the user has granted consent for [category]. Denied by default.
@@ -65,6 +85,15 @@ class ConsentService {
     for (final category in ConsentCategory.values) {
       await _set(category, false);
     }
+    // Clear the "answered" flag too: the next account on a shared device must
+    // see the first-run consent prompt again rather than inheriting this one.
+    _answered = false;
+    await _storage.remove(answeredStorageKey);
+    // Signal listeners so the cubit re-reads [hasAnswered] and re-shows the
+    // first-run banner. The per-category [_set] calls above stay silent when a
+    // category was already denied, so without this a same-session logout +
+    // re-login would leave the banner hidden for the next account.
+    _changes.add(ConsentCategory.values.first);
   }
 
   Future<void> _set(ConsentCategory category, bool granted) async {
@@ -98,6 +127,15 @@ class ConsentService {
       return await _storage.getBool(category.storageKey) ?? false;
     } catch (_) {
       // Storage can be unavailable (locked keystore, tests); fail closed.
+      return false;
+    }
+  }
+
+  Future<bool> _readAnswered() async {
+    try {
+      return await _storage.getBool(answeredStorageKey) ?? false;
+    } catch (_) {
+      // Fail open to "not answered" so the prompt is shown rather than skipped.
       return false;
     }
   }

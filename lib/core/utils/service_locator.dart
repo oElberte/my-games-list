@@ -15,6 +15,7 @@ import 'package:my_games_list/core/utils/env.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
+import 'package:my_games_list/features/consent/bloc/consent_cubit.dart';
 import 'package:my_games_list/features/settings/bloc/settings_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -121,6 +122,13 @@ void _registerGlobalBlocs() {
   // Register SettingsBloc as lazy singleton
   sl.registerLazySingleton<SettingsBloc>(
     () => SettingsBloc(sl<LocalStorageService>()),
+  );
+
+  // Consent presentation cubit (lazy singleton): a thin view over ConsentService
+  // shared by the first-run banner and the settings toggles so both stay in
+  // sync. Built lazily, after ConsentService.load() has run.
+  sl.registerLazySingleton<ConsentCubit>(
+    () => ConsentCubit(sl<ConsentService>()),
   );
 
   // Drives FCM registration: only registers the token once push consent is

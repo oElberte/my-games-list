@@ -173,5 +173,18 @@
     "deleteAccountConfirmLabel": "Digite {word} para confirmar",
     "deleteAccountConfirmWord": "EXCLUIR",
     "deleteAccountConfirmButton": "Excluir conta",
-    "deleteAccountError": "Não foi possível excluir sua conta. Tente novamente."
+    "deleteAccountError": "Não foi possível excluir sua conta. Tente novamente.",
+    "consentBannerTitle": "Suas escolhas de privacidade",
+    "consentBannerBody": "Escolha quais dados você permite. Você pode alterar isso quando quiser em Configurações.",
+    "consentAcceptAll": "Aceitar tudo",
+    "consentRejectAll": "Recusar tudo",
+    "consentCustomize": "Personalizar",
+    "consentCustomizeTitle": "Escolha o que você permite",
+    "consentSave": "Salvar",
+    "consentAnalyticsTitle": "Análise de uso",
+    "consentAnalyticsSubtitle": "Dados de uso anônimos para ajudar a melhorar o app.",
+    "consentCrashTitle": "Relatórios de falhas",
+    "consentCrashSubtitle": "Enviar relatórios de falhas e erros para ajudar a corrigir problemas.",
+    "consentPushTitle": "Notificações push",
+    "consentPushSubtitle": "Receba notificações sobre seus jogos e atualizações."
 }

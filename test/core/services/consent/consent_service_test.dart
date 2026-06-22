@@ -25,6 +25,7 @@ void main() {
       gateway = _MockGateway();
       when(() => storage.getBool(any())).thenAnswer((_) async => null);
       when(() => storage.setBool(any(), any())).thenAnswer((_) async => true);
+      when(() => storage.remove(any())).thenAnswer((_) async => true);
       when(
         () => gateway.applyConsent(any(), granted: any(named: 'granted')),
       ).thenAnswer((_) async {});
@@ -114,6 +115,56 @@ void main() {
         verify(() => storage.setBool(category.storageKey, false)).called(1);
         verify(() => gateway.applyConsent(category, granted: false)).called(1);
       }
+    });
+
+    group('answered flag', () {
+      test('defaults to not answered', () {
+        expect(service.hasAnswered, isFalse);
+      });
+
+      test('load reflects the persisted answered flag', () async {
+        when(
+          () => storage.getBool(ConsentService.answeredStorageKey),
+        ).thenAnswer((_) async => true);
+
+        await service.load();
+
+        expect(service.hasAnswered, isTrue);
+      });
+
+      test('markAnswered persists the flag and is idempotent', () async {
+        await service.markAnswered();
+        await service.markAnswered();
+
+        expect(service.hasAnswered, isTrue);
+        verify(
+          () => storage.setBool(ConsentService.answeredStorageKey, true),
+        ).called(1);
+      });
+
+      test('revokeAll clears the answered flag', () async {
+        await service.markAnswered();
+
+        await service.revokeAll();
+
+        expect(service.hasAnswered, isFalse);
+        verify(
+          () => storage.remove(ConsentService.answeredStorageKey),
+        ).called(1);
+      });
+
+      test(
+        'revokeAll signals the changes stream so the prompt re-shows',
+        () async {
+          await service.markAnswered();
+
+          // The stream emission is what makes the cubit re-read hasAnswered
+          // (false again) on a same-session logout + re-login, otherwise the
+          // banner stays hidden for the next account.
+          expectLater(service.changes, emits(isA<ConsentCategory>()));
+          await service.revokeAll();
+        },
+      );
     });
 
     test(
