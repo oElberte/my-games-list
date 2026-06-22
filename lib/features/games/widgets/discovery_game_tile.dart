@@ -123,13 +123,17 @@ class DiscoveryGameTile extends StatelessWidget {
             Positioned.fill(
               child: Material(
                 type: MaterialType.transparency,
-                child: InkWell(
-                  onTap: () => context.pushNamed(
-                    AppRouter.gameDetailsName,
-                    pathParameters: {'id': game.id.toString()},
-                    extra: heroTagPrefix.isEmpty ? null : heroTagPrefix,
+                child: Semantics(
+                  label: game.name,
+                  button: true,
+                  child: InkWell(
+                    onTap: () => context.pushNamed(
+                      AppRouter.gameDetailsName,
+                      pathParameters: {'id': game.id.toString()},
+                      extra: heroTagPrefix.isEmpty ? null : heroTagPrefix,
+                    ),
+                    mouseCursor: SystemMouseCursors.click,
                   ),
-                  mouseCursor: SystemMouseCursors.click,
                 ),
               ),
             ),

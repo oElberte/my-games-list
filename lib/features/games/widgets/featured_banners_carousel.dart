@@ -160,8 +160,11 @@ class _BannerCard extends StatelessWidget {
               child: Material(
                 type: MaterialType.transparency,
                 child: InkWell(
-                  onTap: () => _onTap(context),
-                  mouseCursor: SystemMouseCursors.click,
+                  // Banners may have no linked game — don't offer a dead tap.
+                  onTap: banner.game == null ? null : () => _onTap(context),
+                  mouseCursor: banner.game == null
+                      ? SystemMouseCursors.basic
+                      : SystemMouseCursors.click,
                 ),
               ),
             ),
