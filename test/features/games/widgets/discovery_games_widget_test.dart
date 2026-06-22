@@ -402,6 +402,7 @@ void main() {
     Widget createLazyWidget({
       required DiscoveryGamesState state,
       DiscoveryType discoveryType = DiscoveryType.indie,
+      String heroTagPrefix = '',
     }) {
       when(() => mockBloc.state).thenReturn(state);
 
@@ -416,7 +417,10 @@ void main() {
         home: Scaffold(
           body: BlocProvider<DiscoveryGamesBloc>.value(
             value: mockBloc,
-            child: LazyDiscoveryGamesWidget(discoveryType: discoveryType),
+            child: LazyDiscoveryGamesWidget(
+              discoveryType: discoveryType,
+              heroTagPrefix: heroTagPrefix,
+            ),
           ),
         ),
       );
@@ -538,5 +542,70 @@ void main() {
       expect(find.text('Indie Game 1'), findsOneWidget);
       expect(find.text('Indie Game 2'), findsOneWidget);
     });
+
+    testWidgets('uses an unchanged detector key for the Home surface', (
+      tester,
+    ) async {
+      when(() => mockBloc.stream).thenAnswer(
+        (_) => Stream.value(
+          stateForType(
+            DiscoveryType.newReleases,
+            status: DiscoveryGamesStatus.initial,
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        createLazyWidget(
+          state: stateForType(
+            DiscoveryType.newReleases,
+            status: DiscoveryGamesStatus.initial,
+          ),
+          discoveryType: DiscoveryType.newReleases,
+        ),
+      );
+      await tester.pump();
+
+      final detector = tester.widget<VisibilityDetector>(
+        find.byType(VisibilityDetector),
+      );
+      expect(detector.key, const Key('lazy_discovery_new_releases'));
+    });
+
+    testWidgets(
+      'derives distinct detector keys per surface so callbacks are not '
+      'coalesced',
+      (tester) async {
+        when(() => mockBloc.stream).thenAnswer(
+          (_) => Stream.value(
+            stateForType(
+              DiscoveryType.newReleases,
+              status: DiscoveryGamesStatus.initial,
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          createLazyWidget(
+            state: stateForType(
+              DiscoveryType.newReleases,
+              status: DiscoveryGamesStatus.initial,
+            ),
+            discoveryType: DiscoveryType.newReleases,
+            heroTagPrefix: 'browse-new-releases-',
+          ),
+        );
+        await tester.pump();
+
+        final detector = tester.widget<VisibilityDetector>(
+          find.byType(VisibilityDetector),
+        );
+        expect(
+          detector.key,
+          const Key('lazy_discovery_browse-new-releases-new_releases'),
+        );
+        expect(detector.key, isNot(const Key('lazy_discovery_new_releases')));
+      },
+    );
   });
 }

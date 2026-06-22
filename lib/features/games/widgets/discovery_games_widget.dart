@@ -181,7 +181,9 @@ class _LazyDiscoveryGamesWidgetState extends State<LazyDiscoveryGamesWidget> {
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
-      key: Key('lazy_discovery_${widget.discoveryType.queryParam}'),
+      key: Key(
+        'lazy_discovery_${widget.heroTagPrefix}${widget.discoveryType.queryParam}',
+      ),
       onVisibilityChanged: _onVisibilityChanged,
       child: BlocBuilder<DiscoveryGamesBloc, DiscoveryGamesState>(
         buildWhen: (previous, current) {
