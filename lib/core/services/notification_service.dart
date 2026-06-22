@@ -26,24 +26,52 @@ class NotificationService {
   StreamSubscription<String>? _tokenRefreshSubscription;
   StreamSubscription<RemoteMessage>? _onMessageSubscription;
   StreamSubscription<RemoteMessage>? _onMessageOpenedAppSubscription;
+  bool _initialized = false;
+  // Bumped on every disable(); an in-flight initialize() compares against it so
+  // a revoke/logout mid-setup cancels before the token is sent or listeners are
+  // attached (otherwise it would PATCH the token and listen after consent off).
+  int _generation = 0;
 
   /// Stream of route strings to navigate to when a notification is tapped.
   Stream<String> get navigationStream => _navigationController.stream;
 
+  /// Requests permission, registers the FCM token with the backend, and starts
+  /// listening for messages.
+  ///
+  /// LGPD: this is only invoked once push consent is granted **and** the user
+  /// is authenticated (so the backend PATCH /users/me/fcm-token can succeed
+  /// instead of 401-ing at cold start). It must never run on app launch.
   Future<void> initialize() async {
     // Push notifications (FCM + flutter_local_notifications) are not supported
     // on web in this app, so skip all setup there.
     if (kIsWeb) return;
+    if (_initialized) return;
+    _initialized = true;
+
+    // Capture the generation this setup belongs to. disable() bumps it, so if a
+    // revoke/logout lands mid-setup we bail before sending the token or
+    // attaching listeners (which would leak collection after consent is off).
+    final generation = _generation;
+    bool isStale() => generation != _generation;
+
+    // Auto-init is off by default (native config) and after every disable().
+    // Turn it back on only now that push consent is granted, so the SDK does
+    // not recreate the token behind our back.
+    await _messaging.setAutoInitEnabled(true);
 
     // 1. Request permissions
     await _messaging.requestPermission(alert: true, badge: true, sound: true);
+    if (isStale()) return;
 
     // 2. Initialize flutter_local_notifications for foreground display
     await _initLocalNotifications();
+    if (isStale()) return;
 
     // 3. Get FCM token and send to backend
     final token = await _messaging.getToken();
+    if (isStale()) return;
     if (token != null) await _sendTokenToBackend(token);
+    if (isStale()) return;
 
     // 4. Listen for token refreshes
     _tokenRefreshSubscription = _messaging.onTokenRefresh.listen(
@@ -61,6 +89,7 @@ class NotificationService {
 
     // 7. Notification tap: app was terminated, opened from notification
     final initialMessage = await _messaging.getInitialMessage();
+    if (isStale()) return;
     if (initialMessage != null) _handleNotificationTap(initialMessage);
   }
 
@@ -113,19 +142,57 @@ class NotificationService {
 
   Future<void> _sendTokenToBackend(String token) async {
     try {
-      String platform = 'android';
-      if (kIsWeb) {
-        platform = 'web';
-      } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-        platform = 'ios';
-      }
       await _httpClient.patch(
         '/users/me/fcm-token',
-        data: {'fcm_token': token, 'platform': platform},
+        data: {'fcm_token': token, 'platform': _platform},
       );
     } catch (_) {
       // Non-critical: silently ignore failures
     }
+  }
+
+  /// Stops push collection on consent revocation: cancels message/token-refresh
+  /// subscriptions, deletes the FCM token on-device, and asks the backend to
+  /// drop the stored token so it stops delivering. Idempotent and safe to call
+  /// even if [initialize] never ran.
+  Future<void> disable() async {
+    if (kIsWeb) return;
+    // Invalidate any in-flight initialize() so it stops before sending the
+    // token or attaching listeners.
+    _generation++;
+    await _cancelMessageSubscriptions();
+    _initialized = false;
+    try {
+      // Stop the SDK from re-minting a token after we delete it below.
+      await _messaging.setAutoInitEnabled(false);
+      await _deleteTokenFromBackend();
+      await _messaging.deleteToken();
+    } catch (_) {
+      // Best-effort teardown; never block consent revocation on FCM errors.
+    }
+  }
+
+  Future<void> _deleteTokenFromBackend() async {
+    try {
+      await _httpClient.delete('/users/me/fcm-token');
+    } catch (_) {
+      // Non-critical: backend may already lack the token.
+    }
+  }
+
+  String get _platform {
+    if (kIsWeb) return 'web';
+    if (defaultTargetPlatform == TargetPlatform.iOS) return 'ios';
+    return 'android';
+  }
+
+  Future<void> _cancelMessageSubscriptions() async {
+    await _tokenRefreshSubscription?.cancel();
+    await _onMessageSubscription?.cancel();
+    await _onMessageOpenedAppSubscription?.cancel();
+    _tokenRefreshSubscription = null;
+    _onMessageSubscription = null;
+    _onMessageOpenedAppSubscription = null;
   }
 
   void dispose() {

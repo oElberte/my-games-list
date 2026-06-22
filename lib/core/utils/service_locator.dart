@@ -5,8 +5,13 @@ import 'package:my_games_list/core/data/services/storage/local_storage_service.d
 import 'package:my_games_list/core/data/services/storage/secure_token_storage.dart';
 import 'package:my_games_list/core/data/services/storage/shared_preferences_service.dart';
 import 'package:my_games_list/core/data/services/storage/token_storage.dart';
+import 'package:my_games_list/core/services/consent/consent_service.dart';
+import 'package:my_games_list/core/services/consent/firebase_telemetry_gateway.dart';
+import 'package:my_games_list/core/services/consent/push_registration_coordinator.dart';
+import 'package:my_games_list/core/services/consent/telemetry_gateway.dart';
 import 'package:my_games_list/core/services/notification_service.dart';
 import 'package:my_games_list/core/services/session_reset_service.dart';
+import 'package:my_games_list/core/utils/env.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
 import 'package:my_games_list/features/auth/bloc/auth_state.dart';
@@ -29,6 +34,11 @@ Future<void> setupServiceLocator() async {
 
   // Register global BLoCs (non-auth)
   _registerGlobalBlocs();
+
+  // Load persisted consent and apply each collector's state. Runs after the
+  // gateway + services are registered and BEFORE the app starts collecting, so
+  // a fresh install (all categories denied) collects nothing.
+  await sl<ConsentService>().load();
 }
 
 /// Registers core services like storage and HTTP client.
@@ -54,11 +64,33 @@ Future<void> _registerCoreServices() async {
     () => NotificationService(httpClient: sl<IHttpClient>()),
   );
 
-  // Session teardown (logout) — clears token + resets per-user singletons
+  // Telemetry collectors live behind a gateway so consent logic stays testable
+  // and Firebase-free. Only production builds touch the real SDKs; everything
+  // else (staging, debug, tests) uses a no-op so nothing collects.
+  sl.registerLazySingleton<TelemetryGateway>(
+    () => Env.isProduction
+        ? FirebaseTelemetryGateway(
+            notificationService: sl<NotificationService>(),
+          )
+        : const NoopTelemetryGateway(),
+  );
+
+  // Consent gate (LGPD). Defaults every category to denied until granted.
+  sl.registerLazySingleton<ConsentService>(
+    () => ConsentService(
+      storage: sl<LocalStorageService>(),
+      gateway: sl<TelemetryGateway>(),
+    ),
+  );
+
+  // Session teardown (logout) — clears token, re-denies every consent category
+  // so the next account starts denied, and resets per-user singletons.
   sl.registerLazySingleton<SessionResetService>(
     () => SessionResetService(
       tokenStorage: sl<TokenStorage>(),
       httpClient: sl<IHttpClient>(),
+      notificationService: sl<NotificationService>(),
+      consentService: sl<ConsentService>(),
     ),
   );
 }
@@ -89,6 +121,17 @@ void _registerGlobalBlocs() {
   // Register SettingsBloc as lazy singleton
   sl.registerLazySingleton<SettingsBloc>(
     () => SettingsBloc(sl<LocalStorageService>()),
+  );
+
+  // Drives FCM registration: only registers the token once push consent is
+  // granted AND the user is authenticated, tearing it down otherwise. Fixes
+  // the cold-start PATCH /users/me/fcm-token 401.
+  sl.registerLazySingleton<PushRegistrationCoordinator>(
+    () => PushRegistrationCoordinator(
+      consentService: sl<ConsentService>(),
+      notificationService: sl<NotificationService>(),
+      authBloc: sl<AuthBloc>(),
+    ),
   );
 
   // Auto-logout on 401: an expired/invalid session triggers a single logout

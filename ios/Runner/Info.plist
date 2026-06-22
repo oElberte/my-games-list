@@ -4,6 +4,14 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<!-- LGPD: keep Firebase off until the user explicitly grants consent.
+	     Crashlytics must not auto-collect and Messaging must not auto-init
+	     (which would mint an FCM token) on cold start before consent. Dart
+	     enables each collector only after its category is granted. -->
+	<key>FirebaseCrashlyticsCollectionEnabled</key>
+	<false/>
+	<key>FirebaseMessagingAutoInitEnabled</key>
+	<false/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
