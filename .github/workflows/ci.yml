@@ -36,8 +36,16 @@ jobs:
         run: flutter analyze
       - name: Check for hardcoded strings
         run: bash tool/check_hardcoded_strings.sh
-      - name: Test
-        run: flutter test
+      - name: Test with coverage
+        run: flutter test --coverage
+      - name: Enforce coverage threshold
+        run: |
+          MIN=38
+          HIT=$(grep '^DA:' coverage/lcov.info | awk -F, '$2>0{c++} END{print c+0}')
+          TOTAL=$(grep -c '^DA:' coverage/lcov.info)
+          PCT=$(awk "BEGIN{printf \"%.1f\", $HIT/$TOTAL*100}")
+          echo "Coverage: $PCT% ($HIT/$TOTAL lines, minimum ${MIN}%)"
+          awk "BEGIN{exit !($PCT+0 >= $MIN)}" || { echo "::error::Coverage $PCT% is below the ${MIN}% minimum"; exit 1; }
 
   build-web:
     name: Build Web
