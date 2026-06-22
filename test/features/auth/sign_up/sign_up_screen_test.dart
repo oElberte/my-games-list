@@ -123,10 +123,7 @@ void main() {
       await acceptTerms(tester);
 
       // Enabled after acceptance.
-      expect(
-        tester.widget<FilledButton>(signUpButton()).onPressed,
-        isNotNull,
-      );
+      expect(tester.widget<FilledButton>(signUpButton()).onPressed, isNotNull);
     });
 
     testWidgets('accepting and submitting dispatches SignUpSubmitted with '
@@ -193,9 +190,7 @@ void main() {
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
         // In the loading state the button shows the spinner instead of its
         // label, so locate it by type rather than by text.
-        final button = tester.widget<FilledButton>(
-          find.byType(FilledButton),
-        );
+        final button = tester.widget<FilledButton>(find.byType(FilledButton));
         expect(button.onPressed, isNull);
       },
     );
