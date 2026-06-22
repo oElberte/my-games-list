@@ -630,38 +630,43 @@ class _DescriptionSection extends StatelessWidget {
 
     const maxLines = 4;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (game.storyline != null) ...[
-          Text(l10n.storyline, style: Theme.of(context).textTheme.titleSmall),
-          const SizedBox(height: 8),
-          Text(
-            game.storyline!,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-            maxLines: isExpanded ? null : 3,
-            overflow: isExpanded ? null : TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 12),
+    // Make the long-form storyline/summary selectable so web users can copy
+    // descriptions. Wrapping only the content text keeps the toggle button and
+    // the rest of the screen behaving normally.
+    return SelectionArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (game.storyline != null) ...[
+            Text(l10n.storyline, style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 8),
+            Text(
+              game.storyline!,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+              maxLines: isExpanded ? null : 3,
+              overflow: isExpanded ? null : TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 12),
+          ],
+          if (game.summary != null) ...[
+            Text(l10n.summary, style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 8),
+            Text(
+              game.summary!,
+              style: Theme.of(context).textTheme.bodyMedium,
+              maxLines: isExpanded ? null : maxLines,
+              overflow: isExpanded ? null : TextOverflow.ellipsis,
+            ),
+          ],
+          if (fullText.length > 200)
+            TextButton(
+              onPressed: onToggle,
+              child: Text(isExpanded ? l10n.readLess : l10n.readMore),
+            ),
         ],
-        if (game.summary != null) ...[
-          Text(l10n.summary, style: Theme.of(context).textTheme.titleSmall),
-          const SizedBox(height: 8),
-          Text(
-            game.summary!,
-            style: Theme.of(context).textTheme.bodyMedium,
-            maxLines: isExpanded ? null : maxLines,
-            overflow: isExpanded ? null : TextOverflow.ellipsis,
-          ),
-        ],
-        if (fullText.length > 200)
-          TextButton(
-            onPressed: onToggle,
-            child: Text(isExpanded ? l10n.readLess : l10n.readMore),
-          ),
-      ],
+      ),
     );
   }
 }
@@ -783,13 +788,15 @@ class _SimilarGamesSection extends StatelessWidget {
                   ? getHighResUrl(game.cover!.url, ImageSize.coverBig)
                   : null;
 
-              return GestureDetector(
+              return InkWell(
                 onTap: () {
                   context.pushNamed(
                     'gameDetails',
                     pathParameters: {'id': game.id.toString()},
                   );
                 },
+                mouseCursor: SystemMouseCursors.click,
+                borderRadius: BorderRadius.circular(8),
                 child: SizedBox(
                   width: 100,
                   child: Column(

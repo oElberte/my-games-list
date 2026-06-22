@@ -105,117 +105,126 @@ class _GameCard extends StatelessWidget {
         ? getHighResUrl(game.coverUrl, ImageSize.hd720)
         : game.coverUrl;
 
-    return GestureDetector(
-      onTap: () {
-        context.pushNamed(
-          'gameDetails',
-          pathParameters: {'id': game.id.toString()},
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.4)
-                  : Colors.black.withValues(alpha: 0.2),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.4)
+                : Colors.black.withValues(alpha: 0.2),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Background image with Hero animation
+            VisibilityHero(
+              tag: 'game-cover-${game.id}',
+              child: _GameCoverImage(coverUrl: highResCoverUrl),
+            ),
+
+            // Gradient overlay
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.7),
+                  ],
+                  stops: const [0.4, 1.0],
+                ),
+              ),
+            ),
+
+            // Countdown badge
+            Positioned(
+              top: 12,
+              right: 12,
+              child: _CountdownBadge(countdownText: game.countdownText),
+            ),
+
+            // Game info
+            Positioned(
+              left: 12,
+              right: 12,
+              bottom: 12,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    game.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.whatshot,
+                        color: Colors.orange,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${game.hypes} hypes',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontSize: 12,
+                        ),
+                      ),
+                      if (game.platforms.isNotEmpty) ...[
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            game.platformNames,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.7),
+                              fontSize: 11,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Tap target with web hover/focus affordance, overlaid so the
+            // ripple covers the whole card without altering the layout.
+            Positioned.fill(
+              child: Material(
+                type: MaterialType.transparency,
+                child: InkWell(
+                  onTap: () {
+                    context.pushNamed(
+                      'gameDetails',
+                      pathParameters: {'id': game.id.toString()},
+                    );
+                  },
+                  mouseCursor: SystemMouseCursors.click,
+                ),
+              ),
             ),
           ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // Background image with Hero animation
-              VisibilityHero(
-                tag: 'game-cover-${game.id}',
-                child: _GameCoverImage(coverUrl: highResCoverUrl),
-              ),
-
-              // Gradient overlay
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.7),
-                    ],
-                    stops: const [0.4, 1.0],
-                  ),
-                ),
-              ),
-
-              // Countdown badge
-              Positioned(
-                top: 12,
-                right: 12,
-                child: _CountdownBadge(countdownText: game.countdownText),
-              ),
-
-              // Game info
-              Positioned(
-                left: 12,
-                right: 12,
-                bottom: 12,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      game.name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.whatshot,
-                          color: Colors.orange,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${game.hypes} hypes',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            fontSize: 12,
-                          ),
-                        ),
-                        if (game.platforms.isNotEmpty) ...[
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              game.platformNames,
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.7),
-                                fontSize: 11,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

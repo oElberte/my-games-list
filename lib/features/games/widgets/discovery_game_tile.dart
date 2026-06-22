@@ -30,101 +30,110 @@ class DiscoveryGameTile extends StatelessWidget {
         ? getHighResUrl(game.coverUrl!, ImageSize.coverBig)
         : null;
 
-    return GestureDetector(
-      onTap: () => context.pushNamed(
-        AppRouter.gameDetailsName,
-        pathParameters: {'id': game.id.toString()},
-        extra: heroTagPrefix.isEmpty ? null : heroTagPrefix,
+    return Container(
+      width: isCompact ? 130 : null,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.grey.withValues(alpha: 0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: Container(
-        width: isCompact ? 130 : null,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.3)
-                  : Colors.grey.withValues(alpha: 0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          children: [
+            // Cover image
+            if (coverUrl != null)
+              VisibilityHero(
+                tag: '${heroTagPrefix}game-cover-${game.id}',
+                child: CachedNetworkImage(
+                  imageUrl: coverUrl,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                  placeholder: (context, url) => Container(
+                    color: isDark ? Colors.grey[800] : Colors.grey[300],
+                    child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: isDark ? Colors.grey[800] : Colors.grey[300],
+                    child: const Icon(Icons.broken_image, size: 40),
+                  ),
+                ),
+              )
+            else
+              Container(
+                color: isDark ? Colors.grey[800] : Colors.grey[300],
+                child: const Center(child: Icon(Icons.gamepad, size: 40)),
+              ),
+
+            // Gradient overlay for text readability
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.7),
+                    ],
+                    stops: const [0.5, 1.0],
+                  ),
+                ),
+              ),
+            ),
+
+            // Rating badge (top right)
+            if (game.hasRating)
+              Positioned(
+                top: 8,
+                right: 8,
+                child: _RatingBadge(rating: game.totalRating!),
+              ),
+
+            // Game name (bottom)
+            Positioned(
+              left: 8,
+              right: 8,
+              bottom: 8,
+              child: Text(
+                game.name,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+
+            // Tap target with web hover/focus affordance, overlaid so the
+            // ripple covers the whole tile without altering the layout.
+            Positioned.fill(
+              child: Material(
+                type: MaterialType.transparency,
+                child: InkWell(
+                  onTap: () => context.pushNamed(
+                    AppRouter.gameDetailsName,
+                    pathParameters: {'id': game.id.toString()},
+                    extra: heroTagPrefix.isEmpty ? null : heroTagPrefix,
+                  ),
+                  mouseCursor: SystemMouseCursors.click,
+                ),
+              ),
             ),
           ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Stack(
-            children: [
-              // Cover image
-              if (coverUrl != null)
-                VisibilityHero(
-                  tag: '${heroTagPrefix}game-cover-${game.id}',
-                  child: CachedNetworkImage(
-                    imageUrl: coverUrl,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                    placeholder: (context, url) => Container(
-                      color: isDark ? Colors.grey[800] : Colors.grey[300],
-                      child: const Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      color: isDark ? Colors.grey[800] : Colors.grey[300],
-                      child: const Icon(Icons.broken_image, size: 40),
-                    ),
-                  ),
-                )
-              else
-                Container(
-                  color: isDark ? Colors.grey[800] : Colors.grey[300],
-                  child: const Center(child: Icon(Icons.gamepad, size: 40)),
-                ),
-
-              // Gradient overlay for text readability
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.7),
-                      ],
-                      stops: const [0.5, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-
-              // Rating badge (top right)
-              if (game.hasRating)
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: _RatingBadge(rating: game.totalRating!),
-                ),
-
-              // Game name (bottom)
-              Positioned(
-                left: 8,
-                right: 8,
-                bottom: 8,
-                child: Text(
-                  game.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
