@@ -2,7 +2,7 @@
 
 App store listing copy for **My Games List**, in English (`en-US`) and Brazilian Portuguese (`pt-BR`).
 
-The layout follows the [fastlane](https://docs.fastlane.tools) convention so it works directly with `supply` (Google Play) and `deliver` (App Store).
+The layout follows the [fastlane](https://docs.fastlane.tools) convention for `supply` (Google Play) and `deliver` (App Store). Because both platforms live side by side under `android/` and `ios/`, **`deliver` must be pointed at the iOS folder explicitly** with `metadata_path: 'fastlane/metadata/ios'` — see [Running the upload](#running-the-upload).
 
 > **All text here is DRAFT.** It needs the owner's review and approval before any store submission, and should be re-checked against the shipping build so it never describes a feature the app does not have.
 
@@ -25,6 +25,38 @@ fastlane/metadata/
     │   └── keywords.txt
     └── pt-BR/                # same five files
 ```
+
+## Running the upload
+
+`deliver` (App Store) defaults its `metadata_path` to `fastlane/metadata/`, expecting locale folders (`en-US/`, `pt-BR/`) directly under it. Here that default path holds the `android/` and `ios/` split instead, so **`deliver` will not find the iOS copy unless you override `metadata_path` to point at `ios/`**. `supply` (Google Play) reads `fastlane/metadata/android/` by convention and needs no override.
+
+```ruby
+# Fastfile
+
+platform :ios do
+  lane :upload_metadata do
+    deliver(
+      metadata_path: "fastlane/metadata/ios",
+      skip_screenshots: true,
+      skip_binary_upload: true,
+    )
+  end
+end
+
+platform :android do
+  lane :upload_metadata do
+    supply(
+      metadata_path: "fastlane/metadata/android",
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+end
+```
+
+`supply`'s `metadata_path` already defaults to `fastlane/metadata/android`, so it is passed above only for symmetry. The `skip_*` flags upload copy only; drop them once screenshots and binaries are wired up.
 
 ## Character limits
 
