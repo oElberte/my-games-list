@@ -11,29 +11,51 @@ class GameSearchCard extends StatelessWidget {
 
   final SearchGame game;
 
+  void _openDetails(BuildContext context) {
+    context.pushNamed(
+      'gameDetails',
+      pathParameters: {'id': game.id.toString()},
+    );
+  }
+
+  String _semanticsLabel() {
+    final parts = <String>[game.name];
+    if (game.genres.isNotEmpty) {
+      parts.add(game.genres.map((g) => g.name).take(2).join(', '));
+    }
+    if (game.platforms.isNotEmpty) {
+      parts.add(game.platforms.map((p) => p.name).take(2).join(', '));
+    }
+    if (game.firstReleaseDate != null) {
+      parts.add(game.firstReleaseDate!.year.toString());
+    }
+    return parts.join('. ');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          context.pushNamed(
-            'gameDetails',
-            pathParameters: {'id': game.id.toString()},
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _GameCover(coverUrl: game.coverUrl, gameId: game.id),
-              const SizedBox(width: 16),
-              Expanded(child: _GameInfo(game: game)),
-            ],
+      child: Semantics(
+        label: _semanticsLabel(),
+        button: true,
+        excludeSemantics: true,
+        onTap: () => _openDetails(context),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => _openDetails(context),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _GameCover(coverUrl: game.coverUrl, gameId: game.id),
+                const SizedBox(width: 16),
+                Expanded(child: _GameInfo(game: game)),
+              ],
+            ),
           ),
         ),
       ),

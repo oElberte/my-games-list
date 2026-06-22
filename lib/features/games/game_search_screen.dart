@@ -107,6 +107,7 @@ class _SearchBar extends StatelessWidget {
           prefixIcon: const Icon(Icons.search),
           suffixIcon: IconButton(
             icon: const Icon(Icons.clear),
+            tooltip: context.l10n.clearSearch,
             onPressed: () {
               controller.clear();
               context.read<GameSearchBloc>().add(const GameSearchClear());

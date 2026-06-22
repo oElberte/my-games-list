@@ -44,16 +44,46 @@ void main() {
     testWidgets('BrowseErrorView uses the pt heading and retry label', (
       tester,
     ) async {
+      final connectivity = _MockConnectivityCubit();
+      when(() => connectivity.state).thenReturn(true);
+
       await pumpPt(
         tester,
-        Scaffold(
-          body: BrowseErrorView(message: 'detalhe', onRetry: () {}),
+        BlocProvider<ConnectivityCubit>.value(
+          value: connectivity,
+          child: Scaffold(
+            body: BrowseErrorView(message: 'detalhe', onRetry: () {}),
+          ),
         ),
       );
 
       expect(find.text('Erro ao carregar dados'), findsOneWidget);
       expect(find.text('Tentar novamente'), findsOneWidget);
       expect(find.text('Try again'), findsNothing);
+    });
+
+    testWidgets('BrowseErrorView uses the pt offline copy while offline', (
+      tester,
+    ) async {
+      final connectivity = _MockConnectivityCubit();
+      when(() => connectivity.state).thenReturn(false);
+
+      await pumpPt(
+        tester,
+        BlocProvider<ConnectivityCubit>.value(
+          value: connectivity,
+          child: Scaffold(
+            body: BrowseErrorView(message: 'detalhe', onRetry: () {}),
+          ),
+        ),
+      );
+
+      expect(find.text('Você está offline'), findsOneWidget);
+      expect(
+        find.text('Verifique sua conexão e tente novamente.'),
+        findsOneWidget,
+      );
+      expect(find.text("You're offline"), findsNothing);
     });
 
     testWidgets('BrowseEmptyView renders the pt message from l10n', (

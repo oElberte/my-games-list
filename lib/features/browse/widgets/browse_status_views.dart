@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_games_list/core/services/connectivity_cubit.dart';
 import 'package:my_games_list/core/utils/l10n_extensions.dart';
 
 /// Shared error view for the Browse screens — mirrors the discovery screens'
 /// error composition (icon + heading + message + retry).
+///
+/// When the device is offline the view explains the connectivity problem
+/// instead of showing a generic failure, while still offering retry.
 class BrowseErrorView extends StatelessWidget {
   const BrowseErrorView({
     required this.message,
@@ -16,6 +21,8 @@ class BrowseErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final online = context.watch<ConnectivityCubit>().state;
+    final l10n = context.l10n;
 
     return Center(
       child: Padding(
@@ -23,15 +30,19 @@ class BrowseErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
+            Icon(
+              online ? Icons.error_outline : Icons.wifi_off,
+              size: 64,
+              color: theme.colorScheme.error,
+            ),
             const SizedBox(height: 16),
             Text(
-              context.l10n.errorLoadingData,
+              online ? l10n.errorLoadingData : l10n.offlineTitle,
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             Text(
-              message,
+              online ? message : l10n.offlineErrorMessage,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
@@ -41,7 +52,7 @@ class BrowseErrorView extends StatelessWidget {
             FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: Text(context.l10n.browseRetry),
+              label: Text(l10n.browseRetry),
             ),
           ],
         ),

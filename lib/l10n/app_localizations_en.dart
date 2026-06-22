@@ -269,6 +269,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get browseRetry => 'Try again';
 
   @override
+  String get offlineTitle => 'You\'re offline';
+
+  @override
+  String get offlineErrorMessage => 'Check your connection and try again.';
+
+  @override
+  String gameCoverLabel(String name) {
+    return 'Cover of $name';
+  }
+
+  @override
+  String get clearSearch => 'Clear search';
+
+  @override
+  String get clearDate => 'Clear date';
+
+  @override
+  String screenshotLabel(String name) {
+    return 'Screenshot of $name';
+  }
+
+  @override
+  String get favorited => 'Favorited';
+
+  @override
+  String libraryEntryLabel(String name, String status) {
+    return '$name, $status';
+  }
+
+  @override
+  String genreCardLabel(String name) {
+    return '$name genre';
+  }
+
+  @override
   String get navHome => 'Home';
 
   @override

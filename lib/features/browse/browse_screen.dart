@@ -93,22 +93,31 @@ class _GenreCard extends StatelessWidget {
 
     return Card(
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
+      child: Semantics(
+        label: context.l10n.genreCardLabel(genre.name),
+        button: true,
         onTap: () => context.pushNamed(
           AppRouter.genreGamesName,
           pathParameters: {'genreId': genre.id.toString()},
           queryParameters: {'name': genre.name},
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Center(
-            child: Text(
-              genre.name,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
+        child: InkWell(
+          onTap: () => context.pushNamed(
+            AppRouter.genreGamesName,
+            pathParameters: {'genreId': genre.id.toString()},
+            queryParameters: {'name': genre.name},
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Center(
+              child: Text(
+                genre.name,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

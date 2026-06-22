@@ -464,6 +464,9 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                                             () => _isFavorite = !_isFavorite,
                                           );
                                         },
+                                        tooltip: _isFavorite
+                                            ? context.l10n.favorited
+                                            : context.l10n.addToFavorites,
                                         icon: Icon(
                                           _isFavorite
                                               ? Icons.favorite
@@ -473,6 +476,9 @@ class _AddToLibraryBottomSheetState extends State<AddToLibraryBottomSheet> {
                                               : theme
                                                     .colorScheme
                                                     .onSurfaceVariant,
+                                          semanticLabel: _isFavorite
+                                              ? context.l10n.favorited
+                                              : context.l10n.addToFavorites,
                                         ),
                                         style: IconButton.styleFrom(
                                           backgroundColor: _isFavorite
@@ -747,19 +753,22 @@ class _DatePickerButton extends StatelessWidget {
               ),
             ),
             if (hasDate)
-              GestureDetector(
-                onTap: onClear,
-                child: Icon(
+              IconButton(
+                onPressed: onClear,
+                tooltip: context.l10n.clearDate,
+                iconSize: 18,
+                icon: Icon(
                   Icons.close,
-                  size: 18,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               )
             else
-              Icon(
-                Icons.calendar_today,
-                size: 18,
-                color: theme.colorScheme.onSurfaceVariant,
+              ExcludeSemantics(
+                child: Icon(
+                  Icons.calendar_today,
+                  size: 18,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
           ],
         ),

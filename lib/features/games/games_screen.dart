@@ -168,134 +168,154 @@ class _LibraryEntryCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
-      child: InkWell(
+      child: Semantics(
+        label: context.l10n.libraryEntryLabel(
+          entry.game.name,
+          entry.status.localizedName(context),
+        ),
+        button: true,
         onTap: () => context.pushNamed(
           AppRouter.gameDetailsName,
           pathParameters: {'id': entry.game.igdbId.toString()},
         ),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Game cover
-              VisibilityHero(
-                tag: 'game-cover-${entry.game.igdbId}',
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: entry.game.coverUrl != null
-                      ? Image.network(
-                          entry.game.coverUrl!,
-                          width: 60,
-                          height: 80,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                                width: 60,
-                                height: 80,
-                                color:
-                                    theme.colorScheme.surfaceContainerHighest,
-                                child: const Icon(Icons.videogame_asset),
-                              ),
-                        )
-                      : Container(
-                          width: 60,
-                          height: 80,
-                          color: theme.colorScheme.surfaceContainerHighest,
-                          child: const Icon(Icons.videogame_asset),
-                        ),
+        child: InkWell(
+          onTap: () => context.pushNamed(
+            AppRouter.gameDetailsName,
+            pathParameters: {'id': entry.game.igdbId.toString()},
+          ),
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Game cover
+                VisibilityHero(
+                  tag: 'game-cover-${entry.game.igdbId}',
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: entry.game.coverUrl != null
+                        ? Image.network(
+                            entry.game.coverUrl!,
+                            width: 60,
+                            height: 80,
+                            fit: BoxFit.cover,
+                            semanticLabel: context.l10n.gameCoverLabel(
+                              entry.game.name,
+                            ),
+                            errorBuilder: (context, error, stackTrace) =>
+                                Container(
+                                  width: 60,
+                                  height: 80,
+                                  color:
+                                      theme.colorScheme.surfaceContainerHighest,
+                                  child: const Icon(Icons.videogame_asset),
+                                ),
+                          )
+                        : Container(
+                            width: 60,
+                            height: 80,
+                            color: theme.colorScheme.surfaceContainerHighest,
+                            child: const Icon(Icons.videogame_asset),
+                          ),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              // Game info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      entry.game.name,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                const SizedBox(width: 12),
+                // Game info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        entry.game.name,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    // Status chip
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(entry.status, theme),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        entry.status.localizedName(context),
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: Colors.white,
+                      const SizedBox(height: 4),
+                      // Status chip
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _getStatusColor(entry.status, theme),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          entry.status.localizedName(context),
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    // Platform and playtime
-                    Row(
-                      children: [
-                        if (entry.platform != null) ...[
+                      const SizedBox(height: 4),
+                      // Platform and playtime
+                      Row(
+                        children: [
+                          if (entry.platform != null) ...[
+                            Text(
+                              entry.platform!.displayName,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                            const Text(' • '),
+                          ],
                           Text(
-                            entry.platform!.displayName,
+                            entry.playtimeFormatted,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
-                          const Text(' • '),
-                        ],
-                        Text(
-                          entry.playtimeFormatted,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        if (entry.score != null) ...[
-                          const Text(' • '),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.star,
-                                size: 14,
-                                color: Colors.amber.shade600,
-                              ),
-                              const SizedBox(width: 2),
-                              Text(
-                                '${entry.score}',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurfaceVariant,
+                          if (entry.score != null) ...[
+                            const Text(' • '),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  size: 14,
+                                  color: Colors.amber.shade600,
                                 ),
-                              ),
-                            ],
-                          ),
+                                const SizedBox(width: 2),
+                                Text(
+                                  '${entry.score}',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ],
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              // Favorite button
-              IconButton(
-                icon: Icon(
-                  entry.isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: entry.isFavorite ? Colors.red : null,
+                // Favorite button
+                IconButton(
+                  tooltip: entry.isFavorite
+                      ? context.l10n.favorited
+                      : context.l10n.addToFavorites,
+                  icon: Icon(
+                    entry.isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: entry.isFavorite ? Colors.red : null,
+                    semanticLabel: entry.isFavorite
+                        ? context.l10n.favorited
+                        : context.l10n.addToFavorites,
+                  ),
+                  onPressed: () {
+                    context.read<LibraryBloc>().add(
+                      LibraryToggleFavoriteRequested(entryId: entry.id),
+                    );
+                  },
                 ),
-                onPressed: () {
-                  context.read<LibraryBloc>().add(
-                    LibraryToggleFavoriteRequested(entryId: entry.id),
-                  );
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

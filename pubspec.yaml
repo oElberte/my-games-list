@@ -1,7 +1,7 @@
 name: my_games_list
 description: "A new Flutter project."
 publish_to: "none"
-version: 1.0.0
+version: 1.0.0+1
 
 environment:
   sdk: ^3.8.1
