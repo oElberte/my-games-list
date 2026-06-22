@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:my_games_list/core/theme/app_theme.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_bloc.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_event.dart';
 import 'package:my_games_list/features/games/bloc/discovery_games_state.dart';
@@ -19,15 +20,10 @@ class _MockDiscoveryGamesBloc
     extends MockBloc<DiscoveryGamesEvent, DiscoveryGamesState>
     implements DiscoveryGamesBloc {}
 
-/// Fixed Material 3 theme mirroring the app's seeded palette so goldens stay
-/// pinned to the real visual output rather than test defaults.
-ThemeData _theme(Brightness brightness) => ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: Colors.blue,
-    brightness: brightness,
-  ),
-);
+/// Uses the real branded [AppTheme] so goldens stay pinned to the app's actual
+/// visual output rather than test defaults.
+ThemeData _theme(Brightness brightness) =>
+    brightness == Brightness.dark ? AppTheme.dark() : AppTheme.light();
 
 /// Wraps [child] in a deterministic shell: fixed size, devicePixelRatio and
 /// text scale, localization delegates, and a router so `pushNamed` tap targets

@@ -9,6 +9,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:my_games_list/core/data/services/storage/local_storage_service.dart';
 import 'package:my_games_list/core/utils/app_router.dart';
 import 'package:my_games_list/core/utils/service_locator.dart';
+import 'package:my_games_list/core/widgets/brand_logo.dart';
 import 'package:my_games_list/features/auth/auth_repository.dart';
 import 'package:my_games_list/features/auth/bloc/auth_bloc.dart';
 import 'package:my_games_list/features/auth/bloc/auth_event.dart';
@@ -67,7 +68,7 @@ void main() {
       );
     }
 
-    testWidgets('should display app icon and name', (tester) async {
+    testWidgets('should display brand logo and name', (tester) async {
       // Arrange
       whenListen(
         mockAuthBloc,
@@ -79,6 +80,7 @@ void main() {
       await tester.pumpWidget(createSplashScreen());
 
       // Assert
+      expect(find.byType(BrandLogo), findsOneWidget);
       expect(find.byIcon(Icons.games), findsOneWidget);
       expect(find.text('My Games List'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
