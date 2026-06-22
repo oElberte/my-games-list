@@ -165,14 +165,16 @@ void main() {
 
     testWidgets('the offset-limit message shows at the list tail when the '
         'paging limit is reached', (tester) async {
-      // The tail item only renders while a load-more is in flight
-      // (isLoadingMore); once the offset limit is reached it swaps the spinner
-      // for the limit message.
+      // Production-realistic state: the bloc emits offsetLimitReached with
+      // hasMore false and the status back at success (no load-more in flight),
+      // which makes canLoadMore false. The tail must still render the limit
+      // message in that state.
       when(() => bloc.state).thenReturn(
         GameSearchState(
-          status: GameSearchStatus.loadingMore,
+          status: GameSearchStatus.success,
           query: 'game',
           games: _games(1),
+          hasMore: false,
           offsetLimitReached: true,
         ),
       );
