@@ -65,4 +65,4 @@ jobs:
       - name: Generate l10n
         run: flutter gen-l10n
       - name: Build web
-        run: flutter build web --release
+        run: flutter build web --release --no-web-resources-cdn
