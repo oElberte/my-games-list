@@ -1,7 +1,5 @@
 # Política de Privacidade
 
-AVISO — RASCUNHO PARA REVISÃO JURÍDICA. Este texto foi redigido com base no funcionamento real do aplicativo, mas ainda precisa ser revisado e aprovado por advogado(a) antes da publicação oficial. Não constitui aconselhamento jurídico. Dois dados ainda precisam ser preenchidos pelo responsável: a razão social e o CNPJ do controlador e o nome e e-mail do Encarregado (DPO).
-
 Versão: 2026-06-22
 
 Data de vigência: 22 de junho de 2026
@@ -10,9 +8,7 @@ Esta Política de Privacidade descreve como o MyGamesList ("aplicativo", "servi�
 
 ## 1. Quem é o controlador dos dados
 
-O controlador dos dados pessoais tratados no MyGamesList é:
-
-- [[CONTROLADOR: razão social + CNPJ]]
+O controlador dos dados pessoais tratados no MyGamesList é **Elberte Plínio** (pessoa física). O MyGamesList é mantido por uma pessoa natural, e não por uma empresa; a LGPD (Art. 5º, VI) admite expressamente que o controlador seja pessoa física.
 
 O controlador é a pessoa responsável pelas decisões referentes ao tratamento dos seus dados pessoais.
 
@@ -20,7 +16,7 @@ O controlador é a pessoa responsável pelas decisões referentes ao tratamento 
 
 Para exercer seus direitos ou esclarecer dúvidas sobre o tratamento dos seus dados pessoais, entre em contato com o Encarregado (Data Protection Officer):
 
-- [[ENCARREGADO/DPO: nome + e-mail]]
+- Encarregado (DPO): **Elberte Plínio** — **games@elberte.com**
 
 O Encarregado é o canal de comunicação entre você, o controlador e a Autoridade Nacional de Proteção de Dados (ANPD).
 

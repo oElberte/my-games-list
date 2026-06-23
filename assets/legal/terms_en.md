@@ -1,6 +1,6 @@
 # Terms of Use
 
-NOTICE — DRAFT PENDING LEGAL REVIEW. These Terms were written based on how the app actually works, but they still need to be reviewed and approved by a qualified lawyer before official publication. They are not legal advice. The Brazilian Portuguese version is the legally authoritative text; this English version is provided for convenience. The provider's identification (legal name and CNPJ) still needs to be filled in by the owner.
+NOTICE — The Brazilian Portuguese version is the legally authoritative text; this English version is provided for convenience.
 
 Version: 2026-06-22
 
@@ -10,9 +10,7 @@ These Terms of Use ("Terms") govern your use of the MyGamesList app ("the app", 
 
 ## 1. Who provides the service
 
-The service is provided by:
-
-- [[CONTROLADOR: razão social + CNPJ]]
+The service is provided by **Elberte Plínio**, an individual, who maintains the app as the data controller and service provider.
 
 ## 2. Service description
 

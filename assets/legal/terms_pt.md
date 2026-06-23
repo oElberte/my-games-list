@@ -1,7 +1,5 @@
 # Termos de Uso
 
-AVISO — RASCUNHO PARA REVISÃO JURÍDICA. Estes Termos foram redigidos com base no funcionamento real do aplicativo, mas ainda precisam ser revisados e aprovados por advogado(a) antes da publicação oficial. Não constituem aconselhamento jurídico. A identificação do prestador (razão social e CNPJ) ainda precisa ser preenchida pelo responsável.
-
 Versão: 2026-06-22
 
 Data de vigência: 22 de junho de 2026
@@ -10,9 +8,7 @@ Estes Termos de Uso ("Termos") regem o uso do aplicativo MyGamesList ("aplicativ
 
 ## 1. Quem oferece o serviço
 
-O serviço é oferecido por:
-
-- [[CONTROLADOR: razão social + CNPJ]]
+O serviço é oferecido por **Elberte Plínio** (pessoa física), que mantém o aplicativo na qualidade de controlador dos dados pessoais e prestador do serviço.
 
 ## 2. Descrição do serviço
 

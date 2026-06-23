@@ -1,6 +1,6 @@
 # Privacy Policy
 
-NOTICE — DRAFT PENDING LEGAL REVIEW. This text was written based on how the app actually works, but it still needs to be reviewed and approved by a qualified lawyer before official publication. It is not legal advice. The Brazilian Portuguese version is the legally authoritative text; this English version is provided for convenience. Two items still need to be filled in by the owner: the controller's legal name and CNPJ, and the Data Protection Officer's name and email.
+NOTICE — The Brazilian Portuguese version is the legally authoritative text; this English version is provided for convenience.
 
 Version: 2026-06-22
 
@@ -10,9 +10,7 @@ This Privacy Policy describes how MyGamesList ("the app", "the service", "we", "
 
 ## 1. Who is the data controller
 
-The controller of the personal data processed in MyGamesList is:
-
-- [[CONTROLADOR: razão social + CNPJ]]
+The controller of the personal data processed in MyGamesList is **Elberte Plínio**, an individual. MyGamesList is maintained by a natural person, not by a company; the LGPD (Art. 5, VI) expressly allows the controller to be an individual.
 
 The controller is the party responsible for the decisions regarding the processing of your personal data.
 
@@ -20,7 +18,7 @@ The controller is the party responsible for the decisions regarding the processi
 
 To exercise your rights or to ask questions about the processing of your personal data, contact the Data Protection Officer (Encarregado):
 
-- [[ENCARREGADO/DPO: nome + e-mail]]
+- Data Protection Officer (DPO): **Elberte Plínio** — **games@elberte.com**
 
 The DPO is the point of contact between you, the controller, and the Brazilian National Data Protection Authority (ANPD).
 
